@@ -5,6 +5,9 @@ import Image from 'next/image';
 import HeaderBtn from './header_btn';
 
 import logo from '/assets/icons/logo-grey.png';
+import Avatar from './avatar';
+
+const isAuth: boolean = false;
 
 export default function Header() {
   const router = useRouter();
@@ -28,7 +31,7 @@ export default function Header() {
           Lingua
         </h1>
       </div>
-      <div className='content-center'>
+      <div className='flex content-center'>
         <HeaderBtn
           name='About'
           url='/about'
@@ -37,14 +40,29 @@ export default function Header() {
           name='Contact'
           url='/contact'
         />
-        <HeaderBtn
-          name='Sign Up'
-          url='/sign_up'
-        />
-        <HeaderBtn
-          name='Sign In'
-          url='/sign_in'
-        />
+        {isAuth ? (
+          <div className='flex items-center'>
+            <HeaderBtn
+              name='My vocabularies'
+              url='/vocabularies'
+            />
+            <Avatar
+              name='admin'
+              callback={() => {}}
+            />
+          </div>
+        ) : (
+          <div className='flex'>
+            <HeaderBtn
+              name='Sign Up'
+              url='/sign_up'
+            />
+            <HeaderBtn
+              name='Sign In'
+              url='/sign_in'
+            />
+          </div>
+        )}
       </div>
     </header>
   );
