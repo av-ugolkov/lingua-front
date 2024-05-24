@@ -21,12 +21,9 @@ export default function Header() {
           router.push('/');
         }}>
         <Image
-          className='ml-1 mr-2'
+          className='ml-1 mr-2 w-8 h-8'
           src={logo}
-          width={32}
-          height={32}
           alt='logo'
-          unoptimized
         />
         <h1 className='text-3xl font-bold text-gray-600 cursor-default select-none'>
           Lingua

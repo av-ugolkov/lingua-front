@@ -1,27 +1,25 @@
 import React, { useState } from 'react';
-import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
+import SignBtn from '../components/sign/sign_btn';
 import asyncRequire from '../scripts/asyncRequire';
 
 import logo from '/assets/icons/logo-grey.png';
-import SignBtn from '../components/sign/sign_btn';
-import Link from 'next/link';
 
-export default function SignIn() {
+export default function ForgotPsw() {
   const router = useRouter();
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('');
 
-  function signIn() {
-    asyncRequire('/auth/sign_in', {
+  function recoveryPsw() {
+    asyncRequire('/auth/recovery_password', {
       method: 'post',
       credentials: 'include',
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
-        Authorization: 'Basic ' + btoa(username + ':' + password),
       },
+      body: JSON.stringify({ email: email }),
     })
       .then(async (response) => {
         let data = await response.json();
@@ -48,7 +46,7 @@ export default function SignIn() {
             alt='Your Company'
           />
           <h2 className='mt-10 text-center text-2xl font-bold leading-9 tracking-tight'>
-            Sign in to your account
+            Recovery password
           </h2>
         </div>
 
@@ -61,7 +59,7 @@ export default function SignIn() {
               <label
                 htmlFor='email'
                 className='block text-sm font-medium leading-6 text-gray-900'>
-                Email address / User name
+                Email address
               </label>
               <div className='mt-2'>
                 <input
@@ -69,37 +67,8 @@ export default function SignIn() {
                   name='email'
                   type='email'
                   autoComplete='email'
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  required
-                  className='block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
-                />
-              </div>
-            </div>
-
-            <div>
-              <div className='flex items-center justify-between'>
-                <label
-                  htmlFor='password'
-                  className='block text-sm font-medium leading-6 text-gray-900'>
-                  Password
-                </label>
-                <div className='text-sm'>
-                  <Link
-                    href='/forgot_password'
-                    className='font-semibold text-indigo-600 hover:text-indigo-500'>
-                    Forgot password?
-                  </Link>
-                </div>
-              </div>
-              <div className='mt-2'>
-                <input
-                  id='password'
-                  name='password'
-                  type='password'
-                  autoComplete='current-password'
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   required
                   className='block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
                 />
@@ -108,16 +77,18 @@ export default function SignIn() {
 
             <div>
               <SignBtn
-                name='Sign in'
+                name='Create new password'
                 color='indigo'
-                callback={signIn}
+                callback={() => {
+                  recoveryPsw();
+                }}
               />
             </div>
             <div>
               <SignBtn
                 name='Back'
                 color='zinc'
-                callback={() => router.push('/')}
+                callback={() => router.push('/sign_in')}
               />
             </div>
           </form>

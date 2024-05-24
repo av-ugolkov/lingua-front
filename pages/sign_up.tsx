@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
-
 import { useRouter } from 'next/navigation';
 
 import SignBtn from '../components/sign/sign_btn';
-import getBrowserFingerprint from '../scripts/get-browser-fingerprint';
 import asyncRequire from '../scripts/asyncRequire';
 
 import logo from '/assets/icons/logo-grey.png';
@@ -22,7 +20,6 @@ export default function SignIn() {
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
-        Fingerprint: getBrowserFingerprint() || '',
       },
       body: JSON.stringify({
         email: email,
@@ -51,7 +48,6 @@ export default function SignIn() {
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
-        Fingerprint: getBrowserFingerprint(),
       },
       body: JSON.stringify({ email: email }),
     })
