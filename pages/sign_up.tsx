@@ -1,19 +1,73 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
 
 import { useRouter } from 'next/navigation';
 
-import logo from '/assets/icons/logo-grey.png';
 import SignBtn from '../components/sign/sign_btn';
+import getBrowserFingerprint from '../scripts/get-browser-fingerprint';
+import asyncRequire from '../scripts/asyncRequire';
 
-const isSendCode: boolean = false;
+import logo from '/assets/icons/logo-grey.png';
 
 export default function SignIn() {
   const router = useRouter();
+  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('');
+  const [code, setCode] = useState('');
+  const [isSendCode, setIsSendCode] = useState(false);
 
-  function sendCode() {}
+  function signUp() {
+    asyncRequire('/user/sign_up', {
+      method: 'post',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Fingerprint: getBrowserFingerprint() || '',
+      },
+      body: JSON.stringify({
+        email: email,
+        username: email.substring(0, email.indexOf('@')),
+        code: code,
+        password: password,
+      }),
+    })
+      .then(async (response) => {
+        let data = await response.json();
+        if (response.ok) {
+          router.push('/');
+        } else {
+          console.error(data);
+          //notification.value.ErrorNotification(data);
+        }
+      })
+      .catch((error) => {
+        console.error(error.message);
+      });
+  }
 
-  function signUp() {}
+  function sendCode() {
+    asyncRequire('/auth/send_code', {
+      method: 'post',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Fingerprint: getBrowserFingerprint(),
+      },
+      body: JSON.stringify({ email: email }),
+    })
+      .then(async (response) => {
+        let data = await response.json();
+        if (response.ok) {
+          setIsSendCode(true);
+        } else {
+          console.error(data);
+          //notification.value.ErrorNotification(data);
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }
 
   return (
     <div className='flex min-w-80 min-h-full justify-center px-6 py-12 lg:px-80 text-gray-600'>
@@ -40,16 +94,15 @@ export default function SignIn() {
                 className='block text-sm font-medium leading-6 text-gray-900'>
                 Email address
               </label>
-              <div className='mt-2'>
-                <input
-                  id='email'
-                  name='email'
-                  type='email'
-                  autoComplete='email'
-                  required
-                  className='block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
-                />
-              </div>
+              <input
+                id='email'
+                name='email'
+                type='email'
+                autoComplete='email'
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                className='block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
+              />
             </div>
             <div>
               <SignBtn
@@ -58,28 +111,45 @@ export default function SignIn() {
                 callback={sendCode}
               />
             </div>
-            {!isSendCode ? (
+            {isSendCode ? (
               <div className='space-y-6'>
-                <div>
-                  <div className='flex items-center justify-between'>
-                    <label
-                      htmlFor='password'
-                      className='block text-sm font-medium leading-6 text-gray-900'>
-                      Password
-                    </label>
+                <div className='space-y-1'>
+                  <div>
+                    <div className='flex items-center justify-between'>
+                      <label
+                        htmlFor='code'
+                        className='block text-sm font-medium leading-6 text-gray-900'>
+                        Code
+                      </label>
+                    </div>
+                    <input
+                      id='code'
+                      name='code'
+                      type='integer'
+                      onChange={(e) => setCode(e.target.value)}
+                      required
+                      className='block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
+                    />
                   </div>
-                  <div className='mt-2'>
+                  <div>
+                    <div className='flex items-center justify-between'>
+                      <label
+                        htmlFor='password'
+                        className='block text-sm font-medium leading-6 text-gray-900'>
+                        Password
+                      </label>
+                    </div>
                     <input
                       id='password'
                       name='password'
                       type='password'
                       autoComplete='current-password'
+                      onChange={(e) => setPassword(e.target.value)}
                       required
                       className='block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
                     />
                   </div>
                 </div>
-
                 <div>
                   <SignBtn
                     name='Sign up'

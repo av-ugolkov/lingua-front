@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
-import getBrowserSignature from '../scripts/get-browser-fingerprint';
+import getBrowserFingerprint from '../scripts/get-browser-fingerprint';
 import asyncRequire from '../scripts/asyncRequire';
 
 import logo from '/assets/icons/logo-grey.png';
@@ -21,7 +21,7 @@ export default function SignIn() {
         Accept: 'application/json',
         'Content-Type': 'application/json',
         Authorization: 'Basic ' + btoa(username + ':' + password),
-        Fingerprint: getBrowserSignature(),
+        Fingerprint: getBrowserFingerprint(),
       },
     })
       .then(async (response) => {
@@ -62,7 +62,7 @@ export default function SignIn() {
               <label
                 htmlFor='email'
                 className='block text-sm font-medium leading-6 text-gray-900'>
-                Email address
+                Email address / User name
               </label>
               <div className='mt-2'>
                 <input
