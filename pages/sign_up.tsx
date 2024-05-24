@@ -4,11 +4,16 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
 import logo from '/assets/icons/logo-grey.png';
+import SignBtn from '../components/sign/sign_btn';
 
 const isSendCode: boolean = false;
 
 export default function SignIn() {
   const router = useRouter();
+
+  function sendCode() {}
+
+  function signUp() {}
 
   return (
     <div className='flex min-w-80 min-h-full justify-center px-6 py-12 lg:px-80 text-gray-600'>
@@ -47,14 +52,14 @@ export default function SignIn() {
               </div>
             </div>
             <div>
-              <button
-                type='submit'
-                className='flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600'>
-                Send code
-              </button>
+              <SignBtn
+                name='Send code'
+                color='indigo'
+                callback={sendCode}
+              />
             </div>
-            {isSendCode ? (
-              <div className='space-y-6 hover:duration-1000 hover:bg-indigo-500  duration-1000'>
+            {!isSendCode ? (
+              <div className='space-y-6'>
                 <div>
                   <div className='flex items-center justify-between'>
                     <label
@@ -76,21 +81,20 @@ export default function SignIn() {
                 </div>
 
                 <div>
-                  <button
-                    type='submit'
-                    className='flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600'>
-                    Sign up
-                  </button>
+                  <SignBtn
+                    name='Sign up'
+                    color='indigo'
+                    callback={signUp}
+                  />
                 </div>
               </div>
             ) : null}
             <div>
-              <button
-                onClick={() => router.push('/')}
-                type='submit'
-                className='flex w-full justify-center rounded-md bg-zinc-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-zinc-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-600'>
-                Back
-              </button>
+              <SignBtn
+                name='Back'
+                color='zinc'
+                callback={() => router.push('/')}
+              />
             </div>
           </form>
         </div>

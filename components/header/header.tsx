@@ -26,6 +26,7 @@ export default function Header() {
           width={32}
           height={32}
           alt='logo'
+          unoptimized
         />
         <h1 className='text-3xl font-bold text-gray-600 cursor-default select-none'>
           Lingua

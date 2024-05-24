@@ -1,12 +1,43 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
-
 import { useRouter } from 'next/navigation';
 
+import getBrowserSignature from '../scripts/get-browser-fingerprint';
+import asyncRequire from '../scripts/asyncRequire';
+
 import logo from '/assets/icons/logo-grey.png';
+import SignBtn from '../components/sign/sign_btn';
 
 export default function SignIn() {
   const router = useRouter();
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+
+  function signIn() {
+    asyncRequire('/auth/sign_in', {
+      method: 'post',
+      credentials: 'include',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: 'Basic ' + btoa(username + ':' + password),
+        Fingerprint: getBrowserSignature(),
+      },
+    })
+      .then(async (response) => {
+        let data = await response.json();
+        if (response.ok) {
+          localStorage.setItem('access_token', data.access_token);
+          router.push('/');
+        } else {
+          console.error(data);
+          //notification.value.ErrorNotification(data);
+        }
+      })
+      .catch((error) => {
+        console.error(error.message);
+      });
+  }
 
   return (
     <div className='flex min-w-80 min-h-full justify-center px-6 py-12 lg:px-8 text-gray-600'>
@@ -39,6 +70,8 @@ export default function SignIn() {
                   name='email'
                   type='email'
                   autoComplete='email'
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
                   required
                   className='block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
                 />
@@ -66,6 +99,8 @@ export default function SignIn() {
                   name='password'
                   type='password'
                   autoComplete='current-password'
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   required
                   className='block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
                 />
@@ -73,19 +108,18 @@ export default function SignIn() {
             </div>
 
             <div>
-              <button
-                type='submit'
-                className='flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600'>
-                Sign in
-              </button>
+              <SignBtn
+                name='Sign in'
+                color='indigo'
+                callback={signIn}
+              />
             </div>
             <div>
-              <button
-                onClick={() => router.push('/')}
-                type='submit'
-                className='flex w-full justify-center rounded-md bg-zinc-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-zinc-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-600'>
-                Back
-              </button>
+              <SignBtn
+                name='Back'
+                color='zinc'
+                callback={() => router.push('/')}
+              />
             </div>
           </form>
         </div>
