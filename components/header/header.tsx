@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 
@@ -6,11 +6,46 @@ import HeaderBtn from './header_btn';
 
 import logo from '/assets/icons/logo-grey.png';
 import Avatar from './avatar';
-
-const isAuth: boolean = false;
+import refreshToken from '../../scripts/middleware/auth';
+import asyncRequire from '../../scripts/asyncRequire';
 
 export default function Header() {
   const router = useRouter();
+  const [accountName, setAccountName] = useState('');
+  const [isAuth, setIsAuth] = useState(false);
+
+  useEffect(() => {
+    refreshToken(
+      (token) => {
+        asyncRequire('/user/id', {
+          method: 'get',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            Authorization: token,
+          },
+        })
+          .then(async (response) => {
+            let data = await response.json();
+            if (response.ok) {
+              setIsAuth(true);
+              setAccountName(data.name);
+            } else {
+              console.error(data);
+              // notification.value.ErrorNotification(data);
+            }
+          })
+          .catch((error) => {
+            console.error(error.message);
+          });
+      },
+      () => {
+        setIsAuth(false);
+        setAccountName('');
+        router.push('/');
+      }
+    );
+  });
 
   return (
     <header className='flex justify-between align-text-center bg-white shadow shadow-blue-300 min-w-max p-1'>
@@ -45,7 +80,7 @@ export default function Header() {
               url='/vocabularies'
             />
             <Avatar
-              name='admin'
+              name={accountName}
               callback={() => {}}
             />
           </div>

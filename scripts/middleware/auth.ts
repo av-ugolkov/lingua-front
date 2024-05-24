@@ -1,24 +1,16 @@
-import require from '../asyncRequire';
+import asyncRequire from '../asyncRequire';
 
-function refreshToken(
-  next: (token: string | null) => void,
-  moveToMain?: boolean
-) {
+function refreshToken(success: (token: string) => void, fail: () => void) {
   let token = localStorage.getItem('access_token');
   if (token == null) {
-    if (moveToMain) {
-      // router.push('/').catch((error) => {
-      //   console.error(error.message);
-      // });
-    }
-    next(null);
+    fail();
     return;
   }
   const payload = JSON.parse(atob(token.split('.')[1]));
   const exp = payload['exp'];
   const dateNow = Date.now();
   if (dateNow > exp * 1000) {
-    require('/auth/refresh', {
+    asyncRequire('/auth/refresh', {
       method: 'get',
       credentials: 'include',
       headers: {
@@ -31,14 +23,14 @@ function refreshToken(
         if (response.ok) {
           token = data.access_token;
           localStorage.setItem('access_token', token || '');
-          next('Bearer ' + token);
+          success('Bearer ' + token);
         } else {
           localStorage.removeItem('access_token');
           console.error(data);
           // router.push('/').catch((error) => {
           //   console.error(error.message);
           // });
-          next(null);
+          fail();
         }
       })
       .catch((error) => {
@@ -47,10 +39,10 @@ function refreshToken(
         // router.push('/').catch((error) => {
         //   console.error(error.message);
         // });
-        next(null);
+        fail();
       });
   } else {
-    next('Bearer ' + token);
+    success('Bearer ' + token);
   }
 }
 
