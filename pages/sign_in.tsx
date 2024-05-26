@@ -109,14 +109,18 @@ export default function SignIn() {
             <div>
               <SignBtn
                 name='Sign in'
-                color='indigo'
+                bgColor='bg-indigo-600'
+                hoverBgColor='bg-indigo-500'
+                focusOutlineColor='outline-indigo-600'
                 callback={signIn}
               />
             </div>
             <div>
               <SignBtn
                 name='Back'
-                color='zinc'
+                bgColor='bg-zinc-600'
+                hoverBgColor='bg-zinc-500'
+                focusOutlineColor='outline-zinc-600'
                 callback={() => router.push('/')}
               />
             </div>

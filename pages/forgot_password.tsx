@@ -78,16 +78,18 @@ export default function ForgotPsw() {
             <div>
               <SignBtn
                 name='Create new password'
-                color='indigo'
-                callback={() => {
-                  recoveryPsw();
-                }}
+                bgColor='bg-indigo-600'
+                hoverBgColor='bg-indigo-500'
+                focusOutlineColor='outline-indigo-600'
+                callback={recoveryPsw}
               />
             </div>
             <div>
               <SignBtn
                 name='Back'
-                color='zinc'
+                bgColor='bg-zinc-600'
+                hoverBgColor='bg-zinc-500'
+                focusOutlineColor='outline-zinc-600'
                 callback={() => router.push('/sign_in')}
               />
             </div>
