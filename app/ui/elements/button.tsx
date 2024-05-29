@@ -1,0 +1,37 @@
+import React from 'react';
+import PropTypes from 'prop-types';
+import clsx from 'clsx';
+
+function Button({
+  name,
+  bgColor,
+  hoverBgColor,
+  focusOutlineColor,
+  callback,
+  children,
+}) {
+  return (
+    <button
+      type='button'
+      onClick={callback}
+      className={clsx(
+        bgColor,
+        hoverBgColor,
+        focusOutlineColor,
+        `flex w-full h-full justify-center items-center rounded-md px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`
+      )}>
+      {children}
+      {name}
+    </button>
+  );
+}
+
+Button.propTypes = {
+  children: PropTypes.element,
+  bgColor: PropTypes.string,
+  hoverBgColor: PropTypes.string,
+  focusOutlineColor: PropTypes.string,
+  callback: PropTypes.func,
+};
+
+export default Button;

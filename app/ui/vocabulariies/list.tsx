@@ -1,0 +1,85 @@
+import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+
+import Card from './card';
+import refreshToken from '../../../scripts/middleware/auth';
+import asyncRequire from '../../../scripts/asyncRequire';
+
+interface Vocabulary {
+  id: string;
+  name: string;
+  nativeLang: string;
+  translateLang: string;
+  tags: string[];
+  user_id: string;
+}
+
+const initVocabularies: Vocabulary[] = [];
+
+export default function List() {
+  const router = useRouter();
+  const [vocabularies, setVocabularies] = useState(initVocabularies);
+
+  useEffect(() => {
+    const abortController = new AbortController();
+
+    refreshToken(
+      abortController.signal,
+      (token) => {
+        asyncRequire('/account/vocabularies', {
+          method: 'get',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            Authorization: token,
+          },
+        })
+          .then(async (response) => {
+            let data = await response.json();
+            if (response.ok) {
+              const temp: Vocabulary[] = [];
+              data.forEach((item: any) => {
+                temp.push({
+                  id: item['id'],
+                  name: item['name'],
+                  nativeLang: item['native_lang'],
+                  translateLang: item['translate_lang'],
+                  tags: item['tags'] || [],
+                  user_id: item['user_id'],
+                });
+              });
+              setVocabularies([...temp]);
+            } else {
+              //notification.value.ErrorNotification(data);
+            }
+          })
+          .catch((error) => {
+            console.error(error.message);
+          });
+      },
+      () => {
+        // setIsAuth(false);
+        // setAccountName('');
+        router.push('/');
+      }
+    );
+
+    return () => {
+      abortController.abort();
+    };
+  }, [router]);
+
+  return (
+    <div className='flex flex-row gap-3'>
+      {vocabularies.map((item, _) => (
+        <Card
+          key={item.id}
+          id={item.id}
+          name={item.name}
+          nativeLang={item.nativeLang}
+          translateLang={item.translateLang}
+        />
+      ))}
+    </div>
+  );
+}

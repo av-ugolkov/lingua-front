@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
-import SignBtn from '../components/sign/sign_btn';
+import Button from './ui/elements/button';
 import asyncRequire from '../scripts/asyncRequire';
 
 import logo from '/assets/icons/logo-grey.png';
@@ -101,11 +101,11 @@ export default function SignIn() {
               />
             </div>
             <div>
-              <SignBtn
+              <Button
                 name='Send code'
                 bgColor='bg-indigo-600'
-                hoverBgColor='bg-indigo-500'
-                focusOutlineColor='outline-indigo-600'
+                hoverBgColor='hover:bg-indigo-500'
+                focusOutlineColor='focus-visible:outline-indigo-600'
                 callback={sendCode}
               />
             </div>
@@ -149,22 +149,22 @@ export default function SignIn() {
                   </div>
                 </div>
                 <div>
-                  <SignBtn
+                  <Button
                     name='Sign up'
                     bgColor='bg-indigo-600'
-                    hoverBgColor='bg-indigo-500'
-                    focusOutlineColor='outline-indigo-600'
+                    hoverBgColor='hover:bg-indigo-500'
+                    focusOutlineColor='focus-visible:outline-indigo-600'
                     callback={signUp}
                   />
                 </div>
               </div>
             ) : null}
             <div>
-              <SignBtn
+              <Button
                 name='Back'
                 bgColor='bg-zinc-600'
-                hoverBgColor='bg-zinc-500'
-                focusOutlineColor='outline-zinc-600'
+                hoverBgColor='hover:bg-zinc-500'
+                focusOutlineColor='focus-visible:outline-zinc-600'
                 callback={() => router.push('/')}
               />
             </div>

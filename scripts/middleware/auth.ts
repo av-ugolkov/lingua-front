@@ -1,6 +1,10 @@
 import asyncRequire from '../asyncRequire';
 
-function refreshToken(success: (token: string) => void, fail: () => void) {
+function refreshToken(
+  signal: AbortSignal,
+  success: (token: string) => void,
+  fail: () => void
+) {
   let token = localStorage.getItem('access_token');
   if (token == null) {
     fail();
@@ -17,6 +21,7 @@ function refreshToken(success: (token: string) => void, fail: () => void) {
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },
+      signal: signal,
     })
       .then(async (response) => {
         const data = await response.json();

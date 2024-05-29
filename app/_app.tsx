@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import '../styles/global.css';
+import '/styles/global.css';
 import { Inter } from 'next/font/google';
 
 import { AppProps } from 'next/app';

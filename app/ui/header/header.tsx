@@ -4,10 +4,9 @@ import Image from 'next/image';
 
 import HeaderBtn from './header_btn';
 
-import logo from '/assets/icons/logo-grey.png';
 import Avatar from './avatar';
-import refreshToken from '../../scripts/middleware/auth';
-import asyncRequire from '../../scripts/asyncRequire';
+import refreshToken from '../../../scripts/middleware/auth';
+import asyncRequire from '../../../scripts/asyncRequire';
 
 export default function Header() {
   const router = useRouter();
@@ -15,7 +14,9 @@ export default function Header() {
   const [isAuth, setIsAuth] = useState(false);
 
   useEffect(() => {
+    const abortController = new AbortController();
     refreshToken(
+      abortController.signal,
       (token) => {
         asyncRequire('/user/id', {
           method: 'get',
@@ -24,6 +25,7 @@ export default function Header() {
             'Content-Type': 'application/json',
             Authorization: token,
           },
+          signal: abortController.signal,
         })
           .then(async (response) => {
             let data = await response.json();
@@ -45,7 +47,11 @@ export default function Header() {
         router.push('/');
       }
     );
-  });
+
+    return () => {
+      abortController.abort();
+    };
+  }, [router]);
 
   return (
     <header className='flex justify-between align-text-center bg-white shadow shadow-blue-300 min-w-max p-1'>
@@ -57,7 +63,9 @@ export default function Header() {
         }}>
         <Image
           className='ml-1 mr-2 w-8 h-8'
-          src={logo}
+          src='/logo-grey.png'
+          width={32}
+          height={32}
           alt='logo'
         />
         <h1 className='text-3xl font-bold text-gray-600 cursor-default select-none'>
