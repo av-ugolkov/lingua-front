@@ -1,11 +1,10 @@
+'use client';
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
-import Button from './ui/elements/button';
-import asyncRequire from '../scripts/asyncRequire';
-
-import logo from '/assets/icons/logo-grey.png';
+import Button from '@/components/elements/button';
+import asyncRequire from '@/scripts/asyncRequire';
 
 export default function SignIn() {
   const router = useRouter();
@@ -70,9 +69,11 @@ export default function SignIn() {
       <div className='w-[520px] justify-center shadow-lg shadow-blue-300 px-10 py-10'>
         <div className='sm:mx-auto sm:w-full sm:max-w-sm'>
           <Image
-            className='mx-auto h-44 w-44 object-scale-down'
-            src={logo}
-            alt='Lingua Evo'
+            className='mx-auto w-auto'
+            src='/logo-grey.png'
+            width={128}
+            height={128}
+            alt='Logo'
           />
           <h2 className='mt-10 text-center text-2xl font-bold leading-9 tracking-tight'>
             Sign up to create a new account

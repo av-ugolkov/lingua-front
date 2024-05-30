@@ -4,9 +4,9 @@ import Image from 'next/image';
 import asyncRequire from '../../../scripts/asyncRequire';
 import refreshToken from '../../../scripts/middleware/auth';
 
-import edit from '/assets/icons/s48/edit-2.svg';
-import chevronsRight from '/assets/icons/s48/chevrons-right.svg';
-import deleteIcon from '/assets/icons/s48/delete.svg';
+import edit from '/public/s48/edit-2.svg';
+import chevronsRight from '/public/s48/chevrons-right.svg';
+import deleteIcon from '/public/s48/delete.svg';
 
 export default function Card({ id, name, nativeLang, translateLang }) {
   const [title, setTitle] = useState(name);

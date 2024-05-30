@@ -1,9 +1,10 @@
+'use client';
 import React, { useState } from 'react';
 
-import Header from './ui/header/header';
-import List from './ui/vocabulariies/list';
-import Button from './ui/elements/button';
-import Create from './ui/vocabulariies/create';
+import Header from '@/components/header/header';
+import List from '@/components/vocabularies/list';
+import Button from '@/components/elements/button';
+import Create from '@/components/vocabularies/create';
 
 export default function Vocabularies() {
   const [isShowCreatePopup, setIsShowCreatePopup] = useState(false);

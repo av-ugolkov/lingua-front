@@ -1,5 +1,5 @@
 import React from 'react';
-import Header from './ui/header/header';
+import Header from '@/components/header/header';
 
 export default function HomePage() {
   return (

@@ -1,3 +1,4 @@
+'use client';
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
@@ -5,8 +6,8 @@ import Image from 'next/image';
 import HeaderBtn from './header_btn';
 
 import Avatar from './avatar';
-import refreshToken from '../../../scripts/middleware/auth';
-import asyncRequire from '../../../scripts/asyncRequire';
+import refreshToken from '@/scripts/middleware/auth';
+import asyncRequire from '@/scripts/asyncRequire';
 
 export default function Header() {
   const router = useRouter();

@@ -1,9 +1,11 @@
-import { getAddr } from '../config';
+'use client';
+
+import { getAddr } from '@/config';
 import getBrowserFingerprint from './get-browser-fingerprint';
 
 async function asyncRequire(
   url: string,
-  init?: RequestInit,
+  init: RequestInit,
   queries?: Map<string, string>,
   signal?: AbortSignal
 ): Promise<Response> {
@@ -15,7 +17,7 @@ async function asyncRequire(
   }
   init.headers = {
     ...init.headers,
-    Fingerprint: getBrowserFingerprint(),
+    Fingerprint: getBrowserFingerprint() || '',
   };
   if (signal) {
     init.signal = signal;
