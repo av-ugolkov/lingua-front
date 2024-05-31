@@ -10,24 +10,26 @@ export default function Vocabularies() {
   const [isShowCreatePopup, setIsShowCreatePopup] = useState(false);
 
   return (
-    <div>
+    <>
       <Header />
-      <div className='flex justify-center items-center w-48 h-8'>
-        <Button
-          bgColor='bg-indigo-600'
-          hoverBgColor='hover:bg-indigo-500'
-          focusOutlineColor='focus-visible:outline-indigo-600'
-          name='Create vocabularies'
-          callback={() => {
-            setIsShowCreatePopup((prev) => !prev);
-            console.log(isShowCreatePopup);
-          }}
-        />
+      <div className='p-5'>
+        <div className='flex justify-center items-center w-48 h-8 mb-5'>
+          <Button
+            bgColor='bg-indigo-600'
+            hoverBgColor='hover:bg-indigo-500'
+            focusOutlineColor='focus-visible:outline-indigo-600'
+            callback={() => {
+              setIsShowCreatePopup((prev) => !prev);
+              console.log(isShowCreatePopup);
+            }}>
+            Create vocabularies
+          </Button>
+        </div>
+        <List />
       </div>
-      <List />
       {isShowCreatePopup && (
         <Create closeCallback={() => setIsShowCreatePopup(false)} />
       )}
-    </div>
+    </>
   );
 }

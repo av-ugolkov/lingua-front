@@ -24,6 +24,7 @@ function refreshToken(
       signal: signal,
     })
       .then(async (response) => {
+        console.log('!!!!!!!!!!_refresh_token:', response);
         const data = await response.json();
         if (response.ok) {
           token = data.access_token;

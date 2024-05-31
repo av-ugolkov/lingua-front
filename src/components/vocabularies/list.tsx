@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 import Card from './card';
-import refreshToken from '../../../scripts/middleware/auth';
-import asyncRequire from '../../../scripts/asyncRequire';
+import refreshToken from '@/scripts/middleware/auth';
+import asyncRequire from '@/scripts/asyncRequire';
 
 interface Vocabulary {
   id: string;
@@ -70,7 +70,7 @@ export default function List() {
   }, [router]);
 
   return (
-    <div className='flex flex-row gap-3'>
+    <div className='grid gap-10 grid-cols-[repeat(auto-fill,_384px)]'>
       {vocabularies.map((item, _) => (
         <Card
           key={item.id}

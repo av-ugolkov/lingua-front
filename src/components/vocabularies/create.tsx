@@ -2,7 +2,11 @@ import React from 'react';
 
 import Button from '../elements/button';
 
-export default function Create({ closeCallback }) {
+export default function Create({
+  closeCallback,
+}: {
+  closeCallback: () => void;
+}) {
   return (
     <div className='fixed justify-center items-center bg-gray-500 bg-opacity-60 z-50 w-full inset-0 h-full'>
       <div className='flex justify-center items-center w-full h-full'>

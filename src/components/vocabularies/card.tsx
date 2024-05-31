@@ -1,49 +1,44 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 
-import asyncRequire from '../../../scripts/asyncRequire';
-import refreshToken from '../../../scripts/middleware/auth';
+import asyncRequire from '@/scripts/asyncRequire';
+import refreshToken from '@/scripts/middleware/auth';
+import DropdownButton from '../elements/dropdown-button';
 
-import edit from '/public/s48/edit-2.svg';
-import chevronsRight from '/public/s48/chevrons-right.svg';
-import deleteIcon from '/public/s48/delete.svg';
-
-export default function Card({ id, name, nativeLang, translateLang }) {
+export default function Card({
+  id,
+  name,
+  nativeLang,
+  translateLang,
+}: {
+  id: string;
+  name: string;
+  nativeLang: string;
+  translateLang: string;
+}) {
   const [title, setTitle] = useState(name);
 
   return (
-    <div className='bg-gray-500 w-80 h-96'>
-      <div className='item-title'>
-        <input
-          className='title-edit'
-          type='text'
-          maxLength={20}
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          // onFocus={() => setTitle(title)}
-          onKeyUp={(e) => {
-            if (e.key === 'Enter') {
-              setTitle(title);
-            }
-          }}
-          onBlur={() => renameVocabulary(id, title)}
-        />
-        <Image
-          src={edit}
-          alt='edit'
-        />
+    <div className='flex flex-col bg-gray-300 w-96 min-w-96 h-96 shadow-md shadow-blue-300 text-center'>
+      <div className='flex align-middle justify-center whitespace-nowrap overflow-hidden text-ellipsis'>
+        <div className='inline-block w-full cursor-default bg-gray-300 h-10 text-center font-semibold content-center text-xl ml-8 my-1 border-b-2 border-black'>
+          {title}
+        </div>
+        <DropdownButton />
       </div>
-      <div className='lang_code'>
-        <label>{nativeLang}</label>
+      <div className='flex justify-center mt-1'>
+        <label className=''>{nativeLang}</label>
         <Image
-          className='chevron'
-          src={chevronsRight}
+          className='content-center w-5 align-sub'
+          src='/s48/chevrons-right.svg'
           alt='arrow'
+          width={32}
+          height={32}
         />
         <label>{translateLang}</label>
       </div>
       <div
-        className='content'
+        className='flex relative w-96 h-80'
         onClick={() => {
           console.log('open vocabulary');
         }}>
@@ -55,16 +50,18 @@ export default function Card({ id, name, nativeLang, translateLang }) {
             <div className='font-weight-300'>{word.pronunciation}</div>
           </div>
         ))} */}
-      </div>
-      <div
-        className='delete-vocabulary'
-        onClick={() => {
-          console.log('removeVocabulary');
-        }}>
-        <Image
-          src={deleteIcon}
-          alt='delete'
-        />
+        <div
+          className='flex absolute bottom-2 right-2 align-middle justify-center rounded-sm max-h-fit'
+          onClick={() => {
+            console.log('removeVocabulary');
+          }}>
+          <Image
+            src='/s48/trash.svg'
+            alt='delete'
+            width={32}
+            height={32}
+          />
+        </div>
       </div>
     </div>
   );

@@ -109,21 +109,21 @@ export default function SignIn() {
 
             <div>
               <Button
-                name='Sign in'
                 bgColor='bg-indigo-600'
                 hoverBgColor='hover:bg-indigo-500'
                 focusOutlineColor='focus-visible:outline-indigo-600'
-                callback={signIn}
-              />
+                callback={signIn}>
+                Sign in
+              </Button>
             </div>
             <div>
               <Button
-                name='Back'
                 bgColor='bg-zinc-600'
                 hoverBgColor='hover:bg-zinc-500'
                 focusOutlineColor='focus-visible:outline-zinc-600'
-                callback={() => router.push('/')}
-              />
+                callback={() => router.push('/')}>
+                Back
+              </Button>
             </div>
           </form>
         </div>

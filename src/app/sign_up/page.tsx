@@ -103,12 +103,12 @@ export default function SignIn() {
             </div>
             <div>
               <Button
-                name='Send code'
                 bgColor='bg-indigo-600'
                 hoverBgColor='hover:bg-indigo-500'
                 focusOutlineColor='focus-visible:outline-indigo-600'
-                callback={sendCode}
-              />
+                callback={sendCode}>
+                Send code
+              </Button>
             </div>
             {isSendCode ? (
               <div className='space-y-6'>
@@ -151,23 +151,23 @@ export default function SignIn() {
                 </div>
                 <div>
                   <Button
-                    name='Sign up'
                     bgColor='bg-indigo-600'
                     hoverBgColor='hover:bg-indigo-500'
                     focusOutlineColor='focus-visible:outline-indigo-600'
-                    callback={signUp}
-                  />
+                    callback={signUp}>
+                    Sign up
+                  </Button>
                 </div>
               </div>
             ) : null}
             <div>
               <Button
-                name='Back'
                 bgColor='bg-zinc-600'
                 hoverBgColor='hover:bg-zinc-500'
                 focusOutlineColor='focus-visible:outline-zinc-600'
-                callback={() => router.push('/')}
-              />
+                callback={() => router.push('/')}>
+                Back
+              </Button>
             </div>
           </form>
         </div>

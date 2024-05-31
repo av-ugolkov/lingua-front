@@ -1,6 +1,12 @@
 import React from 'react';
 
-export default function Avatar({ name, callback }) {
+export default function Avatar({
+  name,
+  callback,
+}: {
+  name: string;
+  callback: () => void;
+}) {
   return (
     <div
       onClick={callback}

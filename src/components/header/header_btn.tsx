@@ -1,7 +1,13 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
 
-export default function HeaderBtn({ name, url }) {
+export default function HeaderBtn({
+  name,
+  url,
+}: {
+  name: string;
+  url: string;
+}) {
   const router = useRouter();
 
   return (
