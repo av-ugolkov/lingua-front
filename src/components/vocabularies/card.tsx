@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import Image from 'next/image';
 
 import { ChevronDoubleRightIcon } from '@heroicons/react/24/outline';
 

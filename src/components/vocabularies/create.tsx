@@ -1,4 +1,5 @@
 import React from 'react';
+import { PlusIcon, XMarkIcon } from '@heroicons/react/24/outline';
 
 import Button from '../elements/button';
 
@@ -18,21 +19,9 @@ export default function Create({
               </h3>
               <button
                 type='button'
-                className='text-gray-900 bg-transparent hover:bg-gray-500 hover:text-white rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center'
+                className='text-gray-900 bg-transparent hover:bg-gray-400 hover:text-white rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center'
                 onClick={closeCallback}>
-                <svg
-                  className='w-3 h-3'
-                  aria-hidden='true'
-                  fill='none'
-                  viewBox='0 0 14 14'>
-                  <path
-                    stroke='currentColor'
-                    strokeLinecap='round'
-                    strokeLinejoin='round'
-                    strokeWidth='2'
-                    d='m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6'
-                  />
-                </svg>
+                <XMarkIcon className='size-5' />
               </button>
             </div>
             <form className='p-4'>
@@ -93,21 +82,12 @@ export default function Create({
                 </div>
               </div>
               <Button
-                name='Add new vocabulary'
                 bgColor='bg-indigo-600'
                 hoverBgColor='hover:bg-indigo-500'
                 focusOutlineColor='focus-visible:outline-indigo-600'
                 callback={closeCallback}>
-                <svg
-                  className='me-1 -ms-1 w-5 h-5'
-                  fill='currentColor'
-                  viewBox='0 0 20 20'
-                  xmlns='http://www.w3.org/2000/svg'>
-                  <path
-                    fillRule='evenodd'
-                    d='M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z'
-                    clipRule='evenodd'></path>
-                </svg>
+                <PlusIcon className='size-5 font-extrabold ' />
+                Add new vocabulary
               </Button>
             </form>
           </div>

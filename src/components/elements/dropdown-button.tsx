@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import Image from 'next/image';
 import {
   TrashIcon,
   DocumentDuplicateIcon,
@@ -50,7 +49,6 @@ function MenuButtonItem({
   disable?: boolean;
   children: React.ReactNode;
 }) {
-  console.log('disable', disable);
   return (
     <button
       disabled={disable}
