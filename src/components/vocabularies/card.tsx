@@ -22,7 +22,7 @@ export default function Card({
   return (
     <div className='flex flex-col bg-gray-300 w-96 min-w-96 h-96 shadow-md shadow-blue-300 text-center'>
       <div className='flex align-middle justify-center'>
-        <div className='inline-block w-[80%] cursor-default bg-gray-300 h-10 text-center font-semibold content-center text-xl ml-7 my-1 border-b-2 border-black'>
+        <div className='inline-block w-full cursor-default bg-gray-300 h-10 text-center font-semibold content-center text-xl ml-7 my-1 border-b-2 border-black'>
           {title}
         </div>
         <DropdownButton />

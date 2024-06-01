@@ -14,7 +14,7 @@ export default function DropdownButton() {
   return (
     <div className='relative inline-block w-7 h-10 my-1 z-[3]'>
       <button
-        className='flex w-full h-full justify-center align-middle font-semibold text-gray-900'
+        className='flex w-full h-full items-center font-semibold text-gray-900'
         onClick={() => {
           setOpen(!open);
         }}>
