@@ -15,9 +15,10 @@ async function asyncRequire(
       fullUrl.searchParams.append(key, value);
     });
   }
+  const finger = getBrowserFingerprint() || '';
   init.headers = {
     ...init.headers,
-    Fingerprint: getBrowserFingerprint() || '',
+    Fingerprint: finger,
   };
   if (signal) {
     init.signal = signal;
