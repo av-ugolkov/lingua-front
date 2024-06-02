@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 import { ChevronDoubleRightIcon } from '@heroicons/react/24/outline';
 
-import asyncRequire from '@/scripts/asyncRequire';
+import fetchData from '@/scripts/fetchData';
 import refreshToken from '@/scripts/middleware/auth';
 import DropdownButton from '../elements/dropdown-button';
 
@@ -57,7 +57,7 @@ function renameVocabulary(id: string, vocabularyName: string) {
   refreshToken(
     abortController.signal,
     (token) => {
-      asyncRequire(
+      fetchData(
         '/account/vocabulary',
         {
           method: 'put',

@@ -4,7 +4,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
 import Button from '@/components/elements/button';
-import asyncRequire from '@/scripts/asyncRequire';
+import fetchData from '@/scripts/fetchData';
 
 export default function SignIn() {
   const router = useRouter();
@@ -14,7 +14,7 @@ export default function SignIn() {
   const [isSendCode, setIsSendCode] = useState(false);
 
   function signUp() {
-    asyncRequire('/user/sign_up', {
+    fetchData('/user/sign_up', {
       method: 'post',
       headers: {
         Accept: 'application/json',
@@ -42,7 +42,7 @@ export default function SignIn() {
   }
 
   function sendCode() {
-    asyncRequire('/auth/send_code', {
+    fetchData('/auth/send_code', {
       method: 'post',
       headers: {
         Accept: 'application/json',

@@ -3,7 +3,7 @@
 import { getAddr } from '@/config';
 import getBrowserFingerprint from './get-browser-fingerprint';
 
-async function asyncRequire(
+async function fetchData(
   url: string,
   init: RequestInit,
   queries?: Map<string, string>,
@@ -27,4 +27,4 @@ async function asyncRequire(
   return await fetch(fullUrl, init);
 }
 
-export default asyncRequire;
+export default fetchData;

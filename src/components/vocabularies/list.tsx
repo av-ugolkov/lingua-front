@@ -3,7 +3,7 @@ import { useRouter } from 'next/navigation';
 
 import Card from './card';
 import refreshToken from '@/scripts/middleware/auth';
-import asyncRequire from '@/scripts/asyncRequire';
+import fetchData from '@/scripts/fetchData';
 
 interface Vocabulary {
   id: string;
@@ -26,7 +26,7 @@ export default function List() {
     refreshToken(
       abortController.signal,
       (token) => {
-        asyncRequire('/account/vocabularies', {
+        fetchData('/account/vocabularies', {
           method: 'get',
           headers: {
             Accept: 'application/json',

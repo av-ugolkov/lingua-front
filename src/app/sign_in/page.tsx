@@ -4,7 +4,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
-import asyncRequire from '@/scripts/asyncRequire';
+import fetchData from '@/scripts/fetchData';
 import Button from '@/components/elements/button';
 
 export default function SignIn() {
@@ -13,7 +13,7 @@ export default function SignIn() {
   const [password, setPassword] = useState('');
 
   function signIn() {
-    asyncRequire('/auth/sign_in', {
+    fetchData('/auth/sign_in', {
       method: 'post',
       credentials: 'include',
       headers: {

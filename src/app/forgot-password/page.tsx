@@ -4,14 +4,14 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 
 import Button from '@/components/elements/button';
-import asyncRequire from '@/scripts/asyncRequire';
+import fetchData from '@/scripts/fetchData';
 
 export default function ForgotPsw() {
   const router = useRouter();
   const [email, setEmail] = useState('');
 
   function recoveryPsw() {
-    asyncRequire('/auth/recovery_password', {
+    fetchData('/auth/recovery_password', {
       method: 'post',
       credentials: 'include',
       headers: {
