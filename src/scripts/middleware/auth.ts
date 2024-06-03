@@ -1,20 +1,17 @@
-import asyncRequire from '../asyncRequire';
+import fetchData from '@/scripts/fetchData';
 
-function refreshToken(
-  signal: AbortSignal,
-  success: (token: string) => void,
-  fail: () => void
-) {
+//fetchData переделывать по типу refreshToken
+//в refreshToken мы сразу обрабатываем data и уже здесь ни чего не нужно будет
+function refreshToken(signal: AbortSignal): string {
   let token = localStorage.getItem('access_token');
   if (token == null) {
-    fail();
-    return;
+    return '';
   }
   const payload = JSON.parse(atob(token.split('.')[1]));
   const exp = payload['exp'];
   const dateNow = Date.now();
   if (dateNow > exp * 1000) {
-    asyncRequire('/auth/refresh', {
+    const { status, data } = fetchData('/auth/refresh', {
       method: 'get',
       credentials: 'include',
       headers: {
@@ -22,33 +19,18 @@ function refreshToken(
         'Content-Type': 'application/json',
       },
       signal: signal,
-    })
-      .then(async (response) => {
-        console.log('!!!!!!!!!!_refresh_token:', response);
-        const data = await response.json();
-        if (response.ok) {
-          token = data.access_token;
-          localStorage.setItem('access_token', token || '');
-          success('Bearer ' + token);
-        } else {
-          localStorage.removeItem('access_token');
-          console.error(data);
-          // router.push('/').catch((error) => {
-          //   console.error(error.message);
-          // });
-          fail();
-        }
-      })
-      .catch((error) => {
-        localStorage.removeItem('access_token');
-        console.error(error);
-        // router.push('/').catch((error) => {
-        //   console.error(error.message);
-        // });
-        fail();
-      });
+    });
+    if (status >= 200 && status < 300) {
+      token = data.access_token;
+      localStorage.setItem('access_token', token || '');
+      return 'Bearer ' + token;
+    } else {
+      localStorage.removeItem('access_token');
+      console.error(data);
+      return '';
+    }
   } else {
-    success('Bearer ' + token);
+    return 'Bearer ' + token;
   }
 }
 
