@@ -4,8 +4,9 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
-import fetchData from '@/scripts/fetchData';
+import fetchData, { IResponseData } from '@/scripts/fetchData';
 import Button from '@/components/elements/button';
+import { setLocalStorage } from '@/scripts/useLocalStorage';
 
 export default function SignIn() {
   const router = useRouter();
@@ -22,17 +23,11 @@ export default function SignIn() {
         Authorization: 'Basic ' + btoa(username + ':' + password),
       },
     })
-      .then(async (response) => {
-        let data = await response.json();
-        if (response.ok) {
-          localStorage.setItem('access_token', data.access_token);
-          router.push('/');
-        } else {
-          console.error(data);
-          //notification.value.ErrorNotification(data);
-        }
+      .then((resp: IResponseData) => {
+        setLocalStorage('access_token', resp.data.access_token);
+        router.push('/');
       })
-      .catch((error) => {
+      .catch((error: Error) => {
         console.error(error.message);
       });
   }

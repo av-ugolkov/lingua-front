@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 import Card from './card';
-import refreshToken from '@/scripts/middleware/auth';
+import refreshToken from '@/scripts/middleware/refreshToken';
 import fetchData from '@/scripts/fetchData';
 
 interface Vocabulary {
@@ -23,9 +23,8 @@ export default function List() {
   useEffect(() => {
     const abortController = new AbortController();
 
-    refreshToken(
-      abortController.signal,
-      (token) => {
+    refreshToken(abortController.signal)
+      .then((token) => {
         fetchData('/account/vocabularies', {
           method: 'get',
           headers: {
@@ -34,11 +33,10 @@ export default function List() {
             Authorization: token,
           },
         })
-          .then(async (response) => {
-            let data = await response.json();
-            if (response.ok) {
+          .then((resp) => {
+            if (resp.ok) {
               const temp: Vocabulary[] = [];
-              data.forEach((item: any) => {
+              resp.data.forEach((item: any) => {
                 temp.push({
                   id: item['id'],
                   name: item['name'],
@@ -56,13 +54,12 @@ export default function List() {
           .catch((error) => {
             console.error(error.message);
           });
-      },
-      () => {
+      })
+      .catch((error) => {
         // setIsAuth(false);
         // setAccountName('');
         router.push('/');
-      }
-    );
+      });
 
     return () => {
       abortController.abort();

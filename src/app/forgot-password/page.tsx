@@ -5,6 +5,7 @@ import Image from 'next/image';
 
 import Button from '@/components/elements/button';
 import fetchData from '@/scripts/fetchData';
+import { setLocalStorage } from '@/scripts/useLocalStorage';
 
 export default function ForgotPsw() {
   const router = useRouter();
@@ -20,13 +21,12 @@ export default function ForgotPsw() {
       },
       body: JSON.stringify({ email: email }),
     })
-      .then(async (response) => {
-        let data = await response.json();
-        if (response.ok) {
-          localStorage.setItem('access_token', data.access_token);
+      .then((resp) => {
+        if (resp.ok) {
+          setLocalStorage('access_token', resp.data.access_token);
           router.push('/');
         } else {
-          console.error(data);
+          console.error(resp.data);
           //notification.value.ErrorNotification(data);
         }
       })

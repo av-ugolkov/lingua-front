@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { ChevronDoubleRightIcon } from '@heroicons/react/24/outline';
 
 import fetchData from '@/scripts/fetchData';
-import refreshToken from '@/scripts/middleware/auth';
+import refreshToken from '@/scripts/middleware/refreshToken';
 import DropdownButton from '../elements/dropdown-button';
 
 export default function Card({
@@ -54,9 +54,8 @@ export default function Card({
 function renameVocabulary(id: string, vocabularyName: string) {
   const abortController = new AbortController();
 
-  refreshToken(
-    abortController.signal,
-    (token) => {
+  refreshToken(abortController.signal)
+    .then((token) => {
       fetchData(
         '/account/vocabulary',
         {
@@ -70,22 +69,17 @@ function renameVocabulary(id: string, vocabularyName: string) {
         },
         new Map<string, string>([['name', vocabularyName]])
       )
-        .then(async (response) => {
-          let data = await response.json();
-          if (response.ok) {
-            // notification.value.SuccessNotification('Success');
-          } else {
-            // notification.value.ErrorNotification(data);
-          }
+        .then((response) => {
+          // notification.value.SuccessNotification('Success');
         })
         .catch((error) => {
+          // notification.value.ErrorNotification(data);
           console.error(error.message);
         });
-    },
-    () => {
+    })
+    .catch((error) => {
       // setIsAuth(false);
       // setAccountName('');
       // router.push('/');
-    }
-  );
+    });
 }

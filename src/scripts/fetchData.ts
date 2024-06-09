@@ -3,50 +3,10 @@
 import { getAddr } from '@/config';
 import getBrowserFingerprint from './get-browser-fingerprint';
 
-interface Data {
+export interface IResponseData {
   status: number;
   data: any;
-}
-
-function wrapPromise(promise: Promise<Response>): Data {
-  let step = 'pending';
-  let data: any;
-  let status: number;
-
-  const suspender = promise.then(
-    (res) => {
-      res.json().then(
-        (data) => {
-          data = data;
-          status = res.status;
-          step = 'success';
-        },
-        (err) => {
-          data = err;
-          status = res.status;
-          step = 'error';
-        }
-      );
-    },
-    (err) => {
-      status = -1;
-      data = err;
-      step = 'error';
-    }
-  );
-
-  const read = () => {
-    switch (step) {
-      case 'pending':
-        throw suspender;
-      case 'error':
-        throw { status, data };
-      default:
-        return { status, data };
-    }
-  };
-
-  return read();
+  ok: boolean;
 }
 
 function fetchData(
@@ -54,7 +14,7 @@ function fetchData(
   init: RequestInit,
   queries?: Map<string, string>,
   signal?: AbortSignal
-): Data {
+): Promise<IResponseData> {
   const fullUrl = new URL(getAddr() + url);
   if (queries) {
     queries.forEach((value, key) => {
@@ -69,17 +29,19 @@ function fetchData(
   if (signal) {
     init.signal = signal;
   }
-  return wrapPromise(
-    fetch(fullUrl, init)
-      .then(async (response) => {
-        const data = await response.json();
-        return data;
-      })
-      .catch((error) => {
-        console.error(error);
-        return error;
-      })
-  );
+
+  return fetch(fullUrl, init)
+    .then(async (response: Response): Promise<IResponseData> => {
+      const data = await response.json();
+      if (response.ok) {
+        return { status: response.status, data, ok: true };
+      }
+      throw { status: response.status, data, ok: false };
+    })
+    .catch((error: Error): IResponseData => {
+      console.error(error);
+      throw { status: 0, data: error, ok: false };
+    });
 }
 
 export default fetchData;

@@ -27,17 +27,12 @@ export default function SignIn() {
         password: password,
       }),
     })
-      .then(async (response) => {
-        let data = await response.json();
-        if (response.ok) {
-          router.push('/');
-        } else {
-          console.error(data);
-          //notification.value.ErrorNotification(data);
-        }
+      .then(() => {
+        router.push('/');
       })
       .catch((error) => {
-        console.error(error.message);
+        console.error(error);
+        //notification.value.ErrorNotification(data);
       });
   }
 
@@ -50,17 +45,12 @@ export default function SignIn() {
       },
       body: JSON.stringify({ email: email }),
     })
-      .then(async (response) => {
-        let data = await response.json();
-        if (response.ok) {
-          setIsSendCode(true);
-        } else {
-          console.error(data);
-          //notification.value.ErrorNotification(data);
-        }
+      .then(() => {
+        setIsSendCode(true);
       })
       .catch((error) => {
         console.error(error);
+        //notification.value.ErrorNotification(data);
       });
   }
 
