@@ -5,8 +5,8 @@ import Image from 'next/image';
 
 import HeaderBtn from './header_btn';
 import Account from './Account';
-import fetchData, { IResponseData } from '@/scripts/fetchData';
-import refreshToken from '@/scripts/middleware/refreshToken';
+import { fetchData, IResponseData } from '@/scripts/fetchData';
+import { refreshToken } from '@/scripts/middleware/refreshToken';
 import LoadingEmpty from '../Loading/Empty';
 
 export default function Header() {
@@ -17,46 +17,46 @@ export default function Header() {
 
   useEffect(() => {
     const abortController = new AbortController();
-    refreshToken(abortController.signal)
-      .then((token: string) => {
-        if (token != '') {
-          const abortController = new AbortController();
-          setIsLoading(true);
-          fetchData('/user/id', {
-            method: 'get',
-            headers: {
-              Accept: 'application/json',
-              'Content-Type': 'application/json',
-              Authorization: token,
-            },
-            signal: abortController.signal,
+    refreshToken(
+      abortController.signal,
+      (token) => {
+        const abortController = new AbortController();
+        setIsLoading(true);
+        fetchData('/user/id', {
+          method: 'get',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            Authorization: token,
+          },
+          signal: abortController.signal,
+        })
+          .then((resp: IResponseData) => {
+            setIsAuth(true);
+            setAccountName(resp.data.name);
           })
-            .then((resp: IResponseData) => {
-              setIsAuth(true);
-              setAccountName(resp.data.name);
-            })
-            .catch((error: Error) => {
-              console.error(error);
-            });
-        } else {
-          setIsAuth(false);
-          setAccountName('');
-          router.push('/');
-        }
-      })
-      .catch((error: Error) => {
-        console.error(error);
-      })
-      .finally(() => {
+          .catch((error: Error) => {
+            console.error(error);
+          })
+          .finally(() => {
+            setIsLoading(false);
+          });
+      },
+      () => {
+        setIsAuth(false);
         setIsLoading(false);
-      });
+        setAccountName('');
+        router.push('/');
+      }
+    );
+
     return () => {
       abortController.abort();
     };
-  }, [isLoading, isAuth, router]);
+  }, [router]);
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <LoadingEmpty />;
   }
 
   return (

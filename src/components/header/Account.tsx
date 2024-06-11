@@ -1,14 +1,8 @@
 'use client';
-import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import React from 'react';
 
 import HeaderBtn from './header_btn';
 import Avatar from './avatar';
-import refreshToken from '@/scripts/middleware/refreshToken';
-import fetchData, { IResponseData } from '@/scripts/fetchData';
-
-const abortController = new AbortController();
-const getToken = refreshToken(abortController.signal);
 
 export default function Account({
   isAuth,

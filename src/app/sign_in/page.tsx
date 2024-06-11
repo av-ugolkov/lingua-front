@@ -6,7 +6,7 @@ import Link from 'next/link';
 
 import fetchData, { IResponseData } from '@/scripts/fetchData';
 import Button from '@/components/elements/button';
-import { setLocalStorage } from '@/scripts/useLocalStorage';
+import { setLocalStorage } from '@/scripts/localStorage';
 
 export default function SignIn() {
   const router = useRouter();

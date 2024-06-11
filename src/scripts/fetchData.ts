@@ -9,12 +9,12 @@ export interface IResponseData {
   ok: boolean;
 }
 
-function fetchData(
+export const fetchData = async (
   url: string,
   init: RequestInit,
   queries?: Map<string, string>,
   signal?: AbortSignal
-): Promise<IResponseData> {
+): Promise<IResponseData> => {
   const fullUrl = new URL(getAddr() + url);
   if (queries) {
     queries.forEach((value, key) => {
@@ -30,18 +30,11 @@ function fetchData(
     init.signal = signal;
   }
 
-  return fetch(fullUrl, init)
-    .then(async (response: Response): Promise<IResponseData> => {
-      const data = await response.json();
-      if (response.ok) {
-        return { status: response.status, data, ok: true };
-      }
-      throw { status: response.status, data, ok: false };
-    })
-    .catch((error: Error): IResponseData => {
-      console.error(error);
-      throw { status: 0, data: error, ok: false };
-    });
-}
-
-export default fetchData;
+  try {
+    const response = await fetch(fullUrl, init);
+    const data = await response.json();
+    return { status: response.status, data, ok: response.ok };
+  } catch (error) {
+    throw { status: 0, data: error, ok: false };
+  }
+};

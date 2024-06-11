@@ -5,7 +5,7 @@ import Image from 'next/image';
 
 import Button from '@/components/elements/button';
 import fetchData from '@/scripts/fetchData';
-import { setLocalStorage } from '@/scripts/useLocalStorage';
+import { setLocalStorage } from '@/scripts/localStorage';
 
 export default function ForgotPsw() {
   const router = useRouter();
