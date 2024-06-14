@@ -17,6 +17,7 @@ export default function Header() {
 
   useEffect(() => {
     const abortController = new AbortController();
+    console.log('useEffect');
     refreshToken(
       abortController.signal,
       (token) => {
@@ -32,17 +33,19 @@ export default function Header() {
           signal: abortController.signal,
         })
           .then((resp: IResponseData) => {
+            console.log('useEffect_1');
             setIsAuth(true);
             setAccountName(resp.data.name);
+            setIsLoading(false);
           })
           .catch((error: Error) => {
+            console.log('useEffect_2');
             console.error(error);
-          })
-          .finally(() => {
             setIsLoading(false);
           });
       },
       () => {
+        console.log('useEffect_3');
         setIsAuth(false);
         setIsLoading(false);
         setAccountName('');
@@ -60,40 +63,38 @@ export default function Header() {
   }
 
   return (
-    <Suspense fallback={<LoadingEmpty />}>
-      <header className='flex justify-between align-text-center bg-white shadow shadow-blue-300 min-w-max p-1'>
-        <div
-          className='flex items-center'
-          onClick={() => {
-            console.log('clicked');
-            router.push('/');
-          }}>
-          <Image
-            className='ml-1 mr-2 w-8 h-8'
-            src='/logo-grey.png'
-            width={32}
-            height={32}
-            alt='logo'
-          />
-          <h1 className='text-3xl font-bold text-gray-600 cursor-default select-none'>
-            Lingua
-          </h1>
-        </div>
-        <div className='flex content-center'>
-          <HeaderBtn
-            name='About'
-            url='/about'
-          />
-          <HeaderBtn
-            name='Contact'
-            url='/contact'
-          />
-          <Account
-            isAuth={isAuth}
-            accountName={accountName}
-          />
-        </div>
-      </header>
-    </Suspense>
+    <header className='flex justify-between align-text-center bg-white shadow shadow-blue-300 min-w-max px-3 py-1'>
+      <div
+        className='flex items-center'
+        onClick={() => {
+          console.log('clicked');
+          router.push('/');
+        }}>
+        <Image
+          className='mr-2 w-8 h-8'
+          src='/logo-grey.png'
+          width={32}
+          height={32}
+          alt='logo'
+        />
+        <h1 className='text-3xl font-bold text-gray-600 cursor-default select-none'>
+          Lingua Evo
+        </h1>
+      </div>
+      <div className='flex content-center'>
+        <HeaderBtn
+          name='About'
+          url='/about'
+        />
+        <HeaderBtn
+          name='Contact'
+          url='/contact'
+        />
+        <Account
+          isAuth={isAuth}
+          accountName={accountName}
+        />
+      </div>
+    </header>
   );
 }

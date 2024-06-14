@@ -4,7 +4,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
-import fetchData, { IResponseData } from '@/scripts/fetchData';
+import { fetchData, IResponseData } from '@/scripts/fetchData';
 import Button from '@/components/elements/button';
 import { setLocalStorage } from '@/scripts/localStorage';
 

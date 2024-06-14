@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 
 import { ChevronDoubleRightIcon } from '@heroicons/react/24/outline';
 
-import fetchData from '@/scripts/fetchData';
-import refreshToken from '@/scripts/middleware/refreshToken';
+import { fetchData } from '@/scripts/fetchData';
+import { refreshToken } from '@/scripts/middleware/refreshToken';
 import DropdownButton from '../elements/dropdown-button';
 
 export default function Card({
@@ -54,8 +54,9 @@ export default function Card({
 function renameVocabulary(id: string, vocabularyName: string) {
   const abortController = new AbortController();
 
-  refreshToken(abortController.signal)
-    .then((token) => {
+  refreshToken(
+    abortController.signal,
+    (token) => {
       fetchData(
         '/account/vocabulary',
         {
@@ -76,10 +77,11 @@ function renameVocabulary(id: string, vocabularyName: string) {
           // notification.value.ErrorNotification(data);
           console.error(error.message);
         });
-    })
-    .catch((error) => {
+    },
+    () => {
       // setIsAuth(false);
       // setAccountName('');
       // router.push('/');
-    });
+    }
+  );
 }

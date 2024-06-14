@@ -48,9 +48,11 @@ export const refreshToken = (
         if (token == '') {
           failCallback?.();
         } else {
-          successCallback?.(token);
+          successCallback?.('Bearer ' + token);
         }
       });
     }, 1000);
+  } else {
+    successCallback?.('Bearer ' + token);
   }
 };

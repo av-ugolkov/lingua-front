@@ -21,6 +21,7 @@ export default function Account({
           />
           <Avatar
             name={accountName}
+            className='ml-2'
             callback={() => {}}
           />
         </div>
