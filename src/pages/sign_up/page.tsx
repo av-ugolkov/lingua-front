@@ -58,7 +58,7 @@ export default function SignUp() {
         <div className='sm:mx-auto sm:w-full sm:max-w-sm'>
           <img
             className='mx-auto w-32 h-32'
-            src='/public/logo-grey.png'
+            src='/logo-grey.png'
             alt='logo'
           />
           <h2 className='mt-10 text-center text-2xl font-bold leading-9 tracking-tight'>

@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import Card from './card';
 import { refreshToken } from '@/scripts/middleware/refreshToken';
@@ -17,7 +17,7 @@ interface Vocabulary {
 const initVocabularies: Vocabulary[] = [];
 
 export default function List() {
-  const router = useRouter();
+  const navigate = useNavigate();
   const [vocabularies, setVocabularies] = useState(initVocabularies);
 
   useEffect(() => {
@@ -59,22 +59,21 @@ export default function List() {
       () => {
         // setIsAuth(false);
         // setAccountName('');
-        router.push('/');
+        navigate('/');
       }
     );
 
     return () => {
       abortController.abort();
     };
-  }, [router]);
+  }, [navigate]);
 
   return (
     <div className='grid gap-10 grid-cols-[repeat(auto-fill,_384px)]'>
-      {vocabularies.map((item, _) => (
+      {vocabularies.map((item) => (
         <Card
           key={item.id}
-          id={item.id}
-          name={item.name}
+          title={item.name}
           nativeLang={item.nativeLang}
           translateLang={item.translateLang}
         />

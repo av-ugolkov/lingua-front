@@ -5,13 +5,11 @@ import HeaderBtn from './header_btn';
 import Account from './Account';
 import { fetchData, IResponseData } from '@/scripts/fetchData';
 import { refreshToken } from '@/scripts/middleware/refreshToken';
-import LoadingEmpty from '../Loading/Empty';
 
 export default function Header({ failback }: { failback?: () => void }) {
   const navigate = useNavigate();
   const [isAuth, setIsAuth] = useState(false);
   const [accountName, setAccountName] = useState('');
-  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const abortController = new AbortController();
@@ -19,7 +17,6 @@ export default function Header({ failback }: { failback?: () => void }) {
       abortController.signal,
       (token) => {
         const abortController = new AbortController();
-        setIsLoading(true);
         fetchData('/user/id', {
           method: 'get',
           headers: {
@@ -36,14 +33,10 @@ export default function Header({ failback }: { failback?: () => void }) {
           .catch((error: Error) => {
             console.error(error);
             failback?.();
-          })
-          .finally(() => {
-            setIsLoading(false);
           });
       },
       () => {
         setIsAuth(false);
-        setIsLoading(false);
         setAccountName('');
         failback?.();
       }
@@ -54,10 +47,6 @@ export default function Header({ failback }: { failback?: () => void }) {
     };
   }, [failback]);
 
-  if (isLoading) {
-    return <LoadingEmpty />;
-  }
-
   return (
     <header className='flex justify-between align-text-center bg-white shadow shadow-blue-300 min-w-max px-3 py-1'>
       <div
@@ -67,7 +56,7 @@ export default function Header({ failback }: { failback?: () => void }) {
         }}>
         <img
           className='mr-2 w-8 h-8'
-          src='/public/logo-grey.png'
+          src='/logo-grey.png'
           alt='logo'
         />
         <h1 className='text-3xl font-bold text-gray-600 cursor-default select-none'>

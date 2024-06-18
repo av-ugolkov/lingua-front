@@ -1,5 +1,3 @@
-import React from 'react';
-
 export default function LoadingEmpty() {
-  return <div></div>;
+  return <div id='loading'></div>;
 }

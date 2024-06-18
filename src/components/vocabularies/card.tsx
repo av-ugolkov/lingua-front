@@ -1,31 +1,41 @@
-import React, { useState } from 'react';
+import {
+  ChevronDoubleRightIcon,
+  ShareIcon,
+  DocumentDuplicateIcon,
+  TrashIcon,
+} from '@heroicons/react/24/outline';
 
-import { ChevronDoubleRightIcon } from '@heroicons/react/24/outline';
-
-import { fetchData } from '@/scripts/fetchData';
-import { refreshToken } from '@/scripts/middleware/refreshToken';
-import DropdownButton from '../elements/dropdown-button';
+import DropdownMenu from '../elements/Dropdown/Menu';
+import DropdownItem from '../elements/Dropdown/Item';
 
 export default function Card({
-  id,
-  name,
+  title,
   nativeLang,
   translateLang,
 }: {
-  id: string;
-  name: string;
+  title: string;
   nativeLang: string;
   translateLang: string;
 }) {
-  const [title, setTitle] = useState(name);
-
   return (
     <div className='flex flex-col bg-gray-300 w-96 min-w-96 h-96 shadow-md shadow-blue-300 text-center'>
       <div className='flex align-middle justify-center'>
         <div className='inline-block w-full cursor-default bg-gray-300 h-10 text-center font-semibold content-center text-xl ml-7 my-1 border-b-2 border-black'>
           {title}
         </div>
-        <DropdownButton />
+        <DropdownMenu>
+          <DropdownItem disable>
+            Share
+            <ShareIcon className='size-5' />
+          </DropdownItem>
+          <DropdownItem disable>
+            Copy <DocumentDuplicateIcon className='size-5 ' />
+          </DropdownItem>
+          <DropdownItem>
+            Delete
+            <TrashIcon className='size-5' />
+          </DropdownItem>
+        </DropdownMenu>
       </div>
 
       <div className='flex justify-center items-center mt-1 gap-x-2'>
@@ -50,7 +60,7 @@ export default function Card({
     </div>
   );
 }
-
+/*
 function renameVocabulary(id: string, vocabularyName: string) {
   const abortController = new AbortController();
 
@@ -71,6 +81,7 @@ function renameVocabulary(id: string, vocabularyName: string) {
         new Map<string, string>([['name', vocabularyName]])
       )
         .then((response) => {
+          console.log(response);
           // notification.value.SuccessNotification('Success');
         })
         .catch((error) => {
@@ -85,3 +96,4 @@ function renameVocabulary(id: string, vocabularyName: string) {
     }
   );
 }
+*/
