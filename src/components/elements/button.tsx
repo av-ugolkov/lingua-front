@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import clsx from 'clsx';
 
 function Button({
@@ -29,13 +28,5 @@ function Button({
     </button>
   );
 }
-
-Button.propTypes = {
-  children: PropTypes.element,
-  bgColor: PropTypes.string,
-  hoverBgColor: PropTypes.string,
-  focusOutlineColor: PropTypes.string,
-  callback: PropTypes.func,
-};
 
 export default Button;

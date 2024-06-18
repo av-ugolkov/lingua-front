@@ -1,7 +1,5 @@
-'use client';
-import React, { Suspense, useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import Image from 'next/image';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import HeaderBtn from './header_btn';
 import Account from './Account';
@@ -10,7 +8,7 @@ import { refreshToken } from '@/scripts/middleware/refreshToken';
 import LoadingEmpty from '../Loading/Empty';
 
 export default function Header() {
-  const router = useRouter();
+  const navigate = useNavigate();
   const [isAuth, setIsAuth] = useState(false);
   const [accountName, setAccountName] = useState('');
   const [isLoading, setIsLoading] = useState(true);
@@ -49,14 +47,14 @@ export default function Header() {
         setIsAuth(false);
         setIsLoading(false);
         setAccountName('');
-        router.push('/');
+        navigate('/');
       }
     );
 
     return () => {
       abortController.abort();
     };
-  }, [router]);
+  }, [navigate]);
 
   if (isLoading) {
     return <LoadingEmpty />;
@@ -67,14 +65,11 @@ export default function Header() {
       <div
         className='flex items-center'
         onClick={() => {
-          console.log('clicked');
-          router.push('/');
+          navigate('/');
         }}>
-        <Image
+        <img
           className='mr-2 w-8 h-8'
-          src='/logo-grey.png'
-          width={32}
-          height={32}
+          src='/public/logo-grey.png'
           alt='logo'
         />
         <h1 className='text-3xl font-bold text-gray-600 cursor-default select-none'>

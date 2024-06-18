@@ -1,5 +1,3 @@
-'use client';
-
 import { getAddr } from '@/config';
 import getBrowserFingerprint from './get-browser-fingerprint';
 
@@ -9,12 +7,12 @@ export interface IResponseData {
   ok: boolean;
 }
 
-export const fetchData = async (
+export async function fetchData(
   url: string,
   init: RequestInit,
   queries?: Map<string, string>,
   signal?: AbortSignal
-): Promise<IResponseData> => {
+): Promise<IResponseData> {
   const fullUrl = new URL(getAddr() + url);
   if (queries) {
     queries.forEach((value, key) => {
@@ -33,8 +31,8 @@ export const fetchData = async (
   try {
     const response = await fetch(fullUrl, init);
     const data = await response.json();
-    return { status: response.status, data, ok: response.ok };
+    return { status: response.status, data: data, ok: response.ok };
   } catch (error) {
     throw { status: 0, data: error, ok: false };
   }
-};
+}

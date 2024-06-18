@@ -1,13 +1,11 @@
-'use client';
-import React, { useState } from 'react';
-import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import Button from '@/components/elements/button';
-import fetchData from '@/scripts/fetchData';
+import { fetchData } from '@/scripts/fetchData';
 
-export default function SignIn() {
-  const router = useRouter();
+export default function SignUp() {
+  const navigate = useNavigate();
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
   const [code, setCode] = useState('');
@@ -28,7 +26,7 @@ export default function SignIn() {
       }),
     })
       .then(() => {
-        router.push('/');
+        navigate('/');
       })
       .catch((error) => {
         console.error(error);
@@ -58,12 +56,10 @@ export default function SignIn() {
     <div className='flex min-w-80 min-h-full justify-center px-6 py-12 lg:px-80 text-gray-600'>
       <div className='w-[520px] justify-center shadow-lg shadow-blue-300 px-10 py-10'>
         <div className='sm:mx-auto sm:w-full sm:max-w-sm'>
-          <Image
-            className='mx-auto w-auto'
-            src='/logo-grey.png'
-            width={128}
-            height={128}
-            alt='Logo'
+          <img
+            className='mx-auto w-32 h-32'
+            src='/public/logo-grey.png'
+            alt='logo'
           />
           <h2 className='mt-10 text-center text-2xl font-bold leading-9 tracking-tight'>
             Sign up to create a new account
@@ -155,7 +151,7 @@ export default function SignIn() {
                 bgColor='bg-zinc-600'
                 hoverBgColor='hover:bg-zinc-500'
                 focusOutlineColor='focus-visible:outline-zinc-600'
-                callback={() => router.push('/')}>
+                callback={() => navigate('/')}>
                 Back
               </Button>
             </div>

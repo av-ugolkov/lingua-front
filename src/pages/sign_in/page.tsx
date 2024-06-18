@@ -1,15 +1,12 @@
-'use client';
-import React, { useState } from 'react';
-import Image from 'next/image';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { fetchData, IResponseData } from '@/scripts/fetchData';
 import Button from '@/components/elements/button';
 import { setLocalStorage } from '@/scripts/localStorage';
 
 export default function SignIn() {
-  const router = useRouter();
+  const navigate = useNavigate();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
@@ -25,7 +22,7 @@ export default function SignIn() {
     })
       .then((resp: IResponseData) => {
         setLocalStorage('access_token', resp.data.access_token);
-        router.push('/');
+        navigate('/');
       })
       .catch((error: Error) => {
         console.error(error.message);
@@ -36,12 +33,10 @@ export default function SignIn() {
     <div className='flex min-w-80 min-h-full justify-center px-6 py-12 lg:px-8 text-gray-600'>
       <div className='w-[520px] justify-center shadow-lg shadow-blue-300 px-10 py-10'>
         <div className='sm:mx-auto sm:w-full sm:max-w-sm'>
-          <Image
-            className='mx-auto w-auto'
-            src='/logo-grey.png'
-            width={128}
-            height={128}
-            alt='Logo'
+          <img
+            className='mx-auto w-32 h-32'
+            src='/public/logo-grey.png'
+            alt='logo'
           />
           <h2 className='mt-10 text-center text-2xl font-bold leading-9 tracking-tight'>
             Sign in to your account
@@ -81,11 +76,11 @@ export default function SignIn() {
                   Password
                 </label>
                 <div className='text-sm'>
-                  <Link
+                  <a
                     href='/forgot_password'
                     className='font-semibold text-indigo-600 hover:text-indigo-500'>
                     Forgot password?
-                  </Link>
+                  </a>
                 </div>
               </div>
               <div className='mt-2'>
@@ -116,7 +111,7 @@ export default function SignIn() {
                 bgColor='bg-zinc-600'
                 hoverBgColor='hover:bg-zinc-500'
                 focusOutlineColor='focus-visible:outline-zinc-600'
-                callback={() => router.push('/')}>
+                callback={() => navigate('/')}>
                 Back
               </Button>
             </div>

@@ -1,5 +1,4 @@
-import React from 'react';
-import { useRouter } from 'next/navigation';
+import { useNavigate } from 'react-router-dom';
 
 export default function HeaderBtn({
   name,
@@ -8,12 +7,12 @@ export default function HeaderBtn({
   name: string;
   url: string;
 }) {
-  const router = useRouter();
+  const navigate = useNavigate();
 
   return (
     <button
       className='mx-1 hover:shadow-sm hover:duration-200 hover:shadow-blue-400 duration-1000 text-gray-600 font-bold py-1 px-3'
-      onClick={() => router.push(url)}>
+      onClick={() => navigate(url)}>
       {name}
     </button>
   );

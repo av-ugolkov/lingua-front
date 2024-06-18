@@ -1,4 +1,3 @@
-'use client';
 import { fetchData } from '@/scripts/fetchData';
 import {
   getLocalStorage,

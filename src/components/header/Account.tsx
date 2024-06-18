@@ -1,6 +1,3 @@
-'use client';
-import React from 'react';
-
 import HeaderBtn from './header_btn';
 import Avatar from './avatar';
 
