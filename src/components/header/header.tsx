@@ -7,7 +7,7 @@ import { fetchData, IResponseData } from '@/scripts/fetchData';
 import { refreshToken } from '@/scripts/middleware/refreshToken';
 import LoadingEmpty from '../Loading/Empty';
 
-export default function Header() {
+export default function Header({ failback }: { failback?: () => void }) {
   const navigate = useNavigate();
   const [isAuth, setIsAuth] = useState(false);
   const [accountName, setAccountName] = useState('');
@@ -15,7 +15,6 @@ export default function Header() {
 
   useEffect(() => {
     const abortController = new AbortController();
-    console.log('useEffect');
     refreshToken(
       abortController.signal,
       (token) => {
@@ -31,30 +30,29 @@ export default function Header() {
           signal: abortController.signal,
         })
           .then((resp: IResponseData) => {
-            console.log('useEffect_1');
             setIsAuth(true);
             setAccountName(resp.data.name);
-            setIsLoading(false);
           })
           .catch((error: Error) => {
-            console.log('useEffect_2');
             console.error(error);
+            failback?.();
+          })
+          .finally(() => {
             setIsLoading(false);
           });
       },
       () => {
-        console.log('useEffect_3');
         setIsAuth(false);
         setIsLoading(false);
         setAccountName('');
-        navigate('/');
+        failback?.();
       }
     );
 
     return () => {
       abortController.abort();
     };
-  }, [navigate]);
+  }, [failback]);
 
   if (isLoading) {
     return <LoadingEmpty />;
