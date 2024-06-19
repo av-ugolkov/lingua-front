@@ -1,5 +1,3 @@
-import React from 'react';
-
 export default function LoadingBig() {
   return (
     <div className='flex justify-center items-center h-screen'>

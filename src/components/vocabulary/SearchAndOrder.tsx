@@ -9,29 +9,29 @@ const typesSort: string[] = [
   'Z to A',
 ];
 
-let typeSort = 'Newest';
-let searchString = '';
+const typeSort = 'Newest';
+// const searchString = '';
 
 function sortWords() {
   switch (typeSort) {
     case 'Newest':
       //   sortedStore.update(Sorted.Newest)
       break;
-    case 'Oldest':
-      //   sortedStore.update(Sorted.Oldest)
-      break;
-    case 'Update asc':
-      //   sortedStore.update(Sorted.UpdateAsc)
-      break;
-    case 'Update desc':
-      //   sortedStore.update(Sorted.UpdateDesc)
-      break;
-    case 'A to Z':
-      //   sortedStore.update(Sorted.AtoZ)
-      break;
-    case 'Z to A':
-      //   sortedStore.update(Sorted.ZtoA)
-      break;
+    // case 'Oldest':
+    //   //   sortedStore.update(Sorted.Oldest)
+    //   break;
+    // case 'Update asc':
+    //   //   sortedStore.update(Sorted.UpdateAsc)
+    //   break;
+    // case 'Update desc':
+    //   //   sortedStore.update(Sorted.UpdateDesc)
+    //   break;
+    // case 'A to Z':
+    //   //   sortedStore.update(Sorted.AtoZ)
+    //   break;
+    // case 'Z to A':
+    //   //   sortedStore.update(Sorted.ZtoA)
+    //   break;
   }
 }
 

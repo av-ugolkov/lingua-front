@@ -12,7 +12,7 @@ export default function Vocabulary() {
         <SearchAndOrder />
       </div>
       <div className='px-2 py-5'>
-        <Words />
+        <Words vocab_id={'id'} />
       </div>
     </>
   );
