@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react';
+
 import {
   ChevronDoubleRightIcon,
   ShareIcon,
@@ -7,18 +9,77 @@ import {
 
 import DropdownMenu from '../elements/Dropdown/Menu';
 import DropdownItem from '../elements/Dropdown/Item';
+import { refreshToken } from '@/scripts/middleware/refreshToken';
+import { fetchData } from '@/scripts/fetchData';
+
+const CountRequestWords = '10';
+
+interface IWord {
+  value: string;
+  pronunciation: string;
+}
+const Words: IWord[] = [];
 
 export default function Card({
+  id,
   title,
   nativeLang,
   translateLang,
   onClick,
 }: {
+  id: string;
   title: string;
   nativeLang: string;
   translateLang: string;
   onClick: () => void;
 }) {
+  const [words, setWords] = useState(Words);
+
+  useEffect(() => {
+    const abordController = new AbortController();
+    refreshToken(
+      abordController.signal,
+      (token) => {
+        fetchData(
+          '/vocabulary/word/several',
+          {
+            method: 'get',
+            headers: {
+              Accept: 'application/json',
+              'Content-Type': 'application/json',
+              Authorization: token,
+            },
+          },
+          new Map([
+            ['vocab_id', id],
+            ['limit', CountRequestWords],
+          ]),
+          abordController.signal
+        )
+          .then(async (response) => {
+            if (response.ok) {
+              response.data.forEach((item: any) => {
+                setWords((words) => [
+                  ...words,
+                  {
+                    value: item['native']['text'],
+                    pronunciation: item['native']['pronunciation'],
+                  },
+                ]);
+              });
+            } else {
+              console.error(response.data);
+              // notification.value.ErrorNotification(data);
+            }
+          })
+          .catch((error) => {
+            console.error(error.message);
+          });
+      },
+      () => {}
+    );
+  }, [id]);
+
   return (
     <div className='flex flex-col bg-gray-300 w-96 min-w-96 h-96 shadow-md shadow-blue-300 text-center'>
       <div className='flex align-middle justify-center'>
@@ -48,14 +109,16 @@ export default function Card({
       <div
         className='flex relative w-96 h-80'
         onClick={onClick}>
-        {/* {words.map((word, key) => (
-          <div
-            className='item'
-            key={key}>
-            <div>{word}</div>
-            <div className='font-weight-300'>{word.pronunciation}</div>
-          </div>
-        ))} */}
+        <div className='mx-auto no-underline w-96 text-xs pt-1'>
+          {words.map((word, key) => (
+            <div
+              className='block pb-1 text-black whitespace-nowrap no-underline overflow-hidden text-ellipsis'
+              key={key}>
+              <div>{word.value}</div>
+              <div className='font-weight-300'>{word.pronunciation}</div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

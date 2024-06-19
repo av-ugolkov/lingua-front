@@ -73,6 +73,7 @@ export default function List() {
       {vocabularies.map((item) => (
         <Card
           key={item.id}
+          id={item.id}
           title={item.name}
           nativeLang={item.nativeLang}
           translateLang={item.translateLang}
