@@ -76,6 +76,9 @@ export default function List() {
           title={item.name}
           nativeLang={item.nativeLang}
           translateLang={item.translateLang}
+          onClick={() => {
+            navigate(`/vocabulary/${item.name}`);
+          }}
         />
       ))}
     </div>

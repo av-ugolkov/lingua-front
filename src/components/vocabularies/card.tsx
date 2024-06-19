@@ -12,10 +12,12 @@ export default function Card({
   title,
   nativeLang,
   translateLang,
+  onClick,
 }: {
   title: string;
   nativeLang: string;
   translateLang: string;
+  onClick: () => void;
 }) {
   return (
     <div className='flex flex-col bg-gray-300 w-96 min-w-96 h-96 shadow-md shadow-blue-300 text-center'>
@@ -45,9 +47,7 @@ export default function Card({
       </div>
       <div
         className='flex relative w-96 h-80'
-        onClick={() => {
-          console.log('open vocabulary');
-        }}>
+        onClick={onClick}>
         {/* {words.map((word, key) => (
           <div
             className='item'

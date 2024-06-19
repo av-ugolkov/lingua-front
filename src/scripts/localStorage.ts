@@ -1,5 +1,3 @@
-import { useEffect, useState } from 'react';
-
 export const getLocalStorage = (storageKey: string): string => {
   return localStorage.getItem(storageKey) || '';
 };

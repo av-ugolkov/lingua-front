@@ -13,7 +13,12 @@ export const refreshToken = (
   failCallback?: () => void
 ) => {
   let token = getLocalStorage('access_token');
-  if (token == '') {
+  if (
+    token === '' ||
+    token === 'undefined' ||
+    token === undefined ||
+    !token.includes('.')
+  ) {
     failCallback?.();
     return;
   }
@@ -35,7 +40,7 @@ export const refreshToken = (
       console.error(error);
     }
   };
-
+  console.log('token', token);
   const payload = JSON.parse(atob(token.split('.')[1]));
   const exp = payload['exp'];
   const dateNow = Date.now();

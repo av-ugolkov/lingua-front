@@ -1,5 +1,5 @@
-import HeaderBtn from './header_btn';
-import Avatar from './avatar';
+import HeaderBtn from './HeaderBtn';
+import Avatar from './Avatar';
 
 export default function Account({
   isAuth,

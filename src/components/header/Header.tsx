@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import HeaderBtn from './header_btn';
+import HeaderBtn from './HeaderBtn';
 import Account from './Account';
 import { fetchData, IResponseData } from '@/scripts/fetchData';
 import { refreshToken } from '@/scripts/middleware/refreshToken';
