@@ -1,94 +1,57 @@
+import Tags from '../elements/Tags/Tags';
 import { VocabWord } from './Words';
+
+import {
+  ArrowDownTrayIcon,
+  DocumentPlusIcon,
+  TrashIcon,
+  XCircleIcon,
+} from '@heroicons/react/24/outline';
 
 export default function WordCard({ vocabWord }: { vocabWord: VocabWord }) {
   return (
     <>
-      {' '}
       <div className='flex flex-row border-solid border-black border-2 rounded-xl shadow-xl mb-8'>
-        <div className='p-2'>
+        <div className='p-2 m-2 w-[96%]'>
           <div className='flex'>
             <input
-              className='word'
+              className='flex justify-start bg-transparent w-1/2 mr-1 border-solid border-[2px] border-black border-t-0 border-x-0 pb-1 outline-none'
               type='text'
               maxLength={50}
               placeholder='Word'
             />
             <input
-              className='pronunciation'
+              className='flex justify-start bg-transparent w-1/2 ml-1 border-solid border-[2px] border-black border-t-0 border-x-0 pb-1 outline-none'
               type='text'
               v-model='vocabWord.wordPronunciation'
               maxLength={75}
               placeholder='Pronunciation'
             />
-            <img
+            <ArrowDownTrayIcon
               className='w-5'
               onClick={() => console.log('downloadPronunciation()')}
-              src='/src/assets/icons/s48/download.svg'
-              alt='download'
-              title='Download pronunciation'
+              title='Download Pronunciation'
             />
           </div>
           <div className='pt-3'>
             <div className='pb-[2px]'>Translates</div>
-            <div className='box_input'>
-              {vocabWord.translates.map((tr, index) => (
-                <>
-                  <span
-                    id={`${vocabWord.id}_tr_${index}`}
-                    className='input translate font_subword'
-                    role='textbox'
-                    onKeyUp={() => console.log('editTranslateWord(index)')}
-                    contentEditable>
-                    {tr}
-                  </span>
-                  <img
-                    onClick={() => console.log('deleteTranslateWord(index)')}
-                    src='/src/assets/icons/s48/delete.svg'
-                    alt='delete'
-                  />
-                </>
-              ))}
-            </div>
-            <div
-              className='box_input'
-              onClick={() => console.log('addNewTranslateWord')}>
-              <button className='box_button font_subword'>New</button>
-              <img
-                src='/src/assets/icons/s48/plus.svg'
-                alt='add'
-              />
-            </div>
+            <Tags
+              tags={vocabWord.translates}
+              placeholder='Add new translate'
+              onAddTag={(tag) => {
+                vocabWord.translates.push(tag);
+              }}
+            />
           </div>
           <div className='pt-3'>
             <div className='pb-[2px]'>Examples</div>
-            <div className='box_input'>
-              {vocabWord.examples.map((ex, index) => (
-                <>
-                  <span
-                    id={`${vocabWord.id}_ex_${index}`}
-                    className='input example font_subword'
-                    role='textbox'
-                    onKeyUp={() => console.log('editExampleWord(index)')}
-                    contentEditable>
-                    {ex}
-                  </span>
-                  <img
-                    onClick={() => console.log('deleteExampleWord(index)')}
-                    src='/src/assets/icons/s48/delete.svg'
-                    alt='delete'
-                  />
-                </>
-              ))}
-            </div>
-            <div
-              className='box_input'
-              onClick={() => console.log('addNewExampleWord')}>
-              <button className='box_button font_subword'>New</button>
-              <img
-                src='/src/assets/icons/s48/plus.svg'
-                alt='add'
-              />
-            </div>
+            <Tags
+              tags={vocabWord.examples}
+              placeholder='Add new example'
+              onAddTag={(tag) => {
+                vocabWord.examples.push(tag);
+              }}
+            />
           </div>
           {/* {vocabWord.updated != vocabWordsStore.invalidateDate && (
             <div className='date'>
@@ -102,30 +65,27 @@ export default function WordCard({ vocabWord }: { vocabWord: VocabWord }) {
             onClick={() =>
               console.log("vocabWord.id == '' ? addWord() : updateWord()")
             }>
-            <img
-              src='/src/assets/icons/s48/save.svg'
-              alt='apply'
-              title='Apply'
+            <DocumentPlusIcon
+              className='w-6'
+              title='Save word'
             />
           </button>
           <button
             v-if="vocabWord.id != ''"
             className='right_btn'
             onClick={() => console.log('cancelChanges()')}>
-            <img
-              src='/src/assets/icons/s48/x-circle.svg'
-              alt='cancel'
-              title='Cancel'
+            <XCircleIcon
+              className='w-6'
+              title='Cancel changes'
             />
           </button>
           <button
             v-if="vocabWord.id != ''"
             className='right_btn'
             onClick={() => console.log('deleteWord()')}>
-            <img
-              src='/src/assets/icons/s48/trash-2.svg'
-              alt='delete'
-              title='Delete'
+            <TrashIcon
+              className='w-6'
+              title='Delete word'
             />
           </button>
         </div>

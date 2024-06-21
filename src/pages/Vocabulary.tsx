@@ -2,7 +2,7 @@ import { useParams } from 'react-router-dom';
 
 import SearchAndOrder from '@/components/vocabulary/SearchAndOrder';
 import Words from '@/components/vocabulary/Words';
-import { useVocabulariesStore } from '@/stores/vocabularies';
+import { useVocabulariesStore } from '@/stores/useVocabulariesStore';
 
 export default function Vocabulary() {
   const { name } = useParams<'name'>();

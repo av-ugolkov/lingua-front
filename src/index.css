@@ -3,6 +3,10 @@
 @tailwind utilities;
 @tailwind variants;
 
+.border-groove {
+  border: groove;
+}
+
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;

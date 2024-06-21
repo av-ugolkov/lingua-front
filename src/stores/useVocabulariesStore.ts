@@ -1,3 +1,6 @@
+import { fetchData } from '@/scripts/fetchData';
+import { refreshToken } from '@/scripts/middleware/refreshToken';
+import { useEffect } from 'react';
 import { create } from 'zustand';
 
 interface VocabularyState {
@@ -18,7 +21,43 @@ interface VocabulariesState {
   removeVocabulary: (id: string) => void;
 }
 
-export const useVocabulariesStore = create<VocabulariesState>()((set, get) => ({
+export default function useVocabulariesStore() {
+  useEffect(() => {
+    const vocabularies = vocabulariesStore();
+    const abordController = new AbortController();
+    refreshToken(abordController.signal, (token) => {
+      fetchData('/account/vocabularies', {
+        method: 'get',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          Authorization: token,
+        },
+      })
+        .then((resp) => {
+          if (resp.ok) {
+            resp.data.forEach((item: any) => {
+              vocabularies.addVocabulary({
+                id: item['id'],
+                name: item['name'],
+                nativeLang: item['native_lang'],
+                translateLang: item['translate_lang'],
+                tags: item['tags'] || [],
+                userId: item['user_id'],
+              });
+            });
+          } else {
+            //notification.value.ErrorNotification(data);
+          }
+        })
+        .catch((error) => {
+          console.error(error.message);
+        });
+    });
+  }, []);
+}
+
+export const vocabulariesStore = create<VocabulariesState>((set, get) => ({
   vocabularies: [],
   setVocabularies: (vocabularies) => set({ vocabularies }),
   getVocabulary: (id) => {
