@@ -1,5 +1,8 @@
 import Tags from '../elements/Tags/Tags';
-import { VocabWordState } from '@/stores/useVocabWordsStore';
+import {
+  VocabWordState,
+  useVocabWordsStore,
+} from '@/stores/useVocabWordsStore';
 
 import {
   ArrowDownTrayIcon,
@@ -9,20 +12,22 @@ import {
 } from '@heroicons/react/24/outline';
 
 export default function WordCard({ vocabWord }: { vocabWord: VocabWordState }) {
+  const vocabWords = useVocabWordsStore();
+
   return (
     <>
-      <div className='flex flex-row border-solid border-black border-2 shadow-xl mb-8'>
+      <div className='flex flex-row mb-8 border-solid border-[1px] border-gray-300 shadow-md shadow-blue-300'>
         <div className='p-2 m-2 w-[96%]'>
           <div className='flex'>
             <input
-              className='flex justify-start bg-transparent w-1/2 mr-1 border-solid border-[2px] border-black border-t-0 border-x-0 pb-1 outline-none'
+              className='flex justify-start bg-transparent w-1/2 mr-1 border-solid border-[1px] border-black border-t-0 border-x-0 pb-1 outline-none'
               type='text'
               maxLength={50}
               placeholder='Word'
               value={vocabWord.wordValue}
             />
             <input
-              className='flex justify-start bg-transparent w-1/2 ml-1 border-solid border-[2px] border-black border-t-0 border-x-0 pb-1 outline-none'
+              className='flex justify-start bg-transparent w-1/2 ml-1 border-solid border-[1px] border-black border-t-0 border-x-0 pb-1 outline-none'
               type='text'
               maxLength={75}
               placeholder='Pronunciation'
@@ -38,9 +43,14 @@ export default function WordCard({ vocabWord }: { vocabWord: VocabWordState }) {
             <div className='pb-[2px]'>Translates</div>
             <Tags
               tags={vocabWord.translates}
-              placeholder='Add new translate'
+              placeholder='Type new translate and press Enter'
               onAddTag={(tag) => {
                 vocabWord.translates.push(tag);
+                vocabWords.updateWord(vocabWord);
+              }}
+              onRemoveTag={(ind) => {
+                vocabWord.translates.splice(ind, 1);
+                vocabWords.updateWord(vocabWord);
               }}
             />
           </div>
@@ -48,9 +58,14 @@ export default function WordCard({ vocabWord }: { vocabWord: VocabWordState }) {
             <div className='pb-[2px]'>Examples</div>
             <Tags
               tags={vocabWord.examples}
-              placeholder='Add new example'
+              placeholder='Type new example and press Enter'
               onAddTag={(tag) => {
                 vocabWord.examples.push(tag);
+                vocabWords.updateWord(vocabWord);
+              }}
+              onRemoveTag={(ind) => {
+                vocabWord.examples.splice(ind, 1);
+                vocabWords.updateWord(vocabWord);
               }}
             />
           </div>

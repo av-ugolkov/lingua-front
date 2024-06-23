@@ -1,25 +1,33 @@
+import { XMarkIcon } from '@heroicons/react/24/outline';
+
 export default function Tags({
   tags,
   placeholder,
   onAddTag,
+  onRemoveTag,
 }: {
   tags: string[];
   placeholder: string;
   onAddTag: (tag: string) => void;
+  onRemoveTag: (ind: number) => void;
 }) {
   return (
-    <div className='flex flex-wrap p-0 m-0 w-full'>
-      <ul
+    <div className='flex flex-wrap w-full'>
+      <div
         id='tags'
-        className='flex flex-wrap list-none p-0 mt-2'>
-        {tags.map((tag) => (
-          <li className='mr-2 mb-2 rounded-xl bg-gray-300 px-2 py-1 text-sm font-semibold'>
+        className='flex flex-row flex-wrap mb-2'>
+        {tags.map((tag, ind) => (
+          <span className='flex h-auto items-center px-1 mb-2 mr-2 text-wrap bg-gray-200 shadow shadow-blue-300'>
             {tag}
-          </li>
+            <XMarkIcon
+              className='min-w-5 w-5 h-5 ml-1 hover:shadow hover:shadow-blue-300'
+              onClick={() => onRemoveTag(ind)}
+            />
+          </span>
         ))}
-      </ul>
+      </div>
       <input
-        className='flex-1 h-8 min-w-12 border-solid border-1 border-black rounded-xl focus:border-none'
+        className='inline-block w-72 h-6 px-2 border-none shadow shadow-blue-300 border-black outline-blue-300'
         type='text'
         id='input-tag'
         placeholder={placeholder}
