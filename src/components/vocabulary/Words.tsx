@@ -1,21 +1,18 @@
 import WordCard from './WordCard';
-import useVocabWordsStore, {
+import {
   EmptyWord,
-  vocabWordsStore,
+  useVocabWords,
+  useVocabWordsStore,
 } from '@/stores/useVocabWordsStore';
 
 export default function Words({ vocab_id }: { vocab_id: string }) {
-  useVocabWordsStore({ vocab_id });
-  const vocabWords = vocabWordsStore((state) => state.words);
+  useVocabWords({ vocab_id });
+  const vocabWords = useVocabWordsStore((state) => state.words);
   return (
     <>
       <WordCard vocabWord={EmptyWord} />
       {vocabWords.map((word) => (
-        <div
-          v-if='
-        word.wordValue.toLowerCase().includes(searchStore.trimSpace) ||
-        word.translates.some((item) => item.toLowerCase().includes(searchStore.trimSpace))
-      '>
+        <div>
           <WordCard vocabWord={word} />
         </div>
       ))}

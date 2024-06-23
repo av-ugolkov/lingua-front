@@ -1,7 +1,8 @@
-import { fetchData } from '@/scripts/fetchData';
-import { refreshToken } from '@/scripts/middleware/refreshToken';
 import { useEffect } from 'react';
 import { create } from 'zustand';
+
+import { fetchData } from '@/scripts/fetchData';
+import { refreshToken } from '@/scripts/middleware/refreshToken';
 
 interface VocabularyState {
   id: string;
@@ -21,9 +22,10 @@ interface VocabulariesState {
   removeVocabulary: (id: string) => void;
 }
 
-export default function useVocabulariesStore() {
+export function useVocabularies(callback: () => void) {
+  const vocabularies = useVocabulariesStore();
+
   useEffect(() => {
-    const vocabularies = vocabulariesStore();
     const abordController = new AbortController();
     refreshToken(abordController.signal, (token) => {
       fetchData('/account/vocabularies', {
@@ -49,15 +51,20 @@ export default function useVocabulariesStore() {
           } else {
             //notification.value.ErrorNotification(data);
           }
+          callback();
         })
         .catch((error) => {
           console.error(error.message);
         });
     });
-  }, []);
+
+    return () => {
+      abordController.abort();
+    };
+  }, [vocabularies, callback]);
 }
 
-export const vocabulariesStore = create<VocabulariesState>((set, get) => ({
+export const useVocabulariesStore = create<VocabulariesState>((set, get) => ({
   vocabularies: [],
   setVocabularies: (vocabularies) => set({ vocabularies }),
   getVocabulary: (id) => {
@@ -74,12 +81,17 @@ export const vocabulariesStore = create<VocabulariesState>((set, get) => ({
       (vocabulary) => vocabulary.name === name
     );
     if (!vocabulary) {
-      throw new Error(`Vocabulary with id ${name} not found`);
+      throw new Error(`Vocabulary with name ${name} not found`);
     }
     return vocabulary;
   },
   addVocabulary: (vocabulary) =>
-    set((state) => ({ vocabularies: [...state.vocabularies, vocabulary] })),
+    set((state) => {
+      if (state.vocabularies.find((item) => item.id === vocabulary.id)) {
+        return state;
+      }
+      return { vocabularies: [...state.vocabularies, vocabulary] };
+    }),
   removeVocabulary: (id) =>
     set((state) => ({
       vocabularies: state.vocabularies.filter(

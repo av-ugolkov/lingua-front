@@ -2,12 +2,20 @@ import { useParams } from 'react-router-dom';
 
 import SearchAndOrder from '@/components/vocabulary/SearchAndOrder';
 import Words from '@/components/vocabulary/Words';
-import { useVocabulariesStore } from '@/stores/useVocabulariesStore';
+import {
+  useVocabularies,
+  useVocabulariesStore,
+} from '@/stores/useVocabulariesStore';
+import { useState } from 'react';
 
 export default function Vocabulary() {
   const { name } = useParams<'name'>();
   const vocabularies = useVocabulariesStore();
-  const id = vocabularies.getVocabularyByName(name || '').id;
+  const [id, setID] = useState('');
+  useVocabularies(() => {
+    const id = vocabularies.getVocabularyByName(name || '').id;
+    setID(id);
+  });
 
   return (
     <>

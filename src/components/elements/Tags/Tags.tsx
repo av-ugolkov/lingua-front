@@ -8,7 +8,7 @@ export default function Tags({
   onAddTag: (tag: string) => void;
 }) {
   return (
-    <div className='flex flex-wrap p-0 m-0 w-[70%]'>
+    <div className='flex flex-wrap p-0 m-0 w-full'>
       <ul
         id='tags'
         className='flex flex-wrap list-none p-0 mt-2'>
@@ -19,7 +19,7 @@ export default function Tags({
         ))}
       </ul>
       <input
-        className='flex-1 h-8 border-solid border-1 border-black rounded-xl focus:border-none'
+        className='flex-1 h-8 min-w-12 border-solid border-1 border-black rounded-xl focus:border-none'
         type='text'
         id='input-tag'
         placeholder={placeholder}

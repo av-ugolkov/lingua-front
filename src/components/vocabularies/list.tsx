@@ -1,15 +1,18 @@
 import { useNavigate } from 'react-router-dom';
 
 import Card from './card';
-import useVocabulariesStore, {
-  vocabulariesStore,
+import {
+  useVocabularies,
+  useVocabulariesStore,
 } from '@/stores/useVocabulariesStore';
 
 export default function List() {
   const navigate = useNavigate();
 
-  useVocabulariesStore();
-  const vocabularies = vocabulariesStore((state) => state.vocabularies);
+  useVocabularies(() => {
+    console.log('useVocabularies');
+  });
+  const vocabularies = useVocabulariesStore((state) => state.vocabularies);
 
   return (
     <div className='grid gap-10 grid-cols-[repeat(auto-fill,_384px)]'>

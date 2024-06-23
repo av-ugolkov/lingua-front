@@ -1,11 +1,12 @@
-import { fetchData } from '@/scripts/fetchData';
-import { refreshToken } from '@/scripts/middleware/refreshToken';
 import { useEffect } from 'react';
 import { create } from 'zustand';
 
+import { fetchData } from '@/scripts/fetchData';
+import { refreshToken } from '@/scripts/middleware/refreshToken';
+
 export const InvalidateDate = new Date(1970, 1, 1, 0, 0, 0, 0);
 
-interface VocabWordState {
+export interface VocabWordState {
   id: string;
   wordID: string;
   wordValue: string;
@@ -36,9 +37,10 @@ export const EmptyWord: VocabWordState = {
   created: InvalidateDate,
 };
 
-export default function useVocabWordsStore({ vocab_id }: { vocab_id: string }) {
+export function useVocabWords({ vocab_id }: { vocab_id: string }) {
+  const vocabWords = useVocabWordsStore();
+
   useEffect(() => {
-    const vocabWords = vocabWordsStore();
     const abordController = new AbortController();
     refreshToken(abordController.signal, (token) => {
       fetchData(
@@ -81,7 +83,7 @@ export default function useVocabWordsStore({ vocab_id }: { vocab_id: string }) {
   });
 }
 
-export const vocabWordsStore = create<VocabWordsState>((set, get) => ({
+export const useVocabWordsStore = create<VocabWordsState>((set, get) => ({
   words: [],
   getWord: (id) => {
     const word = get().words.find((word) => word.id === id);
@@ -98,7 +100,12 @@ export const vocabWordsStore = create<VocabWordsState>((set, get) => ({
     return word;
   },
   addWord: (vocabulary) =>
-    set((state) => ({ words: [...state.words, vocabulary] })),
+    set((state) => {
+      if (state.words.find((item) => item.id === vocabulary.id)) {
+        return state;
+      }
+      return { words: [...state.words, vocabulary] };
+    }),
   updateWord: (vocabulary) =>
     set((state) => ({
       words: state.words.map((word) =>
