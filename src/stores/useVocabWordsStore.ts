@@ -24,6 +24,7 @@ interface VocabWordsState {
   addWord: (vocabulary: VocabWordState) => void;
   updateWord: (vocabulary: VocabWordState) => void;
   removeWord: (id: string) => void;
+  clearWords: () => void;
 }
 
 export const EmptyWord: VocabWordState = {
@@ -80,6 +81,10 @@ export function useVocabWords({ vocab_id }: { vocab_id: string }) {
           console.error(error.message);
         });
     });
+
+    return () => {
+      abordController.abort();
+    };
   });
 }
 
@@ -114,4 +119,7 @@ export const useVocabWordsStore = create<VocabWordsState>((set, get) => ({
     })),
   removeWord: (id) =>
     set((state) => ({ words: state.words.filter((word) => word.id !== id) })),
+  clearWords: () => {
+    set(() => ({ words: [] }));
+  },
 }));

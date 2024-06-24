@@ -7,7 +7,7 @@ export default function BtnCard({
 }) {
   return (
     <button
-      className='flex w-8 h-1/4 items-center justify-center hover:shadow hover:shadow-blue-300'
+      className='flex w-8 h-14 items-center justify-center hover:shadow hover:shadow-blue-300'
       onClick={onClick}>
       {children}
     </button>

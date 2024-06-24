@@ -9,9 +9,7 @@ import {
 export default function List() {
   const navigate = useNavigate();
 
-  useVocabularies(() => {
-    console.log('useVocabularies');
-  });
+  useVocabularies(() => {});
   const vocabularies = useVocabulariesStore((state) => state.vocabularies);
 
   return (

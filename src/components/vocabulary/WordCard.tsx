@@ -86,11 +86,11 @@ export default function WordCard({ vocabWord }: { vocabWord: VocabWordState }) {
           ) : (
             <>
               <DropdownMenu title='Menu'>
-                <DropdownItem>
+                <DropdownItem disable>
                   Copy
                   <DocumentDuplicateIcon className='size-5 ' />
                 </DropdownItem>
-                <DropdownItem>
+                <DropdownItem onClick={() => console.log('deleteWord()')}>
                   Delete
                   <TrashIcon className='size-5' />
                 </DropdownItem>

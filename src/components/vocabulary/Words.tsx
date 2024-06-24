@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import WordCard from './WordCard';
 import {
   EmptyWord,
@@ -7,11 +8,18 @@ import {
 
 export default function Words({ vocab_id }: { vocab_id: string }) {
   useVocabWords({ vocab_id });
-  const vocabWords = useVocabWordsStore((state) => state.words);
+  const vocabWords = useVocabWordsStore();
+
+  useEffect(() => {
+    return () => {
+      vocabWords.clearWords();
+    };
+  }, []);
+
   return (
     <>
       <WordCard vocabWord={EmptyWord} />
-      {vocabWords.map((word) => (
+      {vocabWords.words.map((word) => (
         <div>
           <WordCard vocabWord={word} />
         </div>
