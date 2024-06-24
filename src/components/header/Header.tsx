@@ -48,7 +48,7 @@ export default function Header() {
   }, []);
 
   return (
-    <header className='flex justify-between align-text-center bg-white shadow shadow-blue-300 min-w-max px-3 py-1'>
+    <header className='flex justify-between align-text-center bg-white shadow shadow-blue-300 min-w-max px-3 py-1 sticky top-0 z-50'>
       <div
         className='flex items-center'
         onClick={() => {

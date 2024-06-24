@@ -1,5 +1,6 @@
 import Tags from '../elements/Tags/Tags';
 import {
+  InvalidateDate,
   VocabWordState,
   useVocabWordsStore,
 } from '@/stores/useVocabWordsStore';
@@ -68,13 +69,13 @@ export default function WordCard({ vocabWord }: { vocabWord: VocabWordState }) {
               }}
             />
           </div>
-          {/* {vocabWord.updated != vocabWordsStore.invalidateDate && (
-            <div className='date'>
-              {vocabWordsStore.getUpdatedLocaleDate(vocabWord.id)}
+          {vocabWord.updated != InvalidateDate && (
+            <div className='relative w-full text-gray-500 bottom-[-12px] right-[-10px] text-right'>
+              {vocabWord.created.toLocaleString('en-GB')}
             </div>
-          )} */}
+          )}
         </div>
-        <div className='flex flex-col justify-around align-middle'>
+        <div className='flex flex-col justify-around align-middle mx-2'>
           {vocabWord.id === '' ? (
             <BtnCard onClick={() => console.log('addWord()')}>
               <PlusCircleIcon
