@@ -6,7 +6,7 @@ import Account from './Account';
 import { fetchData, IResponseData } from '@/scripts/fetchData';
 import { refreshToken } from '@/scripts/middleware/refreshToken';
 
-export default function Header({ failback }: { failback?: () => void }) {
+export default function Header() {
   const navigate = useNavigate();
   const [isAuth, setIsAuth] = useState(false);
   const [accountName, setAccountName] = useState('');
@@ -32,20 +32,20 @@ export default function Header({ failback }: { failback?: () => void }) {
           })
           .catch((error: Error) => {
             console.error(error);
-            failback?.();
+            navigate('/');
           });
       },
       () => {
         setIsAuth(false);
         setAccountName('');
-        failback?.();
+        navigate('/');
       }
     );
 
     return () => {
       abortController.abort();
     };
-  }, [failback]);
+  }, []);
 
   return (
     <header className='flex justify-between align-text-center bg-white shadow shadow-blue-300 min-w-max px-3 py-1'>

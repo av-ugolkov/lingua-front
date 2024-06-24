@@ -5,18 +5,19 @@ import {
 } from '@/stores/useVocabWordsStore';
 
 import {
-  ArrowDownTrayIcon,
+  DocumentCheckIcon,
   DocumentPlusIcon,
   TrashIcon,
   XCircleIcon,
 } from '@heroicons/react/24/outline';
+import BtnCard from './BtnCard';
 
 export default function WordCard({ vocabWord }: { vocabWord: VocabWordState }) {
   const vocabWords = useVocabWordsStore();
 
   return (
     <>
-      <div className='flex flex-row mb-8 border-solid border-[1px] border-gray-300 shadow-md shadow-blue-300'>
+      <div className='flex flex-row min-w-[540px] mb-8 border-solid border-[1px] border-gray-300 shadow-md shadow-blue-300'>
         <div className='p-2 m-2 w-[96%]'>
           <div className='flex'>
             <input
@@ -32,11 +33,6 @@ export default function WordCard({ vocabWord }: { vocabWord: VocabWordState }) {
               maxLength={75}
               placeholder='Pronunciation'
               value={vocabWord.wordPronunciation}
-            />
-            <ArrowDownTrayIcon
-              className='w-5'
-              onClick={() => console.log('downloadPronunciation()')}
-              title='Download Pronunciation'
             />
           </div>
           <div className='pt-3'>
@@ -76,30 +72,33 @@ export default function WordCard({ vocabWord }: { vocabWord: VocabWordState }) {
           )} */}
         </div>
         <div className='flex flex-col justify-around align-middle'>
-          <button
-            className='right_btn'
-            onClick={() =>
-              console.log("vocabWord.id == '' ? addWord() : updateWord()")
-            }>
-            <DocumentPlusIcon
-              className='w-6'
-              title='Save word'
-            />
-          </button>
-          {vocabWord.id != '' && (
+          {vocabWord.id === '' ? (
+            <BtnCard onClick={() => console.log('addWord()')}>
+              <DocumentPlusIcon
+                className='w-6'
+                title='Save word'
+              />
+            </BtnCard>
+          ) : (
             <>
-              <button onClick={() => console.log('cancelChanges()')}>
+              <BtnCard onClick={() => console.log('updateWord()')}>
+                <DocumentCheckIcon
+                  className='w-6'
+                  title='Save changes'
+                />
+              </BtnCard>
+              <BtnCard onClick={() => console.log('cancelChanges()')}>
                 <XCircleIcon
                   className='w-6'
                   title='Cancel changes'
                 />
-              </button>
-              <button onClick={() => console.log('deleteWord()')}>
+              </BtnCard>
+              <BtnCard onClick={() => console.log('deleteWord()')}>
                 <TrashIcon
                   className='w-6'
                   title='Delete word'
                 />
-              </button>
+              </BtnCard>
             </>
           )}
         </div>

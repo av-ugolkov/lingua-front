@@ -45,7 +45,7 @@ export default function SearchAndOrder() {
   return (
     <>
       <div className='flex justify-between max-h-7'>
-        <div className='flex w-[30%] min-w-48 justify-between border-solid border-[1px] border-black rounded-xl'>
+        <div className='flex w-[30%] min-w-48 justify-between border-solid border-[1px] border-black'>
           {/* <span
             id='search_panel'
             className='flex p-0.5 border-none w-full outline-none whitespace-nowrap active:border-none empty:before:bg-gray-500' //input font_subword'
@@ -66,11 +66,11 @@ export default function SearchAndOrder() {
             className='size-6 py-0.5 pr-2 pl-0.5'
           />
         </div>
-        <div className='flex w-36 align-middle'>
+        <div className='flex w-36 items-center'>
           <ChartBarIcon className='size-5 pr-0.5' />
           <select
-            v-model='typeSort'
             id='native_lang'
+            className='bg-transparent outline-none'
             onChange={sortWords}>
             {typesSort.map((tp) => (
               <option
