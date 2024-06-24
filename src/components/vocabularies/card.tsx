@@ -7,7 +7,7 @@ import {
   TrashIcon,
 } from '@heroicons/react/24/outline';
 
-import DropdownMenu from '../elements/Dropdown/Menu';
+import DropdownMenu from '../elements/Dropdown/DropdownMenu';
 import DropdownItem from '../elements/Dropdown/Item';
 import { refreshToken } from '@/scripts/middleware/refreshToken';
 import { fetchData } from '@/scripts/fetchData';

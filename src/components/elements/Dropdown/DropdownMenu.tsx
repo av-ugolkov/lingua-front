@@ -4,14 +4,18 @@ import { EllipsisVerticalIcon } from '@heroicons/react/24/outline';
 import Transition from '../transition';
 
 export default function DropdownMenu({
+  title,
   children,
 }: {
+  title?: string;
   children: React.ReactNode;
 }) {
   const [open, setOpen] = useState(false);
 
   return (
-    <div className='relative inline-block w-7 h-10 my-1 z-[3]'>
+    <div
+      className='relative inline-block w-7 h-10 my-1 z-[3]'
+      title={title}>
       <button
         className='flex w-full h-full items-center font-semibold text-gray-900'
         onClick={() => {

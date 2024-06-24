@@ -5,12 +5,15 @@ import {
 } from '@/stores/useVocabWordsStore';
 
 import {
-  DocumentCheckIcon,
-  DocumentPlusIcon,
+  CheckCircleIcon,
+  DocumentDuplicateIcon,
+  PlusCircleIcon,
   TrashIcon,
   XCircleIcon,
 } from '@heroicons/react/24/outline';
 import BtnCard from './BtnCard';
+import DropdownMenu from '../elements/Dropdown/DropdownMenu';
+import DropdownItem from '../elements/Dropdown/Item';
 
 export default function WordCard({ vocabWord }: { vocabWord: VocabWordState }) {
   const vocabWords = useVocabWordsStore();
@@ -74,15 +77,25 @@ export default function WordCard({ vocabWord }: { vocabWord: VocabWordState }) {
         <div className='flex flex-col justify-around align-middle'>
           {vocabWord.id === '' ? (
             <BtnCard onClick={() => console.log('addWord()')}>
-              <DocumentPlusIcon
+              <PlusCircleIcon
                 className='w-6'
-                title='Save word'
+                title='Add word'
               />
             </BtnCard>
           ) : (
             <>
+              <DropdownMenu title='Menu'>
+                <DropdownItem>
+                  Copy
+                  <DocumentDuplicateIcon className='size-5 ' />
+                </DropdownItem>
+                <DropdownItem>
+                  Delete
+                  <TrashIcon className='size-5' />
+                </DropdownItem>
+              </DropdownMenu>
               <BtnCard onClick={() => console.log('updateWord()')}>
-                <DocumentCheckIcon
+                <CheckCircleIcon
                   className='w-6'
                   title='Save changes'
                 />
@@ -91,12 +104,6 @@ export default function WordCard({ vocabWord }: { vocabWord: VocabWordState }) {
                 <XCircleIcon
                   className='w-6'
                   title='Cancel changes'
-                />
-              </BtnCard>
-              <BtnCard onClick={() => console.log('deleteWord()')}>
-                <TrashIcon
-                  className='w-6'
-                  title='Delete word'
                 />
               </BtnCard>
             </>
