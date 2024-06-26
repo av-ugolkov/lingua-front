@@ -30,6 +30,9 @@ export default function WordCard({ vocabWord }: { vocabWord: VocabWordState }) {
               maxLength={50}
               placeholder='Word'
               value={vocabWord.wordValue}
+              onChange={(e) => {
+                vocabWord.wordValue = e.target.value;
+              }}
             />
             <input
               className='flex justify-start bg-transparent w-1/2 ml-1 border-solid border-[1px] border-black border-t-0 border-x-0 pb-1 outline-none'
@@ -37,6 +40,9 @@ export default function WordCard({ vocabWord }: { vocabWord: VocabWordState }) {
               maxLength={75}
               placeholder='Pronunciation'
               value={vocabWord.wordPronunciation}
+              onChange={(e) => {
+                vocabWord.wordPronunciation = e.target.value;
+              }}
             />
           </div>
           <div className='pt-3'>

@@ -4,13 +4,13 @@ import SearchAndOrder from '@/components/vocabulary/SearchAndOrder';
 import Words from '@/components/vocabulary/Words';
 import { useVocabulariesStore } from '@/stores/useVocabulariesStore';
 import { useVocabWordsStore } from '@/stores/useVocabWordsStore';
+import { useEffect } from 'react';
 
 export default function Vocabulary() {
   const { name } = useParams<'name'>();
   const vocabularies = useVocabulariesStore();
   const vocabWords = useVocabWordsStore();
 
-  //загрузка всех данных и потом отображение страницы
   async function fetchData() {
     let vocab = vocabularies.getVocabularyByName(name || '');
     if (!vocab) {
@@ -22,6 +22,12 @@ export default function Vocabulary() {
   }
 
   fetchData();
+
+  useEffect(() => {
+    return () => {
+      vocabWords.clearWords();
+    };
+  }, [name]);
 
   return (
     <>

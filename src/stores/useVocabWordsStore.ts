@@ -59,24 +59,28 @@ export const useVocabWordsStore = create<VocabWordsState>((set, get) => ({
     const words = get().words;
     if (words.length === 0) {
       const respData = await asyncFetchWords(vocabID);
-      respData.data.forEach((item: any) => {
-        set({
-          words: [
-            ...get().words,
-            {
-              id: item['id'],
-              vocabID: vocabID,
-              wordID: item['native']['id'],
-              wordValue: item['native']['text'],
-              wordPronunciation: item['native']['pronunciation'],
-              translates: item['translates'],
-              examples: item['examples'],
-              updated: item['updated'],
-              created: item['created'],
-            },
-          ],
+      if (respData.ok) {
+        respData.data.forEach((item: any) => {
+          set((state) => {
+            return {
+              words: [
+                ...state.words,
+                {
+                  id: item['id'],
+                  vocabID: vocabID,
+                  wordID: item['native']['id'],
+                  wordValue: item['native']['text'],
+                  wordPronunciation: item['native']['pronunciation'] || '',
+                  translates: item['translates'] || [],
+                  examples: item['examples'] || [],
+                  updated: new Date(item['updated']),
+                  created: new Date(item['created']),
+                },
+              ],
+            };
+          });
         });
-      });
+      }
     }
   },
   getWord: (id) => {
