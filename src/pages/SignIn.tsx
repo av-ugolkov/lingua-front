@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
-import { fetchData, IResponseData } from '@/scripts/fetchData';
+import { fetchData } from '@/scripts/fetchData';
 import Button from '@/components/elements/button';
 import { setLocalStorage } from '@/scripts/localStorage';
 
@@ -10,23 +10,22 @@ export default function SignIn() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  function signIn() {
-    fetchData('/auth/sign_in', {
+  async function signIn() {
+    const respData = await fetchData('/auth/sign_in', {
       method: 'post',
       credentials: 'include',
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
-        Authorization: 'Basic ' + btoa(username + ':' + password),
+        Authorization: `Basic ${btoa(username + ':' + password)}`,
       },
-    })
-      .then((resp: IResponseData) => {
-        setLocalStorage('access_token', resp.data.access_token);
-        navigate('/');
-      })
-      .catch((error: Error) => {
-        console.error(error.message);
-      });
+    });
+    if (respData.ok) {
+      setLocalStorage('access_token', respData.data.access_token);
+      navigate('/');
+    } else {
+      console.error(respData);
+    }
   }
 
   return (

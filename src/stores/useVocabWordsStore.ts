@@ -1,13 +1,16 @@
-import { useEffect } from 'react';
 import { create } from 'zustand';
 
-import { fetchData } from '@/scripts/fetchData';
-import { refreshToken } from '@/scripts/middleware/refreshToken';
+import {
+  IResponseData,
+  getFetchDataWithToken,
+  postFetchDataWithToken,
+} from '@/scripts/fetchData';
 
 export const InvalidateDate = new Date(1970, 1, 1, 0, 0, 0, 0);
 
 export interface VocabWordState {
   id: string;
+  vocabID: string;
   wordID: string;
   wordValue: string;
   wordPronunciation: string;
@@ -19,6 +22,7 @@ export interface VocabWordState {
 
 interface VocabWordsState {
   words: VocabWordState[];
+  fetchWords: (vocabID: string) => void;
   getWord: (id: string) => VocabWordState;
   getWordByName: (name: string) => VocabWordState;
   addWord: (vocabulary: VocabWordState) => void;
@@ -29,6 +33,7 @@ interface VocabWordsState {
 
 export const EmptyWord: VocabWordState = {
   id: '',
+  vocabID: '',
   wordID: '',
   wordValue: '',
   wordPronunciation: '',
@@ -38,58 +43,42 @@ export const EmptyWord: VocabWordState = {
   created: InvalidateDate,
 };
 
-export function useVocabWords({ vocab_id }: { vocab_id: string }) {
-  const vocabWords = useVocabWordsStore();
-
-  useEffect(() => {
-    const abordController = new AbortController();
-    refreshToken(abordController.signal, (token) => {
-      fetchData(
-        '/vocabulary/word/all',
-        {
-          method: 'get',
-          credentials: 'include',
-          headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-            Authorization: token,
-          },
-        },
-        new Map([['vocab_id', vocab_id]]),
-        abordController.signal
-      )
-        .then(async (response) => {
-          if (response.ok) {
-            response.data.forEach((item: any) => {
-              vocabWords.addWord({
-                id: item['id'],
-                wordID: item['native']['id'],
-                wordValue: item['native']['text'],
-                wordPronunciation: item['native']['pronunciation'] || '',
-                translates: item['translates'] || [],
-                examples: item['examples'] || [],
-                created: new Date(item['created']),
-                updated: new Date(item['updated']),
-              });
-            });
-          } else {
-            console.error(response.data);
-            // notification.value.ErrorNotification(data);
-          }
-        })
-        .catch((error) => {
-          console.error(error.message);
-        });
-    });
-
-    return () => {
-      abordController.abort();
-    };
-  });
+async function asyncFetchWords(vocabID: string): Promise<IResponseData> {
+  const abordController = new AbortController();
+  const respData = await getFetchDataWithToken(
+    '/vocabulary/word/all',
+    abordController.signal,
+    new Map([['vocab_id', vocabID]])
+  );
+  return respData;
 }
 
 export const useVocabWordsStore = create<VocabWordsState>((set, get) => ({
   words: [],
+  fetchWords: async (vocabID) => {
+    const words = get().words;
+    if (words.length === 0) {
+      const respData = await asyncFetchWords(vocabID);
+      respData.data.forEach((item: any) => {
+        set({
+          words: [
+            ...get().words,
+            {
+              id: item['id'],
+              vocabID: vocabID,
+              wordID: item['native']['id'],
+              wordValue: item['native']['text'],
+              wordPronunciation: item['native']['pronunciation'],
+              translates: item['translates'],
+              examples: item['examples'],
+              updated: item['updated'],
+              created: item['created'],
+            },
+          ],
+        });
+      });
+    }
+  },
   getWord: (id) => {
     const word = get().words.find((word) => word.id === id);
     if (!word) {
@@ -104,17 +93,31 @@ export const useVocabWordsStore = create<VocabWordsState>((set, get) => ({
     }
     return word;
   },
-  addWord: (vocabulary) =>
-    set((state) => {
-      if (state.words.find((item) => item.id === vocabulary.id)) {
-        return state;
-      }
-      return { words: [...state.words, vocabulary] };
-    }),
-  updateWord: (vocabulary) =>
+  addWord: async (vocabWord) => {
+    const respBody = await asyncAddWord(vocabWord);
+    if (respBody.ok) {
+      const word: VocabWordState = {
+        ...vocabWord,
+        id: respBody.data['id'],
+        wordID: respBody.data['native']['id'],
+        created: new Date(respBody.data['created']),
+        updated: new Date(respBody.data['updated']),
+      };
+
+      set((state) => {
+        if (state.words.find((item) => item.id === word.id)) {
+          return state;
+        }
+        return { words: [...state.words, word] };
+      });
+    } else {
+      console.warn(respBody);
+    }
+  },
+  updateWord: (vocabWord) =>
     set((state) => ({
       words: state.words.map((word) =>
-        word.id === vocabulary.id ? vocabulary : word
+        word.id === vocabWord.id ? vocabWord : word
       ),
     })),
   removeWord: (id) =>
@@ -123,3 +126,25 @@ export const useVocabWordsStore = create<VocabWordsState>((set, get) => ({
     set(() => ({ words: [] }));
   },
 }));
+
+async function asyncAddWord(vocabWord: VocabWordState): Promise<IResponseData> {
+  const abortController = new AbortController();
+  let jsonBodyData = {
+    id: '00000000-0000-0000-0000-000000000000',
+    vocab_id: vocabWord.vocabID,
+    native: {
+      id: '00000000-0000-0000-0000-000000000000',
+      text: vocabWord.wordValue,
+      pronunciation: vocabWord.wordPronunciation,
+    },
+    translates: vocabWord.translates,
+    examples: vocabWord.examples,
+  };
+  let bodyData = JSON.stringify(jsonBodyData);
+  const respData = await postFetchDataWithToken(
+    '/vocabulary/word',
+    bodyData,
+    abortController.signal
+  );
+  return respData;
+}

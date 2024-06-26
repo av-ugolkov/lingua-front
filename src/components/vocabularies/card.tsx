@@ -9,8 +9,7 @@ import {
 
 import DropdownMenu from '../elements/Dropdown/DropdownMenu';
 import DropdownItem from '../elements/Dropdown/Item';
-import { refreshToken } from '@/scripts/middleware/refreshToken';
-import { fetchData } from '@/scripts/fetchData';
+import { getFetchDataWithToken } from '@/scripts/fetchData';
 
 const CountRequestWords = '10';
 
@@ -37,47 +36,31 @@ export default function Card({
 
   useEffect(() => {
     const abordController = new AbortController();
-    refreshToken(
-      abordController.signal,
-      (token) => {
-        fetchData(
-          '/vocabulary/word/several',
-          {
-            method: 'get',
-            headers: {
-              Accept: 'application/json',
-              'Content-Type': 'application/json',
-              Authorization: token,
+    async function asyncFetchData() {
+      const respWords = await getFetchDataWithToken(
+        '/vocabulary/word/several',
+        abordController.signal,
+        new Map([
+          ['vocab_id', id],
+          ['limit', CountRequestWords],
+        ])
+      );
+      if (respWords.ok) {
+        respWords.data.forEach((item: any) => {
+          setWords((words) => [
+            ...words,
+            {
+              value: item['native']['text'],
+              pronunciation: item['native']['pronunciation'],
             },
-          },
-          new Map([
-            ['vocab_id', id],
-            ['limit', CountRequestWords],
-          ]),
-          abordController.signal
-        )
-          .then(async (response) => {
-            if (response.ok) {
-              response.data.forEach((item: any) => {
-                setWords((words) => [
-                  ...words,
-                  {
-                    value: item['native']['text'],
-                    pronunciation: item['native']['pronunciation'],
-                  },
-                ]);
-              });
-            } else {
-              console.error(response.data);
-              // notification.value.ErrorNotification(data);
-            }
-          })
-          .catch((error) => {
-            console.error(error.message);
-          });
-      },
-      () => {}
-    );
+          ]);
+        });
+      } else {
+        console.error(respWords.data);
+      }
+    }
+
+    asyncFetchData();
   }, [id]);
 
   return (

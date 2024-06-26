@@ -77,7 +77,7 @@ export default function WordCard({ vocabWord }: { vocabWord: VocabWordState }) {
         </div>
         <div className='flex flex-col justify-around align-middle mx-2'>
           {vocabWord.id === '' ? (
-            <BtnCard onClick={() => console.log('addWord()')}>
+            <BtnCard onClick={() => vocabWords.addWord(vocabWord)}>
               <PlusCircleIcon
                 className='w-6'
                 title='Add word'

@@ -3,9 +3,13 @@ import { useState } from 'react';
 import List from '@/components/vocabularies/list';
 import Button from '@/components/elements/button';
 import Create from '@/components/vocabularies/create';
+import { useVocabulariesStore } from '@/stores/useVocabulariesStore';
 
 export default function Vocabularies() {
   const [isShowCreatePopup, setIsShowCreatePopup] = useState(false);
+  const vocabulariesStore = useVocabulariesStore();
+
+  vocabulariesStore.fetchVocabularies();
 
   return (
     <>

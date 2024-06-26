@@ -1,20 +1,8 @@
-import { useEffect } from 'react';
 import WordCard from './WordCard';
-import {
-  EmptyWord,
-  useVocabWords,
-  useVocabWordsStore,
-} from '@/stores/useVocabWordsStore';
+import { EmptyWord, useVocabWordsStore } from '@/stores/useVocabWordsStore';
 
-export default function Words({ vocab_id }: { vocab_id: string }) {
-  useVocabWords({ vocab_id });
+export default function Words() {
   const vocabWords = useVocabWordsStore();
-
-  useEffect(() => {
-    return () => {
-      vocabWords.clearWords();
-    };
-  }, []);
 
   return (
     <>

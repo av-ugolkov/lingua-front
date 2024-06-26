@@ -1,8 +1,6 @@
-import { useEffect } from 'react';
 import { create } from 'zustand';
 
-import { fetchData } from '@/scripts/fetchData';
-import { refreshToken } from '@/scripts/middleware/refreshToken';
+import { IResponseData, getFetchDataWithToken } from '@/scripts/fetchData';
 
 interface VocabularyState {
   id: string;
@@ -15,6 +13,7 @@ interface VocabularyState {
 
 interface VocabulariesState {
   vocabularies: VocabularyState[];
+  fetchVocabularies: () => void;
   getVocabulary: (id: string) => VocabularyState;
   getVocabularyByName: (name: string) => VocabularyState;
   setVocabularies: (vocabularies: VocabularyState[]) => void;
@@ -22,51 +21,41 @@ interface VocabulariesState {
   removeVocabulary: (id: string) => void;
 }
 
-export function useVocabularies(callback: () => void) {
-  const vocabularies = useVocabulariesStore();
-
-  useEffect(() => {
-    const abordController = new AbortController();
-    refreshToken(abordController.signal, (token) => {
-      fetchData('/account/vocabularies', {
-        method: 'get',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-          Authorization: token,
-        },
-      })
-        .then((resp) => {
-          if (resp.ok) {
-            resp.data.forEach((item: any) => {
-              vocabularies.addVocabulary({
-                id: item['id'],
-                name: item['name'],
-                nativeLang: item['native_lang'],
-                translateLang: item['translate_lang'],
-                tags: item['tags'] || [],
-                userId: item['user_id'],
-              });
-            });
-          } else {
-            //notification.value.ErrorNotification(data);
-          }
-          callback();
-        })
-        .catch((error) => {
-          console.error(error.message);
-        });
-    });
-
-    return () => {
-      abordController.abort();
-    };
-  }, [vocabularies, callback]);
+async function asyncFetchVocabularies(): Promise<IResponseData> {
+  const abordController = new AbortController();
+  const respData = await getFetchDataWithToken(
+    '/account/vocabularies',
+    abordController.signal
+  );
+  return respData;
 }
 
 export const useVocabulariesStore = create<VocabulariesState>((set, get) => ({
   vocabularies: [],
   setVocabularies: (vocabularies) => set({ vocabularies }),
+  fetchVocabularies: async () => {
+    const vocabs = get().vocabularies;
+    if (vocabs.length === 0) {
+      const respData = await asyncFetchVocabularies();
+      if (respData.ok) {
+        respData.data.forEach((item: any) => {
+          set({
+            vocabularies: [
+              ...get().vocabularies,
+              {
+                id: item['id'],
+                name: item['name'],
+                nativeLang: item['native_lang'],
+                translateLang: item['translate_lang'],
+                tags: item['tags'],
+                userId: item['user_id'],
+              },
+            ],
+          });
+        });
+      }
+    }
+  },
   getVocabulary: (id) => {
     const vocabulary = get().vocabularies.find(
       (vocabulary) => vocabulary.id === id
@@ -77,6 +66,9 @@ export const useVocabulariesStore = create<VocabulariesState>((set, get) => ({
     return vocabulary;
   },
   getVocabularyByName: (name) => {
+    if (get().vocabularies.length === 0) {
+      get().fetchVocabularies();
+    }
     const vocabulary = get().vocabularies.find(
       (vocabulary) => vocabulary.name === name
     );

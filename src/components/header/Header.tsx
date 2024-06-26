@@ -3,8 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 import HeaderBtn from './HeaderBtn';
 import Account from './Account';
-import { fetchData, IResponseData } from '@/scripts/fetchData';
-import { refreshToken } from '@/scripts/middleware/refreshToken';
+import { getFetchDataWithToken } from '@/scripts/fetchData';
 
 export default function Header() {
   const navigate = useNavigate();
@@ -13,34 +12,23 @@ export default function Header() {
 
   useEffect(() => {
     const abortController = new AbortController();
-    refreshToken(
-      abortController.signal,
-      (token) => {
-        const abortController = new AbortController();
-        fetchData('/user/id', {
-          method: 'get',
-          headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-            Authorization: token,
-          },
-          signal: abortController.signal,
-        })
-          .then((resp: IResponseData) => {
-            setIsAuth(true);
-            setAccountName(resp.data.name);
-          })
-          .catch((error: Error) => {
-            console.error(error);
-            navigate('/');
-          });
-      },
-      () => {
+    async function asyncFetchData() {
+      const respData = await getFetchDataWithToken(
+        '/user/id',
+        abortController.signal
+      );
+      if (respData.ok) {
+        setIsAuth(true);
+        setAccountName(respData.data.name);
+      } else {
+        console.error(respData);
         setIsAuth(false);
         setAccountName('');
         navigate('/');
       }
-    );
+    }
+
+    asyncFetchData();
 
     return () => {
       abortController.abort();
