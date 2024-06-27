@@ -1,3 +1,4 @@
+import { Sorted, useSortedWordsStore } from '@/stores/useSortedWordsStore';
 import { useSearchWordStore } from '@/stores/useSearchWordStore';
 import {
   ChartBarIcon,
@@ -5,42 +6,41 @@ import {
   XMarkIcon,
 } from '@heroicons/react/24/outline';
 
-const typesSort: string[] = [
-  'Newest',
-  'Oldest',
-  'Update asc',
-  'Update desc',
-  'A to Z',
-  'Z to A',
-];
-
-const typeSort = 'Newest';
-
-function sortWords() {
-  switch (typeSort) {
-    case 'Newest':
-      //   sortedStore.update(Sorted.Newest)
-      break;
-    // case 'Oldest':
-    //   //   sortedStore.update(Sorted.Oldest)
-    //   break;
-    // case 'Update asc':
-    //   //   sortedStore.update(Sorted.UpdateAsc)
-    //   break;
-    // case 'Update desc':
-    //   //   sortedStore.update(Sorted.UpdateDesc)
-    //   break;
-    // case 'A to Z':
-    //   //   sortedStore.update(Sorted.AtoZ)
-    //   break;
-    // case 'Z to A':
-    //   //   sortedStore.update(Sorted.ZtoA)
-    //   break;
-  }
+interface ISortType {
+  name: string;
+  type: Sorted;
 }
+
+const sortTypes: ISortType[] = [
+  {
+    name: 'Newest',
+    type: Sorted.Newest,
+  },
+  {
+    name: 'Oldest',
+    type: Sorted.Oldest,
+  },
+  {
+    name: 'Update asc',
+    type: Sorted.UpdateAsc,
+  },
+  {
+    name: 'Update desc',
+    type: Sorted.UpdateDesc,
+  },
+  {
+    name: 'A to Z',
+    type: Sorted.AtoZ,
+  },
+  {
+    name: 'Z to A',
+    type: Sorted.ZtoA,
+  },
+];
 
 export default function SearchAndOrder() {
   const searchWordStore = useSearchWordStore();
+  const sortedWordsStore = useSortedWordsStore();
 
   return (
     <>
@@ -68,12 +68,18 @@ export default function SearchAndOrder() {
           <select
             id='native_lang'
             className='bg-transparent outline-none'
-            onChange={sortWords}>
-            {typesSort.map((tp) => (
+            onChange={(e) => {
+              const typeSort =
+                sortTypes.find((tp) => tp.type.toString() === e.target.value) ||
+                sortTypes[0];
+
+              sortedWordsStore.setOrderType(typeSort.type);
+            }}>
+            {sortTypes.map((tp) => (
               <option
-                value={tp}
-                key={tp}>
-                {tp}
+                value={tp.type}
+                key={tp.type}>
+                {tp.name}
               </option>
             ))}
           </select>

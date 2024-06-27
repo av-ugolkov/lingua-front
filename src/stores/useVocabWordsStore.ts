@@ -5,6 +5,7 @@ import {
   getFetchDataWithToken,
   postFetchDataWithToken,
 } from '@/scripts/fetchData';
+import { Sorted } from './useSortedWordsStore';
 
 export const InvalidateDate = new Date(1970, 1, 1, 0, 0, 0, 0);
 
@@ -22,6 +23,7 @@ export interface VocabWordState {
 
 interface VocabWordsState {
   words: VocabWordState[];
+  getOrderedWords: (typesSort: Sorted) => VocabWordState[];
   fetchWords: (vocabID: string) => void;
   getWord: (id: string) => VocabWordState;
   getWordByName: (name: string) => VocabWordState;
@@ -55,6 +57,30 @@ async function asyncFetchWords(vocabID: string): Promise<IResponseData> {
 
 export const useVocabWordsStore = create<VocabWordsState>((set, get) => ({
   words: [],
+  getOrderedWords: (typesSort) => {
+    let words = get().words;
+    switch (typesSort) {
+      case Sorted.Newest:
+        words.sort((a, b) => b.created.valueOf() - a.created.valueOf());
+        break;
+      case Sorted.Oldest:
+        words.sort((a, b) => a.created.valueOf() - b.created.valueOf());
+        break;
+      case Sorted.UpdateAsc:
+        words.sort((a, b) => a.updated.valueOf() - b.updated.valueOf());
+        break;
+      case Sorted.UpdateDesc:
+        words.sort((a, b) => b.updated.valueOf() - a.updated.valueOf());
+        break;
+      case Sorted.AtoZ:
+        words.sort((a, b) => a.wordValue.localeCompare(b.wordValue));
+        break;
+      case Sorted.ZtoA:
+        words.sort((a, b) => b.wordValue.localeCompare(a.wordValue));
+        break;
+    }
+    return words;
+  },
   fetchWords: async (vocabID) => {
     const words = get().words;
     if (words.length === 0) {
