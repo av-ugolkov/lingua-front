@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 import { fetchData } from '@/scripts/fetchData';
-import Button from '@/components/elements/button';
+import Button from '@/components/elements/Button';
 import { setLocalStorage } from '@/scripts/localStorage';
 
 export default function SignIn() {

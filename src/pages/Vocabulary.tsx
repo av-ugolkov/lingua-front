@@ -1,13 +1,17 @@
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import SearchAndOrder from '@/components/vocabulary/SearchAndOrder';
 import Words from '@/components/vocabulary/Words';
-import { useVocabulariesStore } from '@/stores/useVocabulariesStore';
+import {
+  EmptyVocabulary,
+  useVocabulariesStore,
+} from '@/stores/useVocabulariesStore';
 import { useVocabWordsStore } from '@/stores/useVocabWordsStore';
 import { useEffect } from 'react';
 
 export default function Vocabulary() {
   const { name } = useParams<'name'>();
+  const nagigate = useNavigate();
   const vocabularies = useVocabulariesStore();
   const vocabWords = useVocabWordsStore();
 
@@ -16,6 +20,9 @@ export default function Vocabulary() {
     if (!vocab) {
       await vocabularies.fetchVocabularies();
       vocab = vocabularies.getVocabularyByName(name || '');
+    }
+    if (vocab === EmptyVocabulary) {
+      nagigate('/vocabularies');
     }
 
     await vocabWords.fetchWords(vocab.id);

@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 
 import { IResponseData, getFetchDataWithToken } from '@/scripts/fetchData';
+import { useNavigate } from 'react-router-dom';
 
 interface VocabularyState {
   id: string;
@@ -21,6 +22,15 @@ interface VocabulariesState {
   removeVocabulary: (id: string) => void;
 }
 
+export const EmptyVocabulary: VocabularyState = {
+  id: '',
+  name: '',
+  nativeLang: '',
+  translateLang: '',
+  tags: [],
+  userId: '',
+};
+
 async function asyncFetchVocabularies(): Promise<IResponseData> {
   const abordController = new AbortController();
   const respData = await getFetchDataWithToken(
@@ -34,7 +44,9 @@ export const useVocabulariesStore = create<VocabulariesState>((set, get) => ({
   vocabularies: [],
   setVocabularies: (vocabularies) => set({ vocabularies }),
   fetchVocabularies: async () => {
+    const navigate = useNavigate();
     const vocabs = get().vocabularies;
+    console.log(vocabs);
     if (vocabs.length === 0) {
       const respData = await asyncFetchVocabularies();
       if (respData.ok) {
@@ -53,6 +65,8 @@ export const useVocabulariesStore = create<VocabulariesState>((set, get) => ({
             ],
           });
         });
+      } else {
+        navigate('/');
       }
     }
   },
@@ -73,7 +87,7 @@ export const useVocabulariesStore = create<VocabulariesState>((set, get) => ({
       (vocabulary) => vocabulary.name === name
     );
     if (!vocabulary) {
-      throw new Error(`Vocabulary with name ${name} not found`);
+      return EmptyVocabulary;
     }
     return vocabulary;
   },

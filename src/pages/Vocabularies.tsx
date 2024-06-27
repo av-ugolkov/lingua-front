@@ -1,8 +1,8 @@
 import { useState } from 'react';
 
-import List from '@/components/vocabularies/list';
-import Button from '@/components/elements/button';
-import Create from '@/components/vocabularies/create';
+import List from '@/components/vocabularies/List';
+import Button from '@/components/elements/Button';
+import Create from '@/components/vocabularies/Create';
 import { useVocabulariesStore } from '@/stores/useVocabulariesStore';
 
 export default function Vocabularies() {
@@ -29,7 +29,10 @@ export default function Vocabularies() {
         <List />
       </div>
       {isShowCreatePopup && (
-        <Create closeCallback={() => setIsShowCreatePopup(false)} />
+        <Create
+          addCallback={() => setIsShowCreatePopup(false)}
+          closeCallback={() => setIsShowCreatePopup(false)}
+        />
       )}
     </>
   );

@@ -48,6 +48,7 @@ export default function WordCard({ vocabWord }: { vocabWord: VocabWordState }) {
           <div className='pt-3'>
             <div className='pb-[2px]'>Translates</div>
             <Tags
+              id={vocabWord.id}
               tags={vocabWord.translates}
               placeholder='Type new translate and press Enter'
               onAddTag={(tag) => {
@@ -63,6 +64,7 @@ export default function WordCard({ vocabWord }: { vocabWord: VocabWordState }) {
           <div className='pt-3'>
             <div className='pb-[2px]'>Examples</div>
             <Tags
+              id={vocabWord.id}
               tags={vocabWord.examples}
               placeholder='Type new example and press Enter'
               onAddTag={(tag) => {

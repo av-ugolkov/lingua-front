@@ -1,10 +1,13 @@
 import { PlusIcon, XMarkIcon } from '@heroicons/react/24/outline';
 
-import Button from '../elements/button';
+import Button from '../elements/Button';
+import SelectLanguages from './SelectLanguages';
 
 export default function Create({
+  addCallback,
   closeCallback,
 }: {
+  addCallback: () => void;
   closeCallback: () => void;
 }) {
   return (
@@ -39,52 +42,14 @@ export default function Create({
                     required={true}
                   />
                 </div>
-                <div className='col-span-2 sm:col-span-1'>
-                  <label
-                    htmlFor='category'
-                    className='block mb-2 text-sm font-medium text-gray-900'>
-                    Source language
-                  </label>
-                  <select
-                    id='category'
-                    className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5'>
-                    <option
-                      disabled
-                      defaultValue=''>
-                      Translation language
-                    </option>
-                    <option value='TV'>TV/Monitors</option>
-                    <option value='PC'>PC</option>
-                    <option value='GA'>Gaming/Console</option>
-                    <option value='PH'>Phones</option>
-                  </select>
-                </div>
-                <div className='col-span-2 sm:col-span-1'>
-                  <label
-                    htmlFor='category'
-                    className='block mb-2 text-sm font-medium text-gray-900'>
-                    Second
-                  </label>
-                  <select
-                    id='category'
-                    className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5'>
-                    <option
-                      disabled
-                      defaultValue=''>
-                      Select language
-                    </option>
-                    <option value='TV'>TV/Monitors</option>
-                    <option value='PC'>PC</option>
-                    <option value='GA'>Gaming/Console</option>
-                    <option value='PH'>Phones</option>
-                  </select>
-                </div>
+                <SelectLanguages title='Source language' />
+                <SelectLanguages title='Second language' />
               </div>
               <Button
                 bgColor='bg-indigo-600'
                 hoverBgColor='hover:bg-indigo-500'
                 focusOutlineColor='focus-visible:outline-indigo-600'
-                callback={closeCallback}>
+                callback={addCallback}>
                 <PlusIcon className='size-5 font-extrabold ' />
                 Add new vocabulary
               </Button>

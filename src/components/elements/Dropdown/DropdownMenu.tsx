@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { EllipsisVerticalIcon } from '@heroicons/react/24/outline';
 
-import Transition from '../transition';
+import Transition from '../Transition';
 
 export default function DropdownMenu({
   title,

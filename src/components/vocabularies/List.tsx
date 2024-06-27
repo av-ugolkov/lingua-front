@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 
-import Card from './card';
+import Card from './Card';
 import { useVocabulariesStore } from '@/stores/useVocabulariesStore';
 
 export default function List() {
