@@ -53,7 +53,11 @@ export async function getFetchDataWithToken(
         Authorization: `Bearer ${respToken.data}`,
       },
     };
-    return fetchData(url, init, queries, signal);
+    if (!signal.aborted) {
+      const respData = await fetchData(url, init, queries, signal);
+      return respData;
+    }
+    return { status: 0, data: 'signal was aborted', ok: false };
   } else {
     return { status: 0, data: respToken.data, ok: false };
   }

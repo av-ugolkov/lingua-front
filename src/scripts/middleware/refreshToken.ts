@@ -30,7 +30,7 @@ export const refreshToken = async (
     }
     return response;
   } else {
-    return { status: 200, data: token, ok: true };
+    return { ok: true, status: 0, data: token };
   }
 };
 
@@ -45,7 +45,7 @@ async function fetchToken(signal: AbortSignal): Promise<IResponseData> {
       },
       signal: signal,
     });
-    return response;
+    return { ...response, data: response.data['access_token'] };
   } catch (error: any) {
     return {
       ok: false,

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 import HeaderBtn from './HeaderBtn';
 import Account from './Account';
@@ -9,7 +9,7 @@ export default function Header() {
   const navigate = useNavigate();
   const [isAuth, setIsAuth] = useState(false);
   const [accountName, setAccountName] = useState('');
-
+  const location = useLocation();
   useEffect(() => {
     const abortController = new AbortController();
     async function asyncFetchData() {
@@ -21,10 +21,8 @@ export default function Header() {
         setIsAuth(true);
         setAccountName(respData.data.name);
       } else {
-        console.error(respData);
         setIsAuth(false);
         setAccountName('');
-        navigate('/');
       }
     }
 
@@ -33,7 +31,7 @@ export default function Header() {
     return () => {
       abortController.abort();
     };
-  }, []);
+  }, [location.pathname]);
 
   return (
     <header className='flex justify-between align-text-center bg-white shadow shadow-blue-300 min-w-max px-3 py-1 sticky top-0 z-50'>

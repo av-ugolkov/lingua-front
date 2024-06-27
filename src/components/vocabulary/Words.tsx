@@ -8,7 +8,7 @@ export default function Words() {
     <>
       <WordCard vocabWord={EmptyWord} />
       {vocabWords.words.map((word) => (
-        <div>
+        <div key={word.id}>
           <WordCard vocabWord={word} />
         </div>
       ))}
