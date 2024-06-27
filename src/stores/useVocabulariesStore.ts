@@ -46,7 +46,6 @@ export const useVocabulariesStore = create<VocabulariesState>((set, get) => ({
   fetchVocabularies: async () => {
     const navigate = useNavigate();
     const vocabs = get().vocabularies;
-    console.log(vocabs);
     if (vocabs.length === 0) {
       const respData = await asyncFetchVocabularies();
       if (respData.ok) {
