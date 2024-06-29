@@ -54,6 +54,8 @@ export default function Card({
             },
           ]);
         });
+      } else {
+        console.log(response.data);
       }
     }
   }, [id, loading]);

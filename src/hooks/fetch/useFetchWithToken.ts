@@ -21,6 +21,12 @@ export function useGetFetchWithToken(
         if (respToken.ok) {
           authStore.setAccessToken(respToken.data);
         } else {
+          setResponse({
+            ok: respToken.ok,
+            status: respToken.status,
+            data: respToken.data,
+          });
+          setLoading(false);
           return;
         }
       }
@@ -34,6 +40,12 @@ export function useGetFetchWithToken(
         if (respToken.ok) {
           authStore.setAccessToken(respToken.data);
         } else {
+          setResponse({
+            ok: respToken.ok,
+            status: respToken.status,
+            data: respToken.data,
+          });
+          setLoading(false);
           return;
         }
       }

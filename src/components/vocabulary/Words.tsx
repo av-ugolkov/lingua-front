@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useEffect } from 'react';
 
 import WordCard from './WordCard';
@@ -14,6 +14,7 @@ import { useGetFetchWithToken } from '@/hooks/fetch/useFetchWithToken';
 export default function Words() {
   const { id } = useParams<string>();
   const vocabID = id || '';
+  const navigate = useNavigate();
   const vocabWordsStore = useVocabWordsStore();
   const searchWordStore = useSearchWordStore();
   const sortedWordsStore = useSortedWordsStore();
@@ -41,6 +42,8 @@ export default function Words() {
           });
         });
         vocabWordsStore.setWords(words);
+      } else {
+        navigate('/');
       }
     }
     return () => {

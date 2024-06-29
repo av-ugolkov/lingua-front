@@ -28,6 +28,8 @@ export default function List() {
           });
         });
         vocabulariesStore.setVocabularies(vocabularies);
+      } else {
+        navigate('/');
       }
     }
   }, [loading]);
