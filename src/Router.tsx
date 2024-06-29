@@ -35,7 +35,7 @@ export const router = createBrowserRouter([
         element: <Vocabularies />,
       },
       {
-        path: 'vocabulary/:name',
+        path: 'vocabulary/:id',
         element: <Vocabulary />,
       },
       {

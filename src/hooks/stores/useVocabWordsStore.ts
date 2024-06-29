@@ -23,6 +23,7 @@ export interface VocabWordState {
 
 interface VocabWordsState {
   words: VocabWordState[];
+  setWords: (words: VocabWordState[]) => void;
   getOrderedWords: (typesSort: Sorted) => VocabWordState[];
   getWord: (id: string) => VocabWordState;
   getWordByName: (name: string) => VocabWordState;
@@ -54,6 +55,7 @@ function asyncFetchWords(vocabID: string): IResponseData {
 
 export const useVocabWordsStore = create<VocabWordsState>((set, get) => ({
   words: [],
+  setWords: (words) => set({ words }),
   getOrderedWords: (typesSort) => {
     let words = get().words;
     switch (typesSort) {

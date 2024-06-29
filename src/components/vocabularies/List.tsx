@@ -5,7 +5,7 @@ import Card from './Card';
 import {
   VocabularyState,
   useVocabulariesStore,
-} from '@/stores/useVocabulariesStore';
+} from '@/hooks/stores/useVocabulariesStore';
 import { useGetFetchWithToken } from '@/hooks/fetch/useFetchWithToken';
 
 export default function List() {
@@ -46,7 +46,7 @@ export default function List() {
           nativeLang={item.nativeLang}
           translateLang={item.translateLang}
           onClick={() => {
-            navigate(`/vocabulary/${item.name}`);
+            navigate(`/vocabulary/${item.id}`);
           }}
         />
       ))}

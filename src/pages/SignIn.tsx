@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 
 import { fetchData } from '@/scripts/fetch/fetchData';
 import Button from '@/components/elements/Button';
-import { useAuthStore } from '@/stores/useAuthStore';
+import { useAuthStore } from '@/hooks/stores/useAuthStore';
 
 export default function SignIn() {
   const navigate = useNavigate();

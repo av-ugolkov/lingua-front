@@ -1,5 +1,8 @@
-import { Sorted, useSortedWordsStore } from '@/stores/useSortedWordsStore';
-import { useSearchWordStore } from '@/stores/useSearchWordStore';
+import {
+  Sorted,
+  useSortedWordsStore,
+} from '@/hooks/stores/useSortedWordsStore';
+import { useSearchWordStore } from '@/hooks/stores/useSearchWordStore';
 import {
   ChartBarIcon,
   MagnifyingGlassIcon,
@@ -49,6 +52,7 @@ export default function SearchAndOrder() {
           <div className='ml-2'>
             <input
               type='text'
+              name='search'
               className='flex p-0.5 bg-transparent border-none w-full outline-none whitespace-nowrap active:border-none empty:before:bg-gray-500'
               placeholder='Search'
               onChange={(e) => searchWordStore.setSearchWord(e.target.value)}

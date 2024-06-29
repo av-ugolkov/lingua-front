@@ -33,7 +33,7 @@ export default function Tags({
       <input
         className='inline-block w-72 h-6 px-2 border-none shadow shadow-blue-300 border-black outline-blue-300'
         type='text'
-        id='input-tag'
+        name='tag'
         placeholder={placeholder}
         onKeyDown={(event) => {
           if (event.key === 'Enter') {

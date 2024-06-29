@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 import { emptyResponse, fetchData } from '@/scripts/fetch/fetchData';
 import { refreshToken } from '@/scripts/middleware/refreshToken';
-import { useAuthStore } from '@/stores/useAuthStore';
+import { useAuthStore } from '@/hooks/stores/useAuthStore';
 
 export function useGetFetchWithToken(
   url: string,

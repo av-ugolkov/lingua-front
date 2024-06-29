@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import HeaderBtn from './HeaderBtn';
 import Account from './Account';
 import { useGetFetchWithToken } from '@/hooks/fetch/useFetchWithToken';
-import { useAuthStore } from '@/stores/useAuthStore';
+import { useAuthStore } from '@/hooks/stores/useAuthStore';
 
 export default function Header() {
   const navigate = useNavigate();
