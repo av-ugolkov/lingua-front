@@ -43,20 +43,20 @@ export default function Card({
   );
 
   useEffect(() => {
-    if (response.ok) {
-      response.data.forEach((item: any) => {
-        setWords((words) => [
-          ...words,
-          {
-            value: item['native']['text'],
-            pronunciation: item['native']['pronunciation'],
-          },
-        ]);
-      });
-    } else {
-      console.error(response.data);
+    if (!loading) {
+      if (response.ok) {
+        response.data.forEach((item: any) => {
+          setWords((words) => [
+            ...words,
+            {
+              value: item['native']['text'],
+              pronunciation: item['native']['pronunciation'],
+            },
+          ]);
+        });
+      }
     }
-  }, [id]);
+  }, [id, loading]);
 
   if (loading) {
     return <div></div>;

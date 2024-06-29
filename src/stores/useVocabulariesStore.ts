@@ -3,7 +3,7 @@ import { create } from 'zustand';
 import { IResponseData } from '@/scripts/fetch/fetchData';
 import { useGetFetchWithToken } from '@/hooks/fetch/useFetchWithToken';
 
-interface VocabularyState {
+export interface VocabularyState {
   id: string;
   name: string;
   nativeLang: string;

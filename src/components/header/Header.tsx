@@ -15,7 +15,7 @@ export default function Header() {
   let [accountName, setAccountName] = useState('');
 
   useEffect(() => {
-    if (loading) {
+    if (!loading) {
       if (response.ok) {
         setIsAuth(true);
         setAccountName(response.data['name']);
