@@ -9,7 +9,7 @@ import {
 
 import DropdownMenu from '../elements/Dropdown/DropdownMenu';
 import DropdownItem from '../elements/Dropdown/Item';
-import { getFetchDataWithToken } from '@/scripts/fetchData';
+import { useGetFetchWithToken } from '@/hooks/fetch/useFetchWithToken';
 
 const CountRequestWords = '10';
 
@@ -34,34 +34,33 @@ export default function Card({
 }) {
   const [words, setWords] = useState(Words);
 
-  useEffect(() => {
-    const abordController = new AbortController();
-    async function asyncFetchData() {
-      const respWords = await getFetchDataWithToken(
-        '/vocabulary/word/several',
-        abordController.signal,
-        new Map([
-          ['vocab_id', id],
-          ['limit', CountRequestWords],
-        ])
-      );
-      if (respWords.ok) {
-        respWords.data.forEach((item: any) => {
-          setWords((words) => [
-            ...words,
-            {
-              value: item['native']['text'],
-              pronunciation: item['native']['pronunciation'],
-            },
-          ]);
-        });
-      } else {
-        console.error(respWords.data);
-      }
-    }
+  const { response, loading } = useGetFetchWithToken(
+    '/vocabulary/word/several',
+    new Map([
+      ['vocab_id', id],
+      ['limit', CountRequestWords],
+    ])
+  );
 
-    asyncFetchData();
+  useEffect(() => {
+    if (response.ok) {
+      response.data.forEach((item: any) => {
+        setWords((words) => [
+          ...words,
+          {
+            value: item['native']['text'],
+            pronunciation: item['native']['pronunciation'],
+          },
+        ]);
+      });
+    } else {
+      console.error(response.data);
+    }
   }, [id]);
+
+  if (loading) {
+    return <div></div>;
+  }
 
   return (
     <div className='flex flex-col bg-gray-300 w-96 min-w-96 h-96 shadow-md shadow-blue-300 text-center'>

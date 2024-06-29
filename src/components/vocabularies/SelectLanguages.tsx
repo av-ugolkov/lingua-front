@@ -1,4 +1,4 @@
-import { fetchData } from '@/scripts/fetchData';
+import { fetchData } from '@/scripts/fetch/fetchData';
 import { useEffect, useState } from 'react';
 
 interface ILanguage {

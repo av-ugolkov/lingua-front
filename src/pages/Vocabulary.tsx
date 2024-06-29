@@ -7,34 +7,46 @@ import {
   useVocabulariesStore,
 } from '@/stores/useVocabulariesStore';
 import { useVocabWordsStore } from '@/stores/useVocabWordsStore';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function Vocabulary() {
   const { name } = useParams<'name'>();
+  const nameVocab = name || '';
+  const [loading, setLoading] = useState(true);
   const nagigate = useNavigate();
   const vocabularies = useVocabulariesStore();
   const vocabWords = useVocabWordsStore();
 
-  async function fetchData() {
-    let vocab = vocabularies.getVocabularyByName(name || '');
-    if (!vocab) {
-      await vocabularies.fetchVocabularies();
-      vocab = vocabularies.getVocabularyByName(name || '');
+  useEffect(() => {
+    async function fetchData() {
+      let vocab = vocabularies.getVocabularyByName(nameVocab);
+      if (vocab === EmptyVocabulary) {
+        nagigate('/vocabularies');
+      }
+
+      // await vocabWords.fetchWords(vocab.id);
+
+      // const { response, loading } = useGetFetchWithToken(
+      //   '/vocabulary/word/all',
+      //   new Map([['vocab_id', vocabID]])
+      // );
     }
-    if (vocab === EmptyVocabulary) {
+    if (nameVocab !== '') {
+      fetchData();
+    } else {
       nagigate('/vocabularies');
     }
 
-    await vocabWords.fetchWords(vocab.id);
-  }
+    setLoading(loading);
 
-  fetchData();
-
-  useEffect(() => {
     return () => {
       vocabWords.clearWords();
     };
   }, [name]);
+
+  if (loading) {
+    return <div></div>;
+  }
 
   return (
     <>

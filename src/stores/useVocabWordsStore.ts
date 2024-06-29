@@ -1,11 +1,11 @@
 import { create } from 'zustand';
 
-import {
-  IResponseData,
-  getFetchDataWithToken,
-  postFetchDataWithToken,
-} from '@/scripts/fetchData';
+import { IResponseData } from '@/scripts/fetch/fetchData';
 import { Sorted } from './useSortedWordsStore';
+import {
+  useGetFetchWithToken,
+  usePostFetchWithToken,
+} from '@/hooks/fetch/useFetchWithToken';
 
 export const InvalidateDate = new Date(1970, 1, 1, 0, 0, 0, 0);
 
@@ -24,7 +24,6 @@ export interface VocabWordState {
 interface VocabWordsState {
   words: VocabWordState[];
   getOrderedWords: (typesSort: Sorted) => VocabWordState[];
-  fetchWords: (vocabID: string) => void;
   getWord: (id: string) => VocabWordState;
   getWordByName: (name: string) => VocabWordState;
   addWord: (vocabulary: VocabWordState) => void;
@@ -45,14 +44,12 @@ export const EmptyWord: VocabWordState = {
   created: InvalidateDate,
 };
 
-async function asyncFetchWords(vocabID: string): Promise<IResponseData> {
-  const abordController = new AbortController();
-  const respData = await getFetchDataWithToken(
+function asyncFetchWords(vocabID: string): IResponseData {
+  const { response } = useGetFetchWithToken(
     '/vocabulary/word/all',
-    abordController.signal,
     new Map([['vocab_id', vocabID]])
   );
-  return respData;
+  return response;
 }
 
 export const useVocabWordsStore = create<VocabWordsState>((set, get) => ({
@@ -81,7 +78,7 @@ export const useVocabWordsStore = create<VocabWordsState>((set, get) => ({
     }
     return words;
   },
-  fetchWords: async (vocabID) => {
+  fetchWords: async (vocabID: string) => {
     const words = get().words;
     if (words.length === 0) {
       const respData = await asyncFetchWords(vocabID);
@@ -158,7 +155,6 @@ export const useVocabWordsStore = create<VocabWordsState>((set, get) => ({
 }));
 
 async function asyncAddWord(vocabWord: VocabWordState): Promise<IResponseData> {
-  const abortController = new AbortController();
   let jsonBodyData = {
     id: '00000000-0000-0000-0000-000000000000',
     vocab_id: vocabWord.vocabID,
@@ -171,10 +167,6 @@ async function asyncAddWord(vocabWord: VocabWordState): Promise<IResponseData> {
     examples: vocabWord.examples,
   };
   let bodyData = JSON.stringify(jsonBodyData);
-  const respData = await postFetchDataWithToken(
-    '/vocabulary/word',
-    bodyData,
-    abortController.signal
-  );
-  return respData;
+  const { response } = usePostFetchWithToken('/vocabulary/word', bodyData);
+  return response;
 }

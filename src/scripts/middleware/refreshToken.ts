@@ -1,40 +1,11 @@
-import { IResponseData, fetchData } from '@/scripts/fetchData';
-import {
-  getLocalStorage,
-  setLocalStorage,
-  removeLocalStorage,
-} from '../localStorage';
+import { IResponseData, fetchData } from '@/scripts/fetch/fetchData';
 
-export const refreshToken = async (
-  signal: AbortSignal
-): Promise<IResponseData> => {
-  let token = getLocalStorage('access_token');
-  if (
-    token === '' ||
-    token === 'undefined' ||
-    token === undefined ||
-    !token.includes('.')
-  ) {
-    return { ok: false, status: 0, data: 'no token' };
-  }
-
-  const payload = JSON.parse(atob(token.split('.')[1]));
-  const exp = payload['exp'];
-  const dateNow = Date.now();
-  if (dateNow > exp * 1000) {
-    const response = await fetchToken(signal);
-    if (response.ok) {
-      setLocalStorage('access_token', token);
-    } else {
-      removeLocalStorage('access_token');
-    }
-    return response;
-  } else {
-    return { ok: true, status: 0, data: token };
-  }
+export const refreshToken = async (): Promise<IResponseData> => {
+  const response = await fetchToken();
+  return response;
 };
 
-async function fetchToken(signal: AbortSignal): Promise<IResponseData> {
+async function fetchToken(): Promise<IResponseData> {
   try {
     const response = await fetchData('/auth/refresh', {
       method: 'get',
@@ -43,7 +14,6 @@ async function fetchToken(signal: AbortSignal): Promise<IResponseData> {
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },
-      signal: signal,
     });
     return { ...response, data: response.data['access_token'] };
   } catch (error: any) {

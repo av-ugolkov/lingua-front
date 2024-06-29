@@ -1,15 +1,25 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import List from '@/components/vocabularies/List';
 import Button from '@/components/elements/Button';
 import Create from '@/components/vocabularies/Create';
 import { useVocabulariesStore } from '@/stores/useVocabulariesStore';
+import { useGetFetchWithToken } from '@/hooks/fetch/useFetchWithToken';
 
 export default function Vocabularies() {
   const [isShowCreatePopup, setIsShowCreatePopup] = useState(false);
   const vocabulariesStore = useVocabulariesStore();
+  const { response, loading } = useGetFetchWithToken('/account/vocabularies');
 
-  vocabulariesStore.fetchVocabularies();
+  useEffect(() => {
+    if (response.ok) {
+      vocabulariesStore.setVocabularies(response.data);
+    }
+  }, []);
+
+  if (loading) {
+    return <div></div>;
+  }
 
   return (
     <>

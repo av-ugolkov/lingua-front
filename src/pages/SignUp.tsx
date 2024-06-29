@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import Button from '@/components/elements/Button';
-import { fetchData } from '@/scripts/fetchData';
+import { fetchData } from '@/scripts/fetch/fetchData';
 
 export default function SignUp() {
   const navigate = useNavigate();

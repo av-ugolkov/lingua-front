@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
-import { fetchData } from '@/scripts/fetchData';
+import { fetchData } from '@/scripts/fetch/fetchData';
 import Button from '@/components/elements/Button';
-import { setLocalStorage } from '@/scripts/localStorage';
+import { useAuthStore } from '@/stores/useAuthStore';
 
 export default function SignIn() {
   const navigate = useNavigate();
+  const authStore = useAuthStore();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
@@ -21,7 +22,7 @@ export default function SignIn() {
       },
     });
     if (respData.ok) {
-      setLocalStorage('access_token', respData.data.access_token);
+      authStore.setAccessToken(respData.data.access_token);
       navigate('/');
     } else {
       console.error(respData);

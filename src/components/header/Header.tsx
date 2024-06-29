@@ -1,37 +1,34 @@
 import { useEffect, useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import HeaderBtn from './HeaderBtn';
 import Account from './Account';
-import { getFetchDataWithToken } from '@/scripts/fetchData';
+import { useGetFetchWithToken } from '@/hooks/fetch/useFetchWithToken';
+import { useAuthStore } from '@/stores/useAuthStore';
 
 export default function Header() {
   const navigate = useNavigate();
-  const [isAuth, setIsAuth] = useState(false);
-  const [accountName, setAccountName] = useState('');
-  const location = useLocation();
+  const authStore = useAuthStore();
+  const { response, loading } = useGetFetchWithToken('/user/id');
+
+  let [isAuth, setIsAuth] = useState(false);
+  let [accountName, setAccountName] = useState('');
+
   useEffect(() => {
-    const abortController = new AbortController();
-    async function asyncFetchData() {
-      const respData = await getFetchDataWithToken(
-        '/user/id',
-        abortController.signal
-      );
-      if (respData.ok) {
+    if (loading) {
+      if (response.ok) {
         setIsAuth(true);
-        setAccountName(respData.data.name);
+        setAccountName(response.data['name']);
       } else {
         setIsAuth(false);
         setAccountName('');
       }
     }
+  }, [loading, authStore.accessToken]);
 
-    asyncFetchData();
-
-    return () => {
-      abortController.abort();
-    };
-  }, [location.pathname]);
+  if (loading) {
+    return <div></div>;
+  }
 
   return (
     <header className='flex justify-between align-text-center bg-white shadow shadow-blue-300 min-w-max px-3 py-1 sticky top-0 z-50'>

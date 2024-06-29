@@ -17,21 +17,31 @@ export const router = createBrowserRouter([
       {
         index: true,
         element: <Main />,
+        // loader: async () => {
+        //   const data = await mainLoading();
+        //   return data;
+        // },
       },
       {
-        path: '/about',
+        path: 'about',
         element: <About />,
       },
       {
-        path: '/contact',
+        path: 'contact',
         element: <Contact />,
       },
       {
-        path: '/vocabularies',
+        path: 'vocabularies',
         element: <Vocabularies />,
       },
-      { path: '/vocabulary/:name', element: <Vocabulary /> },
-      { path: '*', element: <Main /> },
+      {
+        path: 'vocabulary/:name',
+        element: <Vocabulary />,
+      },
+      {
+        path: '*',
+        element: <Main />,
+      },
     ],
   },
   {
