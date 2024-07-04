@@ -18,6 +18,7 @@ export default function DropdownMenu({
       title={title}>
       <button
         className='flex w-full h-full items-center font-semibold text-gray-900'
+        onBlur={() => setTimeout(() => setOpen(false), 100)}
         onClick={() => {
           setOpen(!open);
         }}>

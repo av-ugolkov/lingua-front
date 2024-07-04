@@ -12,14 +12,14 @@ export default function Vocabulary() {
   const { id } = useParams();
   const [name, setName] = useState(false);
   const [loading, setLoading] = useState(true);
-  const { funcFetch: fetchVocabulary } = useFetchWithToken(
+  const { funcFetch: fetchGetVocabulary } = useFetchWithToken(
     `/account/vocabulary`,
     RequestMethod.GET
   );
 
   useEffect(() => {
     async function asyncFetchVocabulary() {
-      const response = await fetchVocabulary({
+      const response = await fetchGetVocabulary({
         queries: new Map([['id', id || '']]),
       });
       if (response.ok) {

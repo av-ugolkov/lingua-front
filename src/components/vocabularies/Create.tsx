@@ -1,15 +1,65 @@
+import { useEffect, useState } from 'react';
+
 import { PlusIcon, XMarkIcon } from '@heroicons/react/24/outline';
 
 import Button from '../elements/Button';
 import SelectLanguages from './SelectLanguages';
+import { VocabularyState } from '@/hooks/stores/useVocabulariesStore';
+import { fetchData } from '@/scripts/fetch/fetchData';
+
+export interface ILanguage {
+  lang: string;
+  code: string;
+}
+
+const tempVocabulary: VocabularyState = {
+  id: '',
+  name: '',
+  nativeLang: '',
+  translateLang: '',
+  tags: [],
+  userId: '',
+};
+
+const tempLanguage: ILanguage[] = [];
 
 export default function Create({
   addCallback,
   closeCallback,
 }: {
-  addCallback: () => void;
+  addCallback: (vocabulary: VocabularyState) => void;
   closeCallback: () => void;
 }) {
+  const [vocab, setVocab] = useState(tempVocabulary);
+  const [languages, setLanguages] = useState(tempLanguage);
+
+  useEffect(() => {
+    async function asyncFetchData() {
+      const respData = await fetchData('/languages', {
+        method: 'get',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+      });
+      if (respData.ok) {
+        respData.data.forEach((item: any) => {
+          setLanguages((prev) => {
+            return [
+              ...prev,
+              {
+                lang: item['language'],
+                code: item['code'],
+              },
+            ];
+          });
+        });
+      }
+    }
+
+    asyncFetchData();
+  }, []);
+
   return (
     <div className='fixed justify-center items-center bg-gray-500 bg-opacity-60 z-50 w-full inset-0 h-full'>
       <div className='flex justify-center items-center w-full h-full'>
@@ -29,27 +79,50 @@ export default function Create({
             <form className='p-4'>
               <div className='grid gap-4 mb-4 grid-cols-2'>
                 <div className='col-span-2'>
-                  <label
-                    htmlFor='name'
-                    className='block mb-2 text-sm font-medium text-gray-900'>
+                  <span className='block mb-2 text-sm font-medium text-gray-900'>
                     Name
-                  </label>
+                  </span>
                   <input
                     type='text'
-                    id='name'
                     className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5'
                     placeholder='Vocabulary name'
                     required={true}
+                    value={vocab.name}
+                    onChange={(e) =>
+                      setVocab({ ...vocab, name: e.target.value })
+                    }
                   />
                 </div>
-                <SelectLanguages title='Source language' />
-                <SelectLanguages title='Second language' />
+                <SelectLanguages
+                  key='native_lang'
+                  title='Source language'
+                  languages={languages}
+                  onSelect={(e) => setVocab({ ...vocab, nativeLang: e })}
+                />
+                <SelectLanguages
+                  key='translate_lang'
+                  title='Second language'
+                  languages={languages}
+                  onSelect={(e) => setVocab({ ...vocab, translateLang: e })}
+                />
               </div>
               <Button
                 bgColor='bg-indigo-600'
                 hoverBgColor='hover:bg-indigo-500'
                 focusOutlineColor='focus-visible:outline-indigo-600'
-                callback={addCallback}>
+                callback={() => {
+                  if (
+                    vocab.name === '' ||
+                    vocab.nativeLang === '' ||
+                    vocab.translateLang === '' ||
+                    vocab.nativeLang == vocab.translateLang
+                  ) {
+                    console.error('Please fill in all required fields');
+                    return;
+                  } else {
+                    addCallback(vocab);
+                  }
+                }}>
                 <PlusIcon className='size-5 font-extrabold ' />
                 Add new vocabulary
               </Button>
