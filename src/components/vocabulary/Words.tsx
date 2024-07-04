@@ -8,7 +8,10 @@ import {
 } from '@/hooks/stores/useVocabWordsStore';
 import { useSearchWordStore } from '@/hooks/stores/useSearchWordStore';
 import { useSortedWordsStore } from '@/hooks/stores/useSortedWordsStore';
-import { useGetFetchWithToken } from '@/hooks/fetch/useFetchWithToken';
+import {
+  RequestMethod,
+  useFetchWithToken,
+} from '@/hooks/fetch/useFetchWithToken';
 
 const tempWordState: VocabWordState = {
   id: '',
@@ -31,13 +34,16 @@ export default function Words() {
   const searchWordStore = useSearchWordStore();
   const sortedWordsStore = useSortedWordsStore();
 
-  const { funcGetFetch: fetchWords } = useGetFetchWithToken(
-    '/vocabulary/word/all'
+  const { funcFetch: fetchWords } = useFetchWithToken(
+    '/vocabulary/word/all',
+    RequestMethod.GET
   );
 
   useEffect(() => {
     async function asyncFetchWords() {
-      const response = await fetchWords(new Map([['vocab_id', vocabID]]));
+      const response = await fetchWords({
+        queries: new Map([['vocab_id', vocabID]]),
+      });
 
       if (response.ok) {
         const words: VocabWordState[] = [];

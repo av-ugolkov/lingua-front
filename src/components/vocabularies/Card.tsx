@@ -5,11 +5,15 @@ import {
   ShareIcon,
   DocumentDuplicateIcon,
   TrashIcon,
+  PencilIcon,
 } from '@heroicons/react/24/outline';
 
 import DropdownMenu from '../elements/Dropdown/DropdownMenu';
 import DropdownItem from '../elements/Dropdown/Item';
-import { useGetFetchWithToken } from '@/hooks/fetch/useFetchWithToken';
+import {
+  RequestMethod,
+  useFetchWithToken,
+} from '@/hooks/fetch/useFetchWithToken';
 
 const CountRequestWords = '10';
 
@@ -35,18 +39,21 @@ export default function Card({
   const [words, setWords] = useState(Words);
   const [loading, setLoading] = useState(true);
 
-  const { funcGetFetch: fetchSeveralWords } = useGetFetchWithToken(
-    '/vocabulary/word/several'
+  const { funcFetch: fetchRandomWords } = useFetchWithToken(
+    '/vocabulary/word/random',
+    RequestMethod.GET
   );
 
+  function renameVocabulary() {}
+
   useEffect(() => {
-    async function asyncFetchSeveralWords() {
-      const response = await fetchSeveralWords(
-        new Map([
+    async function asyncFetchRandomWords() {
+      const response = await fetchRandomWords({
+        queries: new Map([
           ['vocab_id', id],
           ['limit', CountRequestWords],
-        ])
-      );
+        ]),
+      });
       if (response.ok) {
         response.data.forEach((item: any) => {
           setWords((words) => [
@@ -63,7 +70,7 @@ export default function Card({
       setLoading(false);
     }
 
-    asyncFetchSeveralWords();
+    asyncFetchRandomWords();
   }, [id]);
 
   if (loading) {
@@ -77,6 +84,10 @@ export default function Card({
           {title}
         </div>
         <DropdownMenu>
+          <DropdownItem onClick={renameVocabulary}>
+            Rename
+            <PencilIcon className='size-5' />
+          </DropdownItem>
           <DropdownItem disable>
             Share
             <ShareIcon className='size-5' />

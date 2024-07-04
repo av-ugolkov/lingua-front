@@ -6,19 +6,23 @@ import {
   VocabularyState,
   useVocabulariesStore,
 } from '@/hooks/stores/useVocabulariesStore';
-import { useGetFetchWithToken } from '@/hooks/fetch/useFetchWithToken';
+import {
+  RequestMethod,
+  useFetchWithToken,
+} from '@/hooks/fetch/useFetchWithToken';
 
 export default function List() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const vocabulariesStore = useVocabulariesStore();
-  const { funcGetFetch: fetchVocabularies } = useGetFetchWithToken(
-    '/account/vocabularies'
+  const { funcFetch: fetchVocabularies } = useFetchWithToken(
+    '/account/vocabularies',
+    RequestMethod.GET
   );
 
   useEffect(() => {
     async function asyncFetchVocabularies() {
-      const response = await fetchVocabularies();
+      const response = await fetchVocabularies({});
       if (response.ok) {
         let vocabularies: VocabularyState[] = [];
         response.data.forEach((item: any) => {

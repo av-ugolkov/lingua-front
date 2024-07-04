@@ -3,13 +3,19 @@ import { useNavigate } from 'react-router-dom';
 
 import HeaderBtn from './HeaderBtn';
 import Account from './Account';
-import { useGetFetchWithToken } from '@/hooks/fetch/useFetchWithToken';
+import {
+  RequestMethod,
+  useFetchWithToken,
+} from '@/hooks/fetch/useFetchWithToken';
 import { useAuthStore } from '@/hooks/stores/useAuthStore';
 
 export default function Header() {
   const navigate = useNavigate();
   const authStore = useAuthStore();
-  const { funcGetFetch: fetchUser } = useGetFetchWithToken('/user/id');
+  const { funcFetch: fetchUser } = useFetchWithToken(
+    '/user/id',
+    RequestMethod.GET
+  );
 
   const [isAuth, setIsAuth] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -17,7 +23,7 @@ export default function Header() {
 
   useEffect(() => {
     async function asyncFetchUser() {
-      const response = await fetchUser();
+      const response = await fetchUser({});
       if (response.ok) {
         setIsAuth(true);
         setAccountName(response.data['name']);
