@@ -9,6 +9,7 @@ import {
 
 import {
   useDeleteFetchWithToken,
+  useGetFetchWithToken,
   usePostFetchWithToken,
 } from '@/hooks/fetch/useFetchWithToken';
 import {
@@ -39,6 +40,8 @@ export default function WordCard({
   );
   const { funcDeleteFetch: fetchDeleteWord } =
     useDeleteFetchWithToken('/vocabulary/word');
+  const { funcGetFetch: fetchGetWord } =
+    useGetFetchWithToken('/vocabulary/word');
 
   function addVocabWord() {
     async function asyncAddWord() {
@@ -115,6 +118,23 @@ export default function WordCard({
     asyncDelete();
   }
 
+  function cancelChanges() {
+    async function asyncCancelChanges() {
+      const response = await fetchGetWord(new Map([['id', word.id]]));
+      if (response.ok) {
+        word.wordValue = response.data['native']['text'];
+        word.wordPronunciation = response.data['native']['pronunciation'] || '';
+        word.examples = response.data['examples'] || [];
+        word.translates = response.data['translates'] || [];
+        updateWord(word);
+      } else {
+        console.error(response);
+      }
+    }
+
+    asyncCancelChanges();
+  }
+
   return (
     <>
       <div className='flex flex-row min-w-[540px] mb-8 border-solid border-[1px] border-gray-300 shadow-md shadow-blue-300'>
@@ -183,6 +203,7 @@ export default function WordCard({
               }}>
               <PlusCircleIcon
                 className='w-6'
+                color='blue'
                 title='Add word'
               />
             </BtnCard>
@@ -205,12 +226,14 @@ export default function WordCard({
               <BtnCard onClick={updateVocabWord}>
                 <CheckCircleIcon
                   className='w-6'
+                  color='green'
                   title='Save changes'
                 />
               </BtnCard>
-              <BtnCard onClick={() => console.log('cancelChanges()')}>
+              <BtnCard onClick={cancelChanges}>
                 <XCircleIcon
                   className='w-6'
+                  color='red'
                   title='Cancel changes'
                 />
               </BtnCard>

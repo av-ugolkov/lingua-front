@@ -33,17 +33,20 @@ export default function Card({
   onClick: () => void;
 }) {
   const [words, setWords] = useState(Words);
+  const [loading, setLoading] = useState(true);
 
-  const { response, loading } = useGetFetchWithToken(
-    '/vocabulary/word/several',
-    new Map([
-      ['vocab_id', id],
-      ['limit', CountRequestWords],
-    ])
+  const { funcGetFetch: fetchSeveralWords } = useGetFetchWithToken(
+    '/vocabulary/word/several'
   );
 
   useEffect(() => {
-    if (!loading) {
+    async function asyncFetchSeveralWords() {
+      const response = await fetchSeveralWords(
+        new Map([
+          ['vocab_id', id],
+          ['limit', CountRequestWords],
+        ])
+      );
       if (response.ok) {
         response.data.forEach((item: any) => {
           setWords((words) => [
@@ -57,8 +60,11 @@ export default function Card({
       } else {
         console.error(response.data);
       }
+      setLoading(false);
     }
-  }, [id, loading]);
+
+    asyncFetchSeveralWords();
+  }, [id]);
 
   if (loading) {
     return <div></div>;

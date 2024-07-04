@@ -9,13 +9,15 @@ import { useAuthStore } from '@/hooks/stores/useAuthStore';
 export default function Header() {
   const navigate = useNavigate();
   const authStore = useAuthStore();
-  const { response, loading } = useGetFetchWithToken('/user/id');
+  const { funcGetFetch: fetchUser } = useGetFetchWithToken('/user/id');
 
-  let [isAuth, setIsAuth] = useState(false);
-  let [accountName, setAccountName] = useState('');
+  const [isAuth, setIsAuth] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [accountName, setAccountName] = useState('');
 
   useEffect(() => {
-    if (!loading) {
+    async function asyncFetchUser() {
+      const response = await fetchUser();
       if (response.ok) {
         setIsAuth(true);
         setAccountName(response.data['name']);
@@ -23,8 +25,11 @@ export default function Header() {
         setIsAuth(false);
         setAccountName('');
       }
+      setLoading(false);
     }
-  }, [loading, authStore.accessToken]);
+
+    asyncFetchUser();
+  }, [authStore.accessToken]);
 
   if (loading) {
     return <div></div>;

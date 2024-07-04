@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import Card from './Card';
@@ -10,11 +10,15 @@ import { useGetFetchWithToken } from '@/hooks/fetch/useFetchWithToken';
 
 export default function List() {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
   const vocabulariesStore = useVocabulariesStore();
-  const { response, loading } = useGetFetchWithToken('/account/vocabularies');
+  const { funcGetFetch: fetchVocabularies } = useGetFetchWithToken(
+    '/account/vocabularies'
+  );
 
   useEffect(() => {
-    if (!loading) {
+    async function asyncFetchVocabularies() {
+      const response = await fetchVocabularies();
       if (response.ok) {
         let vocabularies: VocabularyState[] = [];
         response.data.forEach((item: any) => {
@@ -31,8 +35,10 @@ export default function List() {
       } else {
         navigate('/');
       }
+      setLoading(false);
     }
-  }, [loading]);
+    asyncFetchVocabularies();
+  }, []);
 
   if (loading) {
     return <div></div>;

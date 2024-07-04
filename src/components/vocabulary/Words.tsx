@@ -31,13 +31,14 @@ export default function Words() {
   const searchWordStore = useSearchWordStore();
   const sortedWordsStore = useSortedWordsStore();
 
-  const { response, loading } = useGetFetchWithToken(
-    '/vocabulary/word/all',
-    new Map([['vocab_id', vocabID]])
+  const { funcGetFetch: fetchWords } = useGetFetchWithToken(
+    '/vocabulary/word/all'
   );
 
   useEffect(() => {
-    if (!loading) {
+    async function asyncFetchWords() {
+      const response = await fetchWords(new Map([['vocab_id', vocabID]]));
+
       if (response.ok) {
         const words: VocabWordState[] = [];
         response.data.forEach((item: any) => {
@@ -58,10 +59,12 @@ export default function Words() {
         navigate('/');
       }
     }
+
+    asyncFetchWords();
     return () => {
       vocabWordsStore.clearWords();
     };
-  }, [loading]);
+  }, []);
 
   return (
     <>

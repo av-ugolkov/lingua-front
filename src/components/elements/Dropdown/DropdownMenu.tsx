@@ -26,7 +26,7 @@ export default function DropdownMenu({
 
       <Transition
         show={open}
-        duration={500}>
+        duration={300}>
         <div className='absolute right-1 w-fit origin-top-right bg-gray-200 shadow-md shadow-blue-300'>
           {children}
         </div>

@@ -8,19 +8,21 @@ import { useGetFetchWithToken } from '@/hooks/fetch/useFetchWithToken';
 export default function Vocabulary() {
   const { id } = useParams();
   const [name, setName] = useState(false);
-
-  const { loading, response } = useGetFetchWithToken(
-    `/account/vocabulary`,
-    new Map([['id', id || '']])
-  );
+  const [loading, setLoading] = useState(true);
+  const { funcGetFetch: fetchVocabulary } =
+    useGetFetchWithToken(`/account/vocabulary`);
 
   useEffect(() => {
-    if (!loading) {
+    async function asyncFetchVocabulary() {
+      const response = await fetchVocabulary(new Map([['id', id || '']]));
       if (response.ok) {
         setName(response.data['name']);
       }
+      setLoading(false);
     }
-  }, [loading, id]);
+
+    asyncFetchVocabulary();
+  }, [id]);
 
   if (loading) {
     return <div></div>;
