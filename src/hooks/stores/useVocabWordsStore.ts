@@ -2,10 +2,7 @@ import { create } from 'zustand';
 
 import { IResponseData } from '@/scripts/fetch/fetchData';
 import { Sorted } from './useSortedWordsStore';
-import {
-  useGetFetchWithToken,
-  usePostFetchWithToken,
-} from '@/hooks/fetch/useFetchWithToken';
+import { useGetFetchWithToken } from '@/hooks/fetch/useFetchWithToken';
 
 export const InvalidateDate = new Date(1970, 1, 1, 0, 0, 0, 0);
 
@@ -26,9 +23,8 @@ interface VocabWordsState {
   setWords: (words: VocabWordState[]) => void;
   getOrderedWords: (typesSort: Sorted) => VocabWordState[];
   getWord: (id: string) => VocabWordState;
-  getWordByName: (name: string) => VocabWordState;
-  addWord: (vocabulary: VocabWordState) => void;
-  updateWord: (vocabulary: VocabWordState) => void;
+  addWord: (word: VocabWordState) => void;
+  updateWord: (word: VocabWordState) => void;
   removeWord: (id: string) => void;
   clearWords: () => void;
 }
@@ -100,6 +96,7 @@ export const useVocabWordsStore = create<VocabWordsState>((set, get) => ({
                   examples: item['examples'] || [],
                   updated: new Date(item['updated']),
                   created: new Date(item['created']),
+                  clear: () => {},
                 },
               ],
             };
@@ -115,60 +112,27 @@ export const useVocabWordsStore = create<VocabWordsState>((set, get) => ({
     }
     return word;
   },
-  getWordByName: (name) => {
-    const word = get().words.find((word) => word.wordValue === name);
-    if (!word) {
-      throw new Error(`Word with name ${name} not found`);
-    }
-    return word;
+  addWord: (vocabWord) => {
+    set((state) => {
+      if (state.words.find((item) => item.id === vocabWord.id)) {
+        return state;
+      }
+      return { words: [...state.words, vocabWord] };
+    });
   },
-  addWord: async (vocabWord) => {
-    const respBody = await asyncAddWord(vocabWord);
-    if (respBody.ok) {
-      const word: VocabWordState = {
-        ...vocabWord,
-        id: respBody.data['id'],
-        wordID: respBody.data['native']['id'],
-        created: new Date(respBody.data['created']),
-        updated: new Date(respBody.data['updated']),
-      };
-
-      set((state) => {
-        if (state.words.find((item) => item.id === word.id)) {
-          return state;
-        }
-        return { words: [...state.words, word] };
-      });
-    } else {
-      console.warn(respBody);
+  updateWord: (vocabWord) => {
+    if (vocabWord.id === '') {
+      return;
     }
-  },
-  updateWord: (vocabWord) =>
     set((state) => ({
       words: state.words.map((word) =>
         word.id === vocabWord.id ? vocabWord : word
       ),
-    })),
+    }));
+  },
   removeWord: (id) =>
     set((state) => ({ words: state.words.filter((word) => word.id !== id) })),
   clearWords: () => {
     set(() => ({ words: [] }));
   },
 }));
-
-async function asyncAddWord(vocabWord: VocabWordState): Promise<IResponseData> {
-  let jsonBodyData = {
-    id: '00000000-0000-0000-0000-000000000000',
-    vocab_id: vocabWord.vocabID,
-    native: {
-      id: '00000000-0000-0000-0000-000000000000',
-      text: vocabWord.wordValue,
-      pronunciation: vocabWord.wordPronunciation,
-    },
-    translates: vocabWord.translates,
-    examples: vocabWord.examples,
-  };
-  let bodyData = JSON.stringify(jsonBodyData);
-  const { response } = usePostFetchWithToken('/vocabulary/word', bodyData);
-  return response;
-}

@@ -55,7 +55,7 @@ export default function Card({
           ]);
         });
       } else {
-        console.log(response.data);
+        console.error(response.data);
       }
     }
   }, [id, loading]);

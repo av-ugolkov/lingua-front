@@ -17,7 +17,7 @@ export default function Vocabularies() {
             focusOutlineColor='focus-visible:outline-indigo-600'
             callback={() => {
               setIsShowCreatePopup((prev) => !prev);
-              console.log(isShowCreatePopup);
+              console.warn(isShowCreatePopup);
             }}>
             Create vocabularies
           </Button>

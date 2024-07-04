@@ -1,9 +1,8 @@
 import { useNavigate, useParams } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import WordCard from './WordCard';
 import {
-  EmptyWord,
   VocabWordState,
   useVocabWordsStore,
 } from '@/hooks/stores/useVocabWordsStore';
@@ -11,9 +10,22 @@ import { useSearchWordStore } from '@/hooks/stores/useSearchWordStore';
 import { useSortedWordsStore } from '@/hooks/stores/useSortedWordsStore';
 import { useGetFetchWithToken } from '@/hooks/fetch/useFetchWithToken';
 
+const tempWordState: VocabWordState = {
+  id: '',
+  wordID: '',
+  vocabID: '',
+  wordValue: '',
+  wordPronunciation: '',
+  translates: [],
+  examples: [],
+  created: new Date(),
+  updated: new Date(),
+};
+
 export default function Words() {
-  const { id } = useParams<string>();
+  const { id } = useParams();
   const vocabID = id || '';
+  const [tempWord, setTempWord] = useState(tempWordState);
   const navigate = useNavigate();
   const vocabWordsStore = useVocabWordsStore();
   const searchWordStore = useSearchWordStore();
@@ -31,14 +43,14 @@ export default function Words() {
         response.data.forEach((item: any) => {
           words.push({
             id: item['id'],
-            vocabID: item['vocab_id'],
-            wordID: item['word_id'],
+            vocabID: vocabID,
+            wordID: item['native']['id'],
             wordValue: item['native']['text'],
             wordPronunciation: item['native']['pronunciation'],
             translates: item['translates'] || [],
             examples: item['examples'] || [],
-            updated: item['updated'],
-            created: item['created'],
+            updated: new Date(item['updated']),
+            created: new Date(item['created']),
           });
         });
         vocabWordsStore.setWords(words);
@@ -53,7 +65,12 @@ export default function Words() {
 
   return (
     <>
-      <WordCard vocabWord={EmptyWord} />
+      <WordCard
+        word={tempWord}
+        updateWord={(newState) => {
+          setTempWord((prev) => ({ ...prev, ...newState }));
+        }}
+      />
       {vocabWordsStore
         .getOrderedWords(sortedWordsStore.orderType)
         .filter((word) => {
@@ -66,7 +83,10 @@ export default function Words() {
         })
         .map((word) => (
           <div key={word.id}>
-            <WordCard vocabWord={word} />
+            <WordCard
+              word={word}
+              updateWord={vocabWordsStore.updateWord}
+            />
           </div>
         ))}
     </>

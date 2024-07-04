@@ -17,7 +17,6 @@ export default function Vocabulary() {
   useEffect(() => {
     if (!loading) {
       if (response.ok) {
-        console.log(response.data);
         setName(response.data['name']);
       }
     }
