@@ -54,10 +54,7 @@ export default function List() {
       {vocabulariesStore.vocabularies.map((item) => (
         <Card
           key={item.id}
-          id={item.id}
-          title={item.name}
-          nativeLang={item.nativeLang}
-          translateLang={item.translateLang}
+          vocab={item}
           onClick={() => {
             navigate(`/vocabulary/${item.id}`);
           }}
