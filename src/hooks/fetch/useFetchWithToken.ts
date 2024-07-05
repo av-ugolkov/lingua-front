@@ -20,10 +20,12 @@ export function useFetchWithToken(url: string, method: RequestMethod) {
     body?: string;
     queries?: Map<string, string>;
   }): Promise<IResponseData> {
-    if (authStore.getAccessToken() === '') {
+    let token = authStore.getAccessToken();
+    if (token === '') {
       const respToken = await refreshToken();
       if (respToken.ok) {
         authStore.setAccessToken(respToken.data);
+        token = respToken.data;
       } else {
         return {
           ok: respToken.ok,
@@ -32,7 +34,6 @@ export function useFetchWithToken(url: string, method: RequestMethod) {
         };
       }
     }
-    const token = authStore.getAccessToken();
     const payload = JSON.parse(atob(token.split('.')[1]));
     const exp = payload['exp'];
     const dateNow = Date.now();
@@ -41,6 +42,7 @@ export function useFetchWithToken(url: string, method: RequestMethod) {
       const respToken = await refreshToken();
       if (respToken.ok) {
         authStore.setAccessToken(respToken.data);
+        token = respToken.data;
       } else {
         return {
           ok: respToken.ok,
