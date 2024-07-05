@@ -45,7 +45,7 @@ export default function Card({
   const vocabulariesStore = useVocabulariesStore();
 
   const { funcFetch: fetchRandomWords } = useFetchWithToken(
-    '/vocabulary/word/random',
+    '/vocabulary/words/random',
     RequestMethod.GET
   );
   const { funcFetch: fetchRenameVocabulary } = useFetchWithToken(
@@ -130,7 +130,7 @@ export default function Card({
           </div>
           <DropdownMenu>
             <DropdownItem onClick={() => setIsShowRenamePopup(true)}>
-              Rename
+              Edit
               <PencilIcon className='size-5' />
             </DropdownItem>
             <DropdownItem disable>

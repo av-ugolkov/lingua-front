@@ -24,6 +24,7 @@ export default function Vocabularies() {
     async function asyncFetchCreateVocabulary() {
       const body = JSON.stringify({
         name: vocab.name,
+        access_id: vocab.accessID,
         native_lang: vocab.nativeLang,
         translate_lang: vocab.translateLang,
         tags: [],
@@ -32,13 +33,14 @@ export default function Vocabularies() {
         body: body,
       });
       if (response.ok) {
-        const newVocab = {
+        const newVocab: VocabularyState = {
           id: response.data['id'],
           name: response.data['name'],
+          accessID: response.data['access_id'],
           nativeLang: response.data['native_lang'],
           translateLang: response.data['translate_lang'],
           tags: response.data['tags'] || [],
-          userId: response.data['user_id'],
+          userID: response.data['user_id'],
         };
         vocabulariesStore.addVocabulary(newVocab);
         setIsShowCreatePopup(false);

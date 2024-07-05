@@ -29,10 +29,11 @@ export default function List() {
           vocabularies.push({
             id: item['id'],
             name: item['name'],
+            accessID: item['access_id'],
             nativeLang: item['native_lang'],
             translateLang: item['translate_lang'],
             tags: item['tags'],
-            userId: item['user_id'],
+            userID: item['user_id'],
           });
         });
         vocabulariesStore.setVocabularies(vocabularies);

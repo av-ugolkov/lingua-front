@@ -11,17 +11,24 @@ export interface ILanguage {
   lang: string;
   code: string;
 }
+export interface IAccess {
+  id: number;
+  type: string;
+  name: string;
+}
 
 const tempVocabulary: VocabularyState = {
   id: '',
   name: '',
+  accessID: 2,
   nativeLang: '',
   translateLang: '',
   tags: [],
-  userId: '',
+  userID: '',
 };
 
-const tempLanguage: ILanguage[] = [];
+const tempLanguages: ILanguage[] = [];
+const tempAccesses: IAccess[] = [];
 
 export default function Create({
   addCallback,
@@ -31,10 +38,11 @@ export default function Create({
   closeCallback: () => void;
 }) {
   const [vocab, setVocab] = useState(tempVocabulary);
-  const [languages, setLanguages] = useState(tempLanguage);
+  const [languages, setLanguages] = useState(tempLanguages);
+  const [accesses, setAccesses] = useState(tempAccesses);
 
   useEffect(() => {
-    async function asyncFetchData() {
+    async function asyncFetchLanguages() {
       const respData = await fetchData('/languages', {
         method: 'get',
         headers: {
@@ -54,10 +62,35 @@ export default function Create({
             ];
           });
         });
+      } else {
+        console.error(respData);
       }
     }
-
-    asyncFetchData();
+    async function asyncFetchAccesses() {
+      const respData = await fetchData('/accesses', {
+        method: 'get',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+      });
+      if (respData.ok) {
+        let accessesData: IAccess[] = [];
+        respData.data.forEach((item: any) => {
+          accessesData.push({
+            id: item['id'],
+            type: item['type'],
+            name: item['name'],
+          });
+        });
+        const sorted = accessesData.sort((a, b) => (a.id < b.id ? 1 : -1));
+        setAccesses(sorted);
+      } else {
+        console.error(respData);
+      }
+    }
+    asyncFetchLanguages();
+    asyncFetchAccesses();
   }, []);
 
   return (
@@ -65,9 +98,9 @@ export default function Create({
       <div className='flex justify-center items-center w-full h-full'>
         <div className='flex justify-center items-center p-4 w-full max-w-md max-h-full'>
           <div className='relative bg-white shadow-md shadow-blue-300'>
-            <div className='flex items-center justify-between p-4 border-b rounded-t'>
+            <div className='flex items-center justify-between p-2 border-b rounded-t'>
               <h3 className='text-lg font-semibold text-gray-900'>
-                Create new vocabulary
+                New vocabulary
               </h3>
               <button
                 type='button'
@@ -76,15 +109,16 @@ export default function Create({
                 <XMarkIcon className='size-5' />
               </button>
             </div>
+
             <form className='p-4'>
               <div className='grid gap-4 mb-4 grid-cols-2'>
                 <div className='col-span-2'>
-                  <span className='block mb-2 text-sm font-medium text-gray-900'>
+                  <span className='flex text-center content-center mb-2 text-sm font-medium text-gray-900'>
                     Name
                   </span>
                   <input
                     type='text'
-                    className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5'
+                    className='block w-full p-2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500'
                     placeholder='Vocabulary name'
                     required={true}
                     value={vocab.name}
@@ -105,6 +139,28 @@ export default function Create({
                   languages={languages}
                   onSelect={(e) => setVocab({ ...vocab, translateLang: e })}
                 />
+                <div className='col-span-2'>
+                  <hr className='my-3 h-px border-0 bg-gray-300' />
+                  <span className='flex text-center content-center mb-2 text-sm font-medium text-gray-900'>
+                    Access
+                  </span>
+                  <select
+                    id='access'
+                    defaultValue='access'
+                    onChange={(e) => {
+                      setVocab({
+                        ...vocab,
+                        accessID: accesses.find(
+                          (l) => l.name === e.target.value
+                        )!.id,
+                      });
+                    }}
+                    className='block w-full p-2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500'>
+                    {accesses.map((access) => (
+                      <option key={access.id}>{access.name}</option>
+                    ))}
+                  </select>
+                </div>
               </div>
               <Button
                 bgColor='bg-indigo-600'

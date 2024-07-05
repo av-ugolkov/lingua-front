@@ -35,7 +35,7 @@ export default function Words() {
   const sortedWordsStore = useSortedWordsStore();
 
   const { funcFetch: fetchWords } = useFetchWithToken(
-    '/vocabulary/word/all',
+    '/vocabulary/words',
     RequestMethod.GET
   );
 
