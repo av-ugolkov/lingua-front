@@ -1,45 +1,9 @@
-import {
-  Sorted,
-  useSortedWordsStore,
-} from '@/hooks/stores/useSortedWordsStore';
+import { ChartBarIcon } from '@heroicons/react/24/outline';
+
+import { useSortedWordsStore } from '@/hooks/stores/useSortedWordsStore';
 import { useSearchWordStore } from '@/hooks/stores/useSearchWordStore';
-import {
-  ChartBarIcon,
-  MagnifyingGlassIcon,
-  XMarkIcon,
-} from '@heroicons/react/24/outline';
-
-interface ISortType {
-  name: string;
-  type: Sorted;
-}
-
-const sortTypes: ISortType[] = [
-  {
-    name: 'Newest',
-    type: Sorted.Newest,
-  },
-  {
-    name: 'Oldest',
-    type: Sorted.Oldest,
-  },
-  {
-    name: 'Update asc',
-    type: Sorted.UpdateAsc,
-  },
-  {
-    name: 'Update desc',
-    type: Sorted.UpdateDesc,
-  },
-  {
-    name: 'A to Z',
-    type: Sorted.AtoZ,
-  },
-  {
-    name: 'Z to A',
-    type: Sorted.ZtoA,
-  },
-];
+import { SortTypes } from '@/models/Sorted';
+import SearchInput from '../elements/SearchInput';
 
 export default function SearchAndOrder() {
   const searchWordStore = useSearchWordStore();
@@ -48,25 +12,11 @@ export default function SearchAndOrder() {
   return (
     <>
       <div className='flex justify-between max-h-7'>
-        <div className='flex w-[30%] min-w-48 justify-between border-solid border-[1px] border-black'>
-          <div className='ml-2'>
-            <input
-              type='text'
-              name='search'
-              className='flex p-0.5 bg-transparent border-none w-full outline-none whitespace-nowrap active:border-none empty:before:bg-gray-500'
-              placeholder='Search'
-              onChange={(e) => searchWordStore.setSearchWord(e.target.value)}
-            />
-          </div>
-          {searchWordStore.searchWord === '' ? (
-            <MagnifyingGlassIcon className='size-6 py-0.5 pr-2 pl-0.5' />
-          ) : (
-            <XMarkIcon
-              onClick={() => searchWordStore.clearSearchWord()}
-              className='size-6 py-0.5 pr-2 pl-0.5'
-            />
-          )}
-        </div>
+        <SearchInput
+          searchValue={searchWordStore.searchWord}
+          onChange={searchWordStore.setSearchWord}
+          onClear={searchWordStore.clearSearchWord}
+        />
         <div className='flex w-36 items-center'>
           <ChartBarIcon className='size-5 pr-0.5' />
           <select
@@ -74,12 +24,12 @@ export default function SearchAndOrder() {
             className='bg-transparent outline-none'
             onChange={(e) => {
               const typeSort =
-                sortTypes.find((tp) => tp.type.toString() === e.target.value) ||
-                sortTypes[0];
+                SortTypes.find((tp) => tp.type.toString() === e.target.value) ||
+                SortTypes[0];
 
               sortedWordsStore.setOrderType(typeSort.type);
             }}>
-            {sortTypes.map((tp) => (
+            {SortTypes.map((tp) => (
               <option
                 value={tp.type}
                 key={tp.type}>

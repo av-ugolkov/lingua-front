@@ -6,6 +6,8 @@ import {
   DocumentDuplicateIcon,
   TrashIcon,
   PencilIcon,
+  LockClosedIcon,
+  LockOpenIcon,
 } from '@heroicons/react/24/outline';
 
 import {
@@ -35,7 +37,7 @@ export default function Card({
   vocab: VocabularyState;
   onClick: () => void;
 }) {
-  const [name, setName] = useState(vocab.name);
+  const [vocabData, setVocabData] = useState(vocab);
   const [words, setWords] = useState(Words);
   const [loading, setLoading] = useState(true);
   const [isShowRenamePopup, setIsShowRenamePopup] = useState(false);
@@ -64,7 +66,11 @@ export default function Card({
         }),
       });
       if (response.ok) {
-        setName(editData.name);
+        setVocabData({
+          ...vocabData,
+          name: editData.name,
+          accessID: editData.accessID,
+        });
         vocab.name = editData.name;
         vocab.accessID = editData.accessID;
       } else {
@@ -78,7 +84,7 @@ export default function Card({
   function deleteVocabulary() {
     async function asyncDeleteVocabulary() {
       const response = await fetchDeleteVocabulary({
-        queries: new Map<string, string>([['name', name]]),
+        queries: new Map<string, string>([['name', vocabData.name]]),
       });
       if (response.ok) {
         vocabulariesStore.removeVocabulary(vocab.id);
@@ -125,8 +131,19 @@ export default function Card({
     <>
       <div className='flex flex-col bg-gray-300 w-96 min-w-96 h-96 shadow-md shadow-blue-300 text-center'>
         <div className='flex align-middle justify-center'>
-          <div className='inline-block w-full cursor-default bg-gray-300 h-10 text-center font-semibold content-center text-xl ml-7 my-1 border-b-2 border-black'>
-            {name}
+          <div className='flex min-w-7 h-10 my-1 justify-center items-center'>
+            {vocab.accessID === 0 ? (
+              <LockClosedIcon className='size-5 text-red-600' />
+            ) : vocab.accessID === 1 ? (
+              <LockOpenIcon className='size-5 text-yellow-600' />
+            ) : (
+              vocab.accessID === 2 && (
+                <LockOpenIcon className='size-5 text-green-600' />
+              )
+            )}
+          </div>
+          <div className='inline-block w-full cursor-default bg-gray-300 h-10 text-center font-semibold content-center text-xl my-1 border-b-2 border-black'>
+            {vocabData.name}
           </div>
           <DropdownMenu>
             <DropdownItem onClick={() => setIsShowRenamePopup(true)}>
