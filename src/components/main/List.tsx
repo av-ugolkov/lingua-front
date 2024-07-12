@@ -25,7 +25,7 @@ export interface Vocab {
 
 const vocabsEmpty: Vocab[] = [];
 
-const countsItemsPerPage = [10, 15, 25, 50];
+const countsItemsPerPage = [7, 10, 15, 25, 50];
 
 export default function List() {
   const authStore = useAuthStore();
@@ -44,12 +44,6 @@ export default function List() {
         const respToken = await refreshToken();
         if (respToken.ok) {
           authStore.setAccessToken(respToken.data);
-        } else {
-          return {
-            ok: respToken.ok,
-            status: respToken.status,
-            data: respToken.data,
-          };
         }
       }
       const token = authStore.getAccessToken();
@@ -72,7 +66,7 @@ export default function List() {
       );
 
       if (response.ok) {
-        response.data.forEach((item: any) =>
+        response.data['vocabularies'].forEach((item: any) => {
           setVocabs((vocabs) => [
             ...vocabs,
             {
@@ -87,9 +81,9 @@ export default function List() {
               createdAt: new Date(item['created_at']),
               updatedAt: new Date(item['updated_at']),
             },
-          ])
-        );
-        setCountItems(vocabs.length);
+          ]);
+        });
+        setCountItems(response.data['total_count']);
       } else {
         console.error(response);
       }
@@ -98,7 +92,9 @@ export default function List() {
     asyncFetchData();
 
     return () => {
+      console.log('Unmounted');
       setVocabs(vocabsEmpty);
+      setCountItems(0);
     };
   }, [countItemsPerPage, searchValue, pageNum, sortedType]);
 
@@ -140,9 +136,7 @@ export default function List() {
               items={mapToSortedType()}
               onChange={(value) => {
                 const typeSort =
-                  SortTypes.find((tp) => tp.type.toString() === value) ||
-                  SortTypes[0];
-
+                  SortTypes.find((tp) => tp.name === value) || SortTypes[0];
                 setSortedType(typeSort);
               }}
               classSelect='block w-fit p-1 ml-2 bg-transparent border border-gray-300 text-gray-900 text-sm focus:ring-primary-500 focus:border-primary-500'
@@ -150,7 +144,10 @@ export default function List() {
             <ListBox
               id='count_items'
               items={mapToCountItemsPerPage()}
-              onChange={(value) => setCountItemsPerPage(value as any)}
+              onChange={(value) => {
+                setPageNum(1);
+                setCountItemsPerPage(+value);
+              }}
               classSelect='block w-fit p-1 ml-3 bg-transparent border border-gray-300 text-gray-900 text-sm focus:ring-primary-500 focus:border-primary-500'
             />
           </div>
@@ -161,14 +158,16 @@ export default function List() {
             vocab={item}
           />
         ))}
-        <Pagination
-          currentPage={pageNum}
-          countItems={countItems}
-          itemsPerPage={countItemsPerPage}
-          setPageNum={setPageNum}
-          nextPage={setPageNum}
-          previusPage={setPageNum}
-        />
+        {vocabs.length !== 0 && (
+          <Pagination
+            currentPage={pageNum}
+            countItems={countItems}
+            itemsPerPage={countItemsPerPage}
+            setPageNum={setPageNum}
+            nextPage={setPageNum}
+            previusPage={setPageNum}
+          />
+        )}
       </div>
     </>
   );

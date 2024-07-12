@@ -1,5 +1,7 @@
-import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/20/solid';
 import clsx from 'clsx';
+import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/20/solid';
+
+import getPaginationItems from './getPaginationItems';
 
 export default function Pagination({
   currentPage,
@@ -17,6 +19,8 @@ export default function Pagination({
   previusPage: (value: number) => void;
 }) {
   const maxPage = Math.ceil(countItems / itemsPerPage);
+
+  const pageNums = getPaginationItems(currentPage, maxPage, 7);
 
   return (
     <div className='flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6'>
@@ -39,7 +43,10 @@ export default function Pagination({
             <span className='font-medium'>
               {(currentPage - 1) * itemsPerPage + 1}
             </span>{' '}
-            to <span className='font-medium'>{itemsPerPage * currentPage}</span>{' '}
+            to{' '}
+            <span className='font-medium'>
+              {Math.min(countItems, itemsPerPage * currentPage)}
+            </span>{' '}
             of <span className='font-medium'>{countItems}</span> results
           </p>
         </div>
@@ -58,15 +65,16 @@ export default function Pagination({
                 className='h-5 w-5'
               />
             </div>
-            {[...Array(maxPage)].map((_, index) => (
+            {pageNums.map((pageNum, ind) => (
               <div
-                onClick={() => setPageNum(index + 1)}
+                key={ind}
+                onClick={() => setPageNum(pageNum)}
                 aria-current='page'
                 className={clsx(
                   'relative z-10 inline-flex items-center px-4 py-2 text-sm cursor-default select-none font-semibold text-black focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600',
-                  index === currentPage - 1 && 'bg-indigo-600 text-white'
+                  pageNum === currentPage && 'bg-indigo-600 text-white'
                 )}>
-                {index + 1}
+                {!isNaN(pageNum) ? pageNum : '...'}
               </div>
             ))}
             <div
