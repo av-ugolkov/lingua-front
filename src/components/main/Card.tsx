@@ -7,7 +7,7 @@ export default function Card({ vocab }: { vocab: Vocab }) {
         <div>{vocab.name}</div>
         <div>{vocab.nativeLang}</div>
         <div>{vocab.translateLang}</div>
-        <div>{vocab.userID}</div>
+        <div>{vocab.userName}</div>
         <div>{vocab.description}</div>
         <div>{vocab.updatedAt.toLocaleString('en-GB')}</div>
       </div>

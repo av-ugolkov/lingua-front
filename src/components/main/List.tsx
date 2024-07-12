@@ -9,12 +9,14 @@ import { SortTypes } from '@/models/Sorted';
 import { AdjustmentsHorizontalIcon } from '@heroicons/react/24/outline';
 import SearchInput from '../elements/SearchInput';
 import Pagination from './Pagination';
+import { ILanguage } from '../vocabularies/Create';
 
 export interface Vocab {
   id: string;
   name: string;
   description: string;
   userID: string;
+  userName: string;
   accessID: number;
   nativeLang: string;
   translateLang: string;
@@ -24,19 +26,56 @@ export interface Vocab {
 }
 
 const vocabsEmpty: Vocab[] = [];
+const tempLanguages: ILanguage[] = [{ lang: 'Any', code: 'any' }];
 
-const countsItemsPerPage = [7, 10, 15, 25, 50];
+const countsItemsPerPage = [5, 10, 15, 20, 25];
 
 export default function List() {
   const authStore = useAuthStore();
+  const [languages, setLanguages] = useState(tempLanguages);
   const [searchValue, setSearchValue] = useState('');
   const [sortedType, setSortedType] = useState(SortTypes[0]);
   const [pageNum, setPageNum] = useState(1);
   const [countItems, setCountItems] = useState(0);
+  const [nativeLang, setNativeLang] = useState('any');
+  const [translateLang, setTranslateLang] = useState('any');
   const [countItemsPerPage, setCountItemsPerPage] = useState(
     countsItemsPerPage[0]
   );
   const [vocabs, setVocabs] = useState(vocabsEmpty);
+
+  useEffect(() => {
+    async function asyncFetchLanguages() {
+      const respData = await fetchData('/languages', {
+        method: 'get',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+      });
+      if (respData.ok) {
+        respData.data.forEach((item: any) => {
+          setLanguages((prev) => {
+            return [
+              ...prev,
+              {
+                lang: item['language'],
+                code: item['code'],
+              },
+            ];
+          });
+        });
+      } else {
+        console.error(respData);
+      }
+    }
+
+    asyncFetchLanguages();
+
+    return () => {
+      setLanguages(tempLanguages);
+    };
+  }, []);
 
   useEffect(() => {
     async function asyncFetchData() {
@@ -62,6 +101,8 @@ export default function List() {
           ['per_page', countItemsPerPage],
           ['search', searchValue],
           ['order', sortedType.type],
+          ['native_lang', nativeLang],
+          ['translate_lang', translateLang],
         ])
       );
 
@@ -73,6 +114,7 @@ export default function List() {
               id: item['id'],
               name: item['name'],
               userID: item['user_id'],
+              userName: item['user_name'],
               accessID: item['access_id'],
               nativeLang: item['native_lang'],
               translateLang: item['translate_lang'],
@@ -92,11 +134,17 @@ export default function List() {
     asyncFetchData();
 
     return () => {
-      console.log('Unmounted');
       setVocabs(vocabsEmpty);
       setCountItems(0);
     };
-  }, [countItemsPerPage, searchValue, pageNum, sortedType]);
+  }, [
+    countItemsPerPage,
+    searchValue,
+    pageNum,
+    sortedType,
+    nativeLang,
+    translateLang,
+  ]);
 
   function mapToCountItemsPerPage(): IListBoxItem[] {
     let items: IListBoxItem[] = [];
@@ -110,6 +158,14 @@ export default function List() {
     let items: IListBoxItem[] = [];
     SortTypes.forEach((item) => {
       items.push({ key: item.type.toString(), value: item.name });
+    });
+    return items;
+  }
+
+  function mapToLanguages(): IListBoxItem[] {
+    let items: IListBoxItem[] = [];
+    languages.forEach((item) => {
+      items.push({ key: item.code, value: item.lang });
     });
     return items;
   }
@@ -131,6 +187,26 @@ export default function List() {
           </div>
           <div className='flex justify-end items-center'>
             <AdjustmentsHorizontalIcon className='size-5' />
+            <ListBox
+              id='native_language'
+              items={mapToLanguages()}
+              onChange={(value) => {
+                const lang =
+                  languages.find((tp) => tp.lang === value) || languages[0];
+                setNativeLang(lang.code);
+              }}
+              classSelect='block w-fit p-1 ml-2 bg-transparent border border-gray-300 text-gray-900 text-sm focus:ring-primary-500 focus:border-primary-500'
+            />
+            <ListBox
+              id='translate_language'
+              items={mapToLanguages()}
+              onChange={(value) => {
+                const lang =
+                  languages.find((tp) => tp.lang === value) || languages[0];
+                setTranslateLang(lang.code);
+              }}
+              classSelect='block w-fit p-1 ml-2 bg-transparent border border-gray-300 text-gray-900 text-sm focus:ring-primary-500 focus:border-primary-500'
+            />
             <ListBox
               id='type_sorted'
               items={mapToSortedType()}
