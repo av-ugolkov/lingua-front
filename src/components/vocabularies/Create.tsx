@@ -6,11 +6,8 @@ import Button from '../elements/Button';
 import SelectLanguages from './SelectLanguages';
 import { VocabularyState } from '@/hooks/stores/useVocabulariesStore';
 import { fetchData } from '@/scripts/fetch/fetchData';
+import { ILanguage, useFetchLanguages } from '@/hooks/fetch/useFetchLanguages';
 
-export interface ILanguage {
-  lang: string;
-  code: string;
-}
 export interface IAccess {
   id: number;
   type: string;
@@ -38,34 +35,25 @@ export default function Create({
   closeCallback: () => void;
 }) {
   const [vocab, setVocab] = useState(tempVocabulary);
+  const fetchLanguages = useFetchLanguages();
   const [languages, setLanguages] = useState(tempLanguages);
   const [accesses, setAccesses] = useState(tempAccesses);
 
   useEffect(() => {
-    async function asyncFetchLanguages() {
-      const respData = await fetchData('/languages', {
-        method: 'get',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
+    if (fetchLanguages.size > 0) {
+      fetchLanguages.forEach((v, k) => {
+        setLanguages((prev) => [
+          ...prev,
+          {
+            lang: v,
+            code: k,
+          },
+        ]);
       });
-      if (respData.ok) {
-        respData.data.forEach((item: any) => {
-          setLanguages((prev) => {
-            return [
-              ...prev,
-              {
-                lang: item['language'],
-                code: item['code'],
-              },
-            ];
-          });
-        });
-      } else {
-        console.error(respData);
-      }
     }
+  }, [fetchLanguages]);
+
+  useEffect(() => {
     async function asyncFetchAccesses() {
       const respData = await fetchData('/accesses', {
         method: 'get',
@@ -89,7 +77,6 @@ export default function Create({
         console.error(respData);
       }
     }
-    asyncFetchLanguages();
     asyncFetchAccesses();
   }, []);
 

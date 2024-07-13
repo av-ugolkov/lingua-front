@@ -9,7 +9,7 @@ import { SortTypes } from '@/models/Sorted';
 import { AdjustmentsHorizontalIcon } from '@heroicons/react/24/outline';
 import SearchInput from '../elements/SearchInput';
 import Pagination from './Pagination';
-import { ILanguage } from '../vocabularies/Create';
+import { useFetchLanguages } from '@/hooks/fetch/useFetchLanguages';
 
 export interface Vocab {
   id: string;
@@ -26,13 +26,13 @@ export interface Vocab {
 }
 
 const vocabsEmpty: Vocab[] = [];
-const tempLanguages: ILanguage[] = [{ lang: 'Any', code: 'any' }];
-
 const countsItemsPerPage = [5, 10, 15, 20, 25];
 
 export default function List() {
   const authStore = useAuthStore();
-  const [languages, setLanguages] = useState(tempLanguages);
+  const fetchLanguages = useFetchLanguages();
+  const [languages, setLanguages] = useState([{ lang: 'Any', code: 'any' }]);
+
   const [searchValue, setSearchValue] = useState('');
   const [sortedType, setSortedType] = useState(SortTypes[0]);
   const [pageNum, setPageNum] = useState(1);
@@ -45,37 +45,18 @@ export default function List() {
   const [vocabs, setVocabs] = useState(vocabsEmpty);
 
   useEffect(() => {
-    async function asyncFetchLanguages() {
-      const respData = await fetchData('/languages', {
-        method: 'get',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
+    if (fetchLanguages.size > 0) {
+      fetchLanguages.forEach((v, k) => {
+        setLanguages((prev) => [
+          ...prev,
+          {
+            lang: v,
+            code: k,
+          },
+        ]);
       });
-      if (respData.ok) {
-        respData.data.forEach((item: any) => {
-          setLanguages((prev) => {
-            return [
-              ...prev,
-              {
-                lang: item['language'],
-                code: item['code'],
-              },
-            ];
-          });
-        });
-      } else {
-        console.error(respData);
-      }
     }
-
-    asyncFetchLanguages();
-
-    return () => {
-      setLanguages(tempLanguages);
-    };
-  }, []);
+  }, [fetchLanguages]);
 
   useEffect(() => {
     async function asyncFetchData() {

@@ -34,11 +34,8 @@ export function useFetchWithToken(url: string, method: RequestMethod) {
         };
       }
     }
-    const payload = JSON.parse(atob(token.split('.')[1]));
-    const exp = payload['exp'];
-    const dateNow = Date.now();
 
-    if (dateNow > exp * 1000) {
+    if (!authStore.isActiveToken()) {
       const respToken = await refreshToken();
       if (respToken.ok) {
         authStore.setAccessToken(respToken.data);

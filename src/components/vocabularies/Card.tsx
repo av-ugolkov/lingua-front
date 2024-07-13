@@ -21,6 +21,7 @@ import {
   useFetchWithToken,
 } from '@/hooks/fetch/useFetchWithToken';
 import Edit, { IEditData } from './Edit';
+import { useFetchLanguages } from '@/hooks/fetch/useFetchLanguages';
 
 const CountRequestWords = '10';
 
@@ -42,6 +43,7 @@ export default function Card({
   const [loading, setLoading] = useState(true);
   const [isShowRenamePopup, setIsShowRenamePopup] = useState(false);
   const vocabulariesStore = useVocabulariesStore();
+  const fetchLanguages = useFetchLanguages();
 
   const { funcFetch: fetchRandomWords } = useFetchWithToken(
     '/vocabulary/words/random',
@@ -121,6 +123,10 @@ export default function Card({
     }
 
     asyncFetchRandomWords();
+
+    return () => {
+      setWords([]);
+    };
   }, [vocab.id]);
 
   if (loading) {
@@ -165,9 +171,9 @@ export default function Card({
         </div>
 
         <div className='flex justify-center items-center mt-1 gap-x-2'>
-          <span>{vocab.nativeLang}</span>
+          <span>{fetchLanguages.get(vocab.nativeLang)}</span>
           <ChevronDoubleRightIcon className={'flex size-5'} />
-          <span>{vocab.translateLang}</span>
+          <span>{fetchLanguages.get(vocab.translateLang)}</span>
         </div>
         <div
           className='flex relative w-96 h-80'

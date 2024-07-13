@@ -26,9 +26,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     }
     const payload = JSON.parse(atob(get().accessToken.split('.')[1]));
     const exp = payload['exp'];
-    const dateNow = Date.now();
 
-    return dateNow < exp * 1000;
+    return Date.now() < exp * 1000;
   },
   setAccessToken: (token) => {
     localStorage.setItem('access_token', token);
