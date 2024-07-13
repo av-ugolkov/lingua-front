@@ -139,12 +139,12 @@ export default function Card({
         <div className='flex align-middle justify-center'>
           <div className='flex min-w-7 h-10 my-1 justify-center items-center'>
             {vocab.accessID === 0 ? (
-              <LockClosedIcon className='size-5 text-red-600' />
+              <LockClosedIcon className='size-5 text-red-500 duration-300 hover:text-red-700 hover:duration-300' />
             ) : vocab.accessID === 1 ? (
-              <LockOpenIcon className='size-5 text-yellow-600' />
+              <LockOpenIcon className='size-5 text-yellow-500 duration-300 hover:text-yellow-700 hover:duration-300' />
             ) : (
               vocab.accessID === 2 && (
-                <LockOpenIcon className='size-5 text-green-600' />
+                <LockOpenIcon className='size-5 text-green-500 duration-300 hover:text-green-700 hover:duration-300' />
               )
             )}
           </div>
