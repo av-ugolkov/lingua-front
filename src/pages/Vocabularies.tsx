@@ -27,6 +27,7 @@ export default function Vocabularies() {
         access_id: vocab.accessID,
         native_lang: vocab.nativeLang,
         translate_lang: vocab.translateLang,
+        description: vocab.description,
         tags: [],
       });
       const response = await fetchCreateVocabulary({
@@ -35,12 +36,13 @@ export default function Vocabularies() {
       if (response.ok) {
         const newVocab: VocabularyState = {
           id: response.data['id'],
-          name: response.data['name'],
-          accessID: response.data['access_id'],
-          nativeLang: response.data['native_lang'],
-          translateLang: response.data['translate_lang'],
-          tags: response.data['tags'] || [],
-          userID: response.data['user_id'],
+          name: vocab.name,
+          accessID: vocab.accessID,
+          nativeLang: vocab.nativeLang,
+          translateLang: vocab.translateLang,
+          description: vocab.description,
+          tags: vocab.tags,
+          userID: vocab.userID,
         };
         vocabulariesStore.addVocabulary(newVocab);
         setIsShowCreatePopup(false);
