@@ -9,12 +9,13 @@ import { SortTypes } from '@/models/Sorted';
 import { AdjustmentsHorizontalIcon } from '@heroicons/react/24/outline';
 import SearchInput from '../elements/SearchInput';
 import Pagination from './Pagination';
-import { useFetchLanguages } from '@/hooks/fetch/useFetchLanguages';
+import { useLanguagesStore } from '@/hooks/stores/useLanguagesStore';
 
 export interface Vocab {
   id: string;
   name: string;
   description: string;
+  wordsCount: number;
   userID: string;
   userName: string;
   accessID: number;
@@ -30,11 +31,11 @@ const countsItemsPerPage = [5, 10, 15, 20, 25];
 
 export default function List() {
   const authStore = useAuthStore();
-  const fetchLanguages = useFetchLanguages();
+  const { languages: languagesStore, fetchLanguages } = useLanguagesStore();
   const [languages, setLanguages] = useState([{ lang: 'Any', code: 'any' }]);
 
   const [searchValue, setSearchValue] = useState('');
-  const [sortedType, setSortedType] = useState(SortTypes[0]);
+  const [sortedType, setSortedType] = useState(SortTypes[3]);
   const [pageNum, setPageNum] = useState(1);
   const [countItems, setCountItems] = useState(0);
   const [nativeLang, setNativeLang] = useState('any');
@@ -45,8 +46,8 @@ export default function List() {
   const [vocabs, setVocabs] = useState(vocabsEmpty);
 
   useEffect(() => {
-    if (fetchLanguages.size > 0) {
-      fetchLanguages.forEach((v, k) => {
+    if (languagesStore.size > 0) {
+      languagesStore.forEach((v, k) => {
         setLanguages((prev) => [
           ...prev,
           {
@@ -55,8 +56,10 @@ export default function List() {
           },
         ]);
       });
+    } else {
+      fetchLanguages();
     }
-  }, [fetchLanguages]);
+  }, [languagesStore]);
 
   useEffect(() => {
     async function asyncFetchData() {
@@ -100,6 +103,7 @@ export default function List() {
               nativeLang: item['native_lang'],
               translateLang: item['translate_lang'],
               description: item['description'],
+              wordsCount: item['words_count'],
               tags: item['tags'],
               createdAt: new Date(item['created_at']),
               updatedAt: new Date(item['updated_at']),
@@ -171,6 +175,7 @@ export default function List() {
             <ListBox
               id='native_language'
               items={mapToLanguages()}
+              defaultIndexValue={0}
               onChange={(value) => {
                 const lang =
                   languages.find((tp) => tp.lang === value) || languages[0];
@@ -181,6 +186,7 @@ export default function List() {
             <ListBox
               id='translate_language'
               items={mapToLanguages()}
+              defaultIndexValue={0}
               onChange={(value) => {
                 const lang =
                   languages.find((tp) => tp.lang === value) || languages[0];
@@ -191,6 +197,7 @@ export default function List() {
             <ListBox
               id='type_sorted'
               items={mapToSortedType()}
+              defaultIndexValue={3}
               onChange={(value) => {
                 const typeSort =
                   SortTypes.find((tp) => tp.name === value) || SortTypes[0];
@@ -201,6 +208,7 @@ export default function List() {
             <ListBox
               id='count_items'
               items={mapToCountItemsPerPage()}
+              defaultIndexValue={0}
               onChange={(value) => {
                 setPageNum(1);
                 setCountItemsPerPage(+value);

@@ -21,7 +21,7 @@ import {
   useFetchWithToken,
 } from '@/hooks/fetch/useFetchWithToken';
 import Edit, { IEditData } from './Edit';
-import { useFetchLanguages } from '@/hooks/fetch/useFetchLanguages';
+import { useLanguagesStore } from '@/hooks/stores/useLanguagesStore';
 
 const CountRequestWords = '10';
 
@@ -43,7 +43,7 @@ export default function Card({
   const [loading, setLoading] = useState(true);
   const [isShowRenamePopup, setIsShowRenamePopup] = useState(false);
   const vocabulariesStore = useVocabulariesStore();
-  const fetchLanguages = useFetchLanguages();
+  const { languages, fetchLanguages } = useLanguagesStore();
 
   const { funcFetch: fetchRandomWords } = useFetchWithToken(
     '/vocabulary/words/random',
@@ -97,6 +97,12 @@ export default function Card({
 
     asyncDeleteVocabulary();
   }
+
+  useEffect(() => {
+    if (languages.size === 0) {
+      fetchLanguages();
+    }
+  }, [languages]);
 
   useEffect(() => {
     async function asyncFetchRandomWords() {
@@ -171,9 +177,9 @@ export default function Card({
         </div>
 
         <div className='flex justify-center items-center mt-1 gap-x-2'>
-          <span>{fetchLanguages.get(vocab.nativeLang)}</span>
+          <span>{languages.get(vocab.nativeLang)}</span>
           <ChevronDoubleRightIcon className={'flex size-5'} />
-          <span>{fetchLanguages.get(vocab.translateLang)}</span>
+          <span>{languages.get(vocab.translateLang)}</span>
         </div>
         <div
           className='flex relative w-96 h-80'

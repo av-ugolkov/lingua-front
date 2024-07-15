@@ -6,7 +6,7 @@ import Button from '../elements/Button';
 import SelectLanguages from './SelectLanguages';
 import { VocabularyState } from '@/hooks/stores/useVocabulariesStore';
 import { fetchData } from '@/scripts/fetch/fetchData';
-import { ILanguage, useFetchLanguages } from '@/hooks/fetch/useFetchLanguages';
+import { ILanguage, useLanguagesStore } from '@/hooks/stores/useLanguagesStore';
 
 export interface IAccess {
   id: number;
@@ -20,12 +20,14 @@ const tempVocabulary: VocabularyState = {
   accessID: 2,
   nativeLang: '',
   translateLang: '',
+  description: '',
   tags: [],
   userID: '',
 };
 
 const tempLanguages: ILanguage[] = [];
 const tempAccesses: IAccess[] = [];
+const maxDescriptionLength = 150;
 
 export default function Create({
   addCallback,
@@ -35,13 +37,13 @@ export default function Create({
   closeCallback: () => void;
 }) {
   const [vocab, setVocab] = useState(tempVocabulary);
-  const fetchLanguages = useFetchLanguages();
+  const { languages: languagesStore, fetchLanguages } = useLanguagesStore();
   const [languages, setLanguages] = useState(tempLanguages);
   const [accesses, setAccesses] = useState(tempAccesses);
 
   useEffect(() => {
-    if (fetchLanguages.size > 0) {
-      fetchLanguages.forEach((v, k) => {
+    if (languagesStore.size > 0) {
+      languagesStore.forEach((v, k) => {
         setLanguages((prev) => [
           ...prev,
           {
@@ -50,8 +52,10 @@ export default function Create({
           },
         ]);
       });
+    } else {
+      fetchLanguages();
     }
-  }, [fetchLanguages]);
+  }, [languagesStore]);
 
   useEffect(() => {
     async function asyncFetchAccesses() {
@@ -126,6 +130,27 @@ export default function Create({
                   languages={languages}
                   onSelect={(e) => setVocab({ ...vocab, translateLang: e })}
                 />
+
+                <div className='col-span-2'>
+                  <div>
+                    <label className='mb-1 block text-sm font-medium text-gray-700'>
+                      Description
+                    </label>
+                    <textarea
+                      id='example2'
+                      className='block w-full p-2 resize-none bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500'
+                      rows={3}
+                      maxLength={maxDescriptionLength}
+                      onChange={(e) =>
+                        setVocab({ ...vocab, description: e.target.value })
+                      }
+                      placeholder='Leave a description'></textarea>
+                    <p className='mt-1 text-sm text-gray-500'>
+                      {vocab.description.length}/{maxDescriptionLength}
+                    </p>
+                  </div>
+                </div>
+
                 <div className='col-span-2'>
                   <hr className='my-3 h-px border-0 bg-gray-300' />
                   <span className='flex text-center content-center mb-2 text-sm font-medium text-gray-900'>

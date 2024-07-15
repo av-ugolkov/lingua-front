@@ -6,6 +6,7 @@ export interface VocabularyState {
   accessID: number;
   nativeLang: string;
   translateLang: string;
+  description: string;
   tags: string[];
   userID: string;
 }
@@ -25,6 +26,7 @@ export const EmptyVocabulary: VocabularyState = {
   accessID: 2,
   nativeLang: '',
   translateLang: '',
+  description: '',
   tags: [],
   userID: '',
 };
