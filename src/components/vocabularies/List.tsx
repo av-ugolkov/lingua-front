@@ -32,6 +32,7 @@ export default function List() {
             accessID: item['access_id'],
             nativeLang: item['native_lang'],
             translateLang: item['translate_lang'],
+            description: item['description'],
             tags: item['tags'],
             userID: item['user_id'],
           });

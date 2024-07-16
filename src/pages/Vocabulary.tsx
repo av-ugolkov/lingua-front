@@ -13,17 +13,19 @@ export default function Vocabulary() {
   const [name, setName] = useState(false);
   const [loading, setLoading] = useState(true);
   const { funcFetch: fetchGetVocabulary } = useFetchWithToken(
-    `/account/vocabulary`,
+    `/vocabulary`,
     RequestMethod.GET
   );
 
   useEffect(() => {
     async function asyncFetchVocabulary() {
-      const response = await fetchGetVocabulary({
-        queries: new Map([['id', id || '']]),
-      });
-      if (response.ok) {
-        setName(response.data['name']);
+      if (id) {
+        const response = await fetchGetVocabulary({
+          queries: new Map([['id', id]]),
+        });
+        if (response.ok) {
+          setName(response.data['name']);
+        }
       }
       setLoading(false);
     }

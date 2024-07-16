@@ -3,10 +3,31 @@ import { useEffect, useState } from 'react';
 import { useLanguagesStore } from '@/hooks/stores/useLanguagesStore';
 import { Vocab } from './List';
 import RightPanel from './RightPanel';
+import { LockClosedIcon, LockOpenIcon } from '@heroicons/react/24/outline';
+import { useAuthStore } from '@/hooks/stores/useAuthStore';
+import {
+  RequestMethod,
+  useFetchWithToken,
+} from '@/hooks/fetch/useFetchWithToken';
 
 export default function Card({ vocab }: { vocab: Vocab }) {
   const { languages, fetchLanguages } = useLanguagesStore();
+  const authStore = useAuthStore();
   const [loading, setLoading] = useState(true);
+  const { funcFetch: fetchOpenVocabulary } = useFetchWithToken(
+    '/vocabylary',
+    RequestMethod.GET
+  );
+
+  const { funcFetch: fetchCopyVocabulary } = useFetchWithToken(
+    '/vocabulary/copy',
+    RequestMethod.POST
+  );
+
+  const { funcFetch: fetchSubscribeToCreator } = useFetchWithToken(
+    '/account/subscribe',
+    RequestMethod.POST
+  );
 
   useEffect(() => {
     if (languages.size > 0) {
@@ -20,9 +41,72 @@ export default function Card({ vocab }: { vocab: Vocab }) {
     return <div></div>;
   }
 
+  async function CopyVocabulary() {
+    const response = await fetchCopyVocabulary({
+      body: JSON.stringify({ id: vocab.id }),
+    });
+    if (response.ok) {
+      console.log(response.data);
+    } else {
+      console.warn(response);
+    }
+  }
+
+  async function SubscribeToCreator() {
+    const response = await fetchSubscribeToCreator({
+      body: JSON.stringify({ user_id: vocab.userID }),
+    });
+    if (response.ok) {
+      console.log(response.data);
+    } else {
+      console.warn(response);
+    }
+  }
+
+  async function OpenVocabulary() {
+    const response = await fetchOpenVocabulary({
+      queries: new Map<string, string>([['id', vocab.id]]),
+    });
+    if (response.ok) {
+      console.log(response.data);
+    } else {
+      console.warn(response);
+    }
+  }
+
   return (
     <div className='flex bg-gray-300 h-fit shadow shadow-blue-300'>
-      <div className='flex flex-col w-full justify-around items-center mx-4'>
+      <div className='flex w-0'>
+        <div className='relative size-5 top-1 left-1'>
+          {vocab.accessID === 0 ? (
+            <LockClosedIcon
+              className='size-5 text-red-500'
+              title='Private'
+            />
+          ) : vocab.accessID === 1 ? (
+            <LockOpenIcon
+              className='size-5 text-yellow-500'
+              title='For subscribers'
+            />
+          ) : (
+            vocab.accessID === 2 && (
+              <LockOpenIcon
+                className='size-5 text-green-500'
+                title='Public'
+              />
+            )
+          )}
+        </div>
+      </div>
+      <button
+        className='flex flex-col w-full justify-around items-center mx-1'
+        onClick={() => {
+          if (authStore.isActiveToken()) {
+            OpenVocabulary();
+          } else {
+            console.log('Please login first');
+          }
+        }}>
         <div className='flex w-full justify-center items-center my-2 gap-1'>
           <div>
             <span className='text-lg font-bold'>{vocab.name}</span>
@@ -54,12 +138,23 @@ export default function Card({ vocab }: { vocab: Vocab }) {
             {vocab.updatedAt.toLocaleDateString('en-GB')}
           </div>
         </div>
-      </div>
+      </button>
       <div className='content-center h-28'>
         <RightPanel
-          onCopy={() => {}}
-          onLike={() => {}}
-          onDislike={() => {}}
+          onCopy={() => {
+            if (authStore.isActiveToken()) {
+              CopyVocabulary();
+            } else {
+              console.log('Please login first');
+            }
+          }}
+          onSubscribe={() => {
+            if (authStore.isActiveToken()) {
+              SubscribeToCreator();
+            } else {
+              console.log('Please login first');
+            }
+          }}
         />
       </div>
     </div>
