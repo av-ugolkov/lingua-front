@@ -3,18 +3,16 @@ import { useParams } from 'react-router-dom';
 
 import SearchAndOrder from '@/components/vocabulary/SearchAndOrder';
 import Words from '@/components/vocabulary/Words';
-import {
-  RequestMethod,
-  useFetchWithToken,
-} from '@/hooks/fetch/useFetchWithToken';
+import { RequestMethod, AuthStore, useFetch } from '@/hooks/fetch/useFetch';
 
 export default function Vocabulary() {
   const { id } = useParams();
   const [name, setName] = useState(false);
   const [loading, setLoading] = useState(true);
-  const { funcFetch: fetchGetVocabulary } = useFetchWithToken(
+  const { funcFetch: fetchGetVocabulary } = useFetch(
     `/vocabulary`,
-    RequestMethod.GET
+    RequestMethod.GET,
+    AuthStore.USE
   );
 
   useEffect(() => {

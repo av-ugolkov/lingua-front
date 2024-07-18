@@ -6,18 +6,16 @@ import {
   VocabularyState,
   useVocabulariesStore,
 } from '@/hooks/stores/useVocabulariesStore';
-import {
-  RequestMethod,
-  useFetchWithToken,
-} from '@/hooks/fetch/useFetchWithToken';
+import { RequestMethod, AuthStore, useFetch } from '@/hooks/fetch/useFetch';
 
 export default function List() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const vocabulariesStore = useVocabulariesStore();
-  const { funcFetch: fetchVocabularies } = useFetchWithToken(
+  const { funcFetch: fetchVocabularies } = useFetch(
     '/account/vocabularies',
-    RequestMethod.GET
+    RequestMethod.GET,
+    AuthStore.USE
   );
 
   useEffect(() => {

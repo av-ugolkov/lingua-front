@@ -7,10 +7,7 @@ import {
   XCircleIcon,
 } from '@heroicons/react/24/outline';
 
-import {
-  RequestMethod,
-  useFetchWithToken,
-} from '@/hooks/fetch/useFetchWithToken';
+import { RequestMethod, AuthStore, useFetch } from '@/hooks/fetch/useFetch';
 import {
   EmptyWord,
   InvalidateDate,
@@ -26,27 +23,33 @@ import InputField from './InputField';
 export default function WordCard({
   word,
   updateWord,
+  editable = true,
 }: {
   word: VocabWordState;
   updateWord: (state: VocabWordState) => void;
+  editable?: boolean;
 }) {
   const { id: vocabID } = useParams();
   const vocabWordsStore = useVocabWordsStore();
-  const { funcFetch: fetchAddWord } = useFetchWithToken(
+  const { funcFetch: fetchAddWord } = useFetch(
     '/vocabulary/word',
-    RequestMethod.POST
+    RequestMethod.POST,
+    AuthStore.USE
   );
-  const { funcFetch: fetchUpdateWord } = useFetchWithToken(
+  const { funcFetch: fetchUpdateWord } = useFetch(
     '/vocabulary/word/update',
-    RequestMethod.POST
+    RequestMethod.POST,
+    AuthStore.USE
   );
-  const { funcFetch: fetchDeleteWord } = useFetchWithToken(
+  const { funcFetch: fetchDeleteWord } = useFetch(
     '/vocabulary/word',
-    RequestMethod.DELETE
+    RequestMethod.DELETE,
+    AuthStore.USE
   );
-  const { funcFetch: fetchGetWord } = useFetchWithToken(
+  const { funcFetch: fetchGetWord } = useFetch(
     '/vocabulary/word',
-    RequestMethod.GET
+    RequestMethod.GET,
+    AuthStore.USE
   );
 
   function addVocabWord() {
@@ -216,36 +219,38 @@ export default function WordCard({
               />
             </BtnCard>
           ) : (
-            <>
-              <DropdownMenu title='Menu'>
-                <DropdownItem disable>
-                  <span className='block text-nowrap'>Copy to</span>
-                  <DocumentDuplicateIcon className='size-5' />
-                </DropdownItem>
-                <DropdownItem disable>
-                  <span className='block text-nowrap'>Move to</span>
-                  <DocumentDuplicateIcon className='size-5 ' />
-                </DropdownItem>
-                <DropdownItem onClick={deleteVocabWord}>
-                  Delete
-                  <TrashIcon className='size-5' />
-                </DropdownItem>
-              </DropdownMenu>
-              <BtnCard onClick={updateVocabWord}>
-                <CheckCircleIcon
-                  className='w-6'
-                  color='green'
-                  title='Save changes'
-                />
-              </BtnCard>
-              <BtnCard onClick={cancelChanges}>
-                <XCircleIcon
-                  className='w-6'
-                  color='red'
-                  title='Cancel changes'
-                />
-              </BtnCard>
-            </>
+            editable && (
+              <>
+                <DropdownMenu title='Menu'>
+                  <DropdownItem disable>
+                    <span className='block text-nowrap'>Copy to</span>
+                    <DocumentDuplicateIcon className='size-5' />
+                  </DropdownItem>
+                  <DropdownItem disable>
+                    <span className='block text-nowrap'>Move to</span>
+                    <DocumentDuplicateIcon className='size-5 ' />
+                  </DropdownItem>
+                  <DropdownItem onClick={deleteVocabWord}>
+                    Delete
+                    <TrashIcon className='size-5' />
+                  </DropdownItem>
+                </DropdownMenu>
+                <BtnCard onClick={updateVocabWord}>
+                  <CheckCircleIcon
+                    className='w-6'
+                    color='green'
+                    title='Save changes'
+                  />
+                </BtnCard>
+                <BtnCard onClick={cancelChanges}>
+                  <XCircleIcon
+                    className='w-6'
+                    color='red'
+                    title='Cancel changes'
+                  />
+                </BtnCard>
+              </>
+            )
           )}
         </div>
       </div>

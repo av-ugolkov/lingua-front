@@ -5,28 +5,30 @@ import { Vocab } from './List';
 import RightPanel from './RightPanel';
 import { LockClosedIcon, LockOpenIcon } from '@heroicons/react/24/outline';
 import { useAuthStore } from '@/hooks/stores/useAuthStore';
-import {
-  RequestMethod,
-  useFetchWithToken,
-} from '@/hooks/fetch/useFetchWithToken';
+import { useFetch, RequestMethod, AuthStore } from '@/hooks/fetch/useFetch';
+import { useNavigate } from 'react-router-dom';
 
 export default function Card({ vocab }: { vocab: Vocab }) {
+  const navigate = useNavigate();
   const { languages, fetchLanguages } = useLanguagesStore();
   const authStore = useAuthStore();
   const [loading, setLoading] = useState(true);
-  const { funcFetch: fetchOpenVocabulary } = useFetchWithToken(
-    '/vocabylary',
-    RequestMethod.GET
+  const { funcFetch: fetchOpenVocabulary } = useFetch(
+    '/vocabulary',
+    RequestMethod.GET,
+    AuthStore.OPTIONAL
   );
 
-  const { funcFetch: fetchCopyVocabulary } = useFetchWithToken(
+  const { funcFetch: fetchCopyVocabulary } = useFetch(
     '/vocabulary/copy',
-    RequestMethod.POST
+    RequestMethod.POST,
+    AuthStore.USE
   );
 
-  const { funcFetch: fetchSubscribeToCreator } = useFetchWithToken(
+  const { funcFetch: fetchSubscribeToCreator } = useFetch(
     '/account/subscribe',
-    RequestMethod.POST
+    RequestMethod.POST,
+    AuthStore.USE
   );
 
   useEffect(() => {
@@ -68,7 +70,7 @@ export default function Card({ vocab }: { vocab: Vocab }) {
       queries: new Map<string, string>([['id', vocab.id]]),
     });
     if (response.ok) {
-      console.log(response.data);
+      navigate(`/vocabulary/${response.data['id']}`);
     } else {
       console.warn(response);
     }
@@ -101,11 +103,7 @@ export default function Card({ vocab }: { vocab: Vocab }) {
       <button
         className='flex flex-col w-full justify-around items-center mx-1'
         onClick={() => {
-          if (authStore.isActiveToken()) {
-            OpenVocabulary();
-          } else {
-            console.log('Please login first');
-          }
+          OpenVocabulary();
         }}>
         <div className='flex w-full justify-center items-center my-2 gap-1'>
           <div>

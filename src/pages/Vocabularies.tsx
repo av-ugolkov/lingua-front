@@ -3,10 +3,7 @@ import { useState } from 'react';
 import List from '@/components/vocabularies/List';
 import Button from '@/components/elements/Button';
 import Create from '@/components/vocabularies/Create';
-import {
-  RequestMethod,
-  useFetchWithToken,
-} from '@/hooks/fetch/useFetchWithToken';
+import { RequestMethod, AuthStore, useFetch } from '@/hooks/fetch/useFetch';
 import {
   useVocabulariesStore,
   VocabularyState,
@@ -15,9 +12,10 @@ import {
 export default function Vocabularies() {
   const [isShowCreatePopup, setIsShowCreatePopup] = useState(false);
   const vocabulariesStore = useVocabulariesStore();
-  const { funcFetch: fetchCreateVocabulary } = useFetchWithToken(
+  const { funcFetch: fetchCreateVocabulary } = useFetch(
     `/account/vocabulary`,
-    RequestMethod.POST
+    RequestMethod.POST,
+    AuthStore.USE
   );
 
   function createVocabulary(vocab: VocabularyState) {

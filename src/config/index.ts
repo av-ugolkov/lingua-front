@@ -1,23 +1,19 @@
 export interface Config {
-  type: string
-  host: string
-  port: number
+  type: string;
+  host: string;
+  port: number;
+  version: string;
 }
 
-const config: Config = //import.meta.env.DEV
-   {
-      type: 'http',
-      host: 'localhost',
-      port: 5000
-    }
-  // : {
-  //     type: 'https',
-  //     host: 'linguaevo.twc1.net',
-  //     port: 5000
-  //   }
+const config: Config = {
+  type: 'http',
+  host: 'localhost',
+  port: 5000,
+  version: 'v0',
+};
 
 export function getAddr(): string {
-  return `${config.type}://${config.host}:${config.port}`
+  return `${config.type}://${config.host}:${config.port}/${config.version}`;
 }
 
-export default config
+export default config;

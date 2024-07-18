@@ -16,10 +16,7 @@ import {
 } from '@/hooks/stores/useVocabulariesStore';
 import DropdownMenu from '../elements/Dropdown/DropdownMenu';
 import DropdownItem from '../elements/Dropdown/Item';
-import {
-  RequestMethod,
-  useFetchWithToken,
-} from '@/hooks/fetch/useFetchWithToken';
+import { RequestMethod, AuthStore, useFetch } from '@/hooks/fetch/useFetch';
 import Edit, { IEditData } from './Edit';
 import { useLanguagesStore } from '@/hooks/stores/useLanguagesStore';
 
@@ -45,17 +42,20 @@ export default function Card({
   const vocabulariesStore = useVocabulariesStore();
   const { languages, fetchLanguages } = useLanguagesStore();
 
-  const { funcFetch: fetchRandomWords } = useFetchWithToken(
+  const { funcFetch: fetchRandomWords } = useFetch(
     '/vocabulary/words/random',
-    RequestMethod.GET
+    RequestMethod.GET,
+    AuthStore.USE
   );
-  const { funcFetch: fetchEditVocabulary } = useFetchWithToken(
+  const { funcFetch: fetchEditVocabulary } = useFetch(
     `/account/vocabulary`,
-    RequestMethod.PUT
+    RequestMethod.PUT,
+    AuthStore.USE
   );
-  const { funcFetch: fetchDeleteVocabulary } = useFetchWithToken(
+  const { funcFetch: fetchDeleteVocabulary } = useFetch(
     `/account/vocabulary`,
-    RequestMethod.DELETE
+    RequestMethod.DELETE,
+    AuthStore.USE
   );
 
   function renameVocabulary(editData: IEditData) {

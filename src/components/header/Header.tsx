@@ -3,18 +3,16 @@ import { useNavigate } from 'react-router-dom';
 
 import HeaderBtn from './HeaderBtn';
 import Account from './Account';
-import {
-  RequestMethod,
-  useFetchWithToken,
-} from '@/hooks/fetch/useFetchWithToken';
+import { RequestMethod, AuthStore, useFetch } from '@/hooks/fetch/useFetch';
 import { useAuthStore } from '@/hooks/stores/useAuthStore';
 
 export default function Header() {
   const navigate = useNavigate();
   const authStore = useAuthStore();
-  const { funcFetch: fetchUser } = useFetchWithToken(
+  const { funcFetch: fetchUser } = useFetch(
     '/user/id',
-    RequestMethod.GET
+    RequestMethod.GET,
+    AuthStore.USE
   );
 
   const [isAuth, setIsAuth] = useState(false);
