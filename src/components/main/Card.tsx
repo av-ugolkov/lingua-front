@@ -47,7 +47,7 @@ export default function Card({ vocab }: { vocab: Vocab }) {
 
   async function CopyVocabulary() {
     const response = await fetchCopyVocabulary({
-      body: JSON.stringify({ id: vocab.id }),
+      queries: new Map<string, string>([['id', vocab.id]]),
     });
     if (response.ok) {
       console.log(response.data);
