@@ -7,8 +7,10 @@ import { LockClosedIcon, LockOpenIcon } from '@heroicons/react/24/outline';
 import { useAuthStore } from '@/hooks/stores/useAuthStore';
 import { useFetch, RequestMethod, AuthStore } from '@/hooks/fetch/useFetch';
 import { useNavigate } from 'react-router-dom';
+import { useNotificationStore } from '../notification/useNotificationStore';
 
 export default function Card({ vocab }: { vocab: Vocab }) {
+  const { notificationWarning } = useNotificationStore();
   const navigate = useNavigate();
   const { languages, fetchLanguages } = useLanguagesStore();
   const authStore = useAuthStore();
@@ -72,7 +74,7 @@ export default function Card({ vocab }: { vocab: Vocab }) {
     if (response.ok) {
       navigate(`/vocabulary/${response.data['id']}`);
     } else {
-      console.warn(response);
+      notificationWarning(response.data);
     }
   }
 
