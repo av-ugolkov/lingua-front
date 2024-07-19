@@ -74,7 +74,7 @@ export default function Card({ vocab }: { vocab: Vocab }) {
     if (response.ok) {
       navigate(`/vocabulary/${response.data['id']}`);
     } else {
-      notificationWarning(response.data);
+      notificationWarning(response.data['msg'] || response.data);
     }
   }
 

@@ -32,12 +32,14 @@ export default function Notification({
     <>
       <div
         className={clsx(
-          'flex w-96 h-fit p-2 my-1 justify-between',
+          'flex flex-row w-fit h-fit p-2 my-1 justify-between',
           color(notification.type)
         )}>
         <div className='flex items-center gap-x-1'>
           {icon(notification.type)}
-          <div>{notification.msg}</div>
+          <div className='w-[340px] text-wrap break-words overflow-clip'>
+            {notification.msg}
+          </div>
         </div>
         <button onClick={() => removeNotification(notification.id)}>
           <XMarkIcon className='w-5 h-5' />
@@ -63,12 +65,12 @@ const icon = (type: string) => {
 const color = (type: string) => {
   switch (type) {
     case NotificationType.Info:
-      return 'bg-blue-500';
+      return 'bg-blue-500 opacity-90';
     case NotificationType.Warning:
-      return 'bg-yellow-500';
+      return 'bg-yellow-500 opacity-90';
     case NotificationType.Success:
-      return 'bg-green-500';
+      return 'bg-green-500 opacity-90';
     default:
-      return 'bg-red-500';
+      return 'bg-red-500 opacity-90';
   }
 };

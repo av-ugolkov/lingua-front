@@ -1,8 +1,5 @@
 import { useEffect, useState } from 'react';
 
-import { useAuthStore } from '@/hooks/stores/useAuthStore';
-import { fetchData } from '@/scripts/fetch/fetchData';
-import { refreshToken } from '@/scripts/middleware/refreshToken';
 import Card from './Card';
 import ListBox, { IListBoxItem } from './ListBox';
 import { SortTypes } from '@/models/Sorted';
@@ -10,6 +7,7 @@ import { AdjustmentsHorizontalIcon } from '@heroicons/react/24/outline';
 import SearchInput from '../elements/SearchInput';
 import Pagination from './Pagination';
 import { useLanguagesStore } from '@/hooks/stores/useLanguagesStore';
+import { AuthStore, RequestMethod, useFetch } from '@/hooks/fetch/useFetch';
 
 export interface Vocab {
   id: string;
@@ -30,10 +28,15 @@ const vocabsEmpty: Vocab[] = [];
 const countsItemsPerPage = [5, 10, 15, 20, 25];
 
 export default function List() {
-  const authStore = useAuthStore();
   const [loading, setLoading] = useState(false);
   const { languages: languagesStore, fetchLanguages } = useLanguagesStore();
   const [languages, setLanguages] = useState([{ lang: 'Any', code: 'any' }]);
+
+  const { funcFetch: fetchVocabs } = useFetch(
+    '/vocabularies',
+    RequestMethod.GET,
+    AuthStore.OPTIONAL
+  );
 
   const [searchValue, setSearchValue] = useState('');
   const [sortedType, setSortedType] = useState(SortTypes[3]);
@@ -63,33 +66,17 @@ export default function List() {
   }, [languagesStore]);
 
   useEffect(() => {
-    async function asyncFetchData() {
-      if (!authStore.isActiveToken()) {
-        const respToken = await refreshToken();
-        if (respToken.ok) {
-          authStore.setAccessToken(respToken.data);
-        }
-      }
-      const token = authStore.getAccessToken();
-      const response = await fetchData(
-        '/vocabularies',
-        {
-          method: 'get',
-          headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-        },
-        new Map<string, any>([
+    async function asyncFetchVocabs() {
+      const response = await fetchVocabs({
+        queries: new Map<string, any>([
           ['page', pageNum],
           ['per_page', countItemsPerPage],
           ['search', searchValue],
           ['order', sortedType.type],
           ['native_lang', nativeLang],
           ['translate_lang', translateLang],
-        ])
-      );
+        ]),
+      });
 
       if (response.ok) {
         const vocabs: Vocab[] = [];
@@ -117,7 +104,7 @@ export default function List() {
       setLoading(true);
     }
 
-    asyncFetchData();
+    asyncFetchVocabs();
 
     return () => {
       setVocabs(vocabsEmpty);

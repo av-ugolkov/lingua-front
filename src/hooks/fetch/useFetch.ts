@@ -21,7 +21,8 @@ export function useFetch(
   method: RequestMethod,
   authStore: AuthStore = AuthStore.NO
 ) {
-  const { getAccessToken, setAccessToken, isActiveToken } = useAuthStore();
+  const { getAccessToken, setAccessToken, clearAccessToken, isActiveToken } =
+    useAuthStore();
 
   const funcFetch = async function asyncFetchData({
     body,
@@ -46,12 +47,11 @@ export function useFetch(
         if (respToken.ok) {
           setAccessToken(respToken.data);
           token = respToken.data;
-        } else if (authStore == AuthStore.USE) {
-          return {
-            ok: respToken.ok,
-            status: respToken.status,
-            data: respToken.data,
-          };
+        } else {
+          clearAccessToken();
+          if (authStore == AuthStore.USE) {
+            return respToken;
+          }
         }
       }
 
@@ -60,12 +60,11 @@ export function useFetch(
         if (respToken.ok) {
           setAccessToken(respToken.data);
           token = respToken.data;
-        } else if (authStore == AuthStore.USE) {
-          return {
-            ok: respToken.ok,
-            status: respToken.status,
-            data: respToken.data,
-          };
+        } else {
+          clearAccessToken();
+          if (authStore == AuthStore.USE) {
+            return respToken;
+          }
         }
       }
 
