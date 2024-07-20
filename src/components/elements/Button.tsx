@@ -22,7 +22,7 @@ function Button({
         bgColor,
         hoverBgColor,
         focusOutlineColor,
-        `flex w-full h-full justify-center items-center rounded-md px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`
+        `flex w-full h-full justify-center items-center rounded-md px-3 py-1.5 text-sm text-nowrap font-semibold leading-6 text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`
       )}>
       {children}
     </button>

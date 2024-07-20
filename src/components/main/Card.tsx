@@ -1,16 +1,17 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-import { useLanguagesStore } from '@/hooks/stores/useLanguagesStore';
-import { Vocab } from './List';
-import RightPanel from './RightPanel';
 import { LockClosedIcon, LockOpenIcon } from '@heroicons/react/24/outline';
+
+import RightPanel from './RightPanel';
+import AuthPopup from '../elements/AuthPopup/AuthPopup';
+import { Vocab } from './List';
+import { useLanguagesStore } from '@/hooks/stores/useLanguagesStore';
 import { useAuthStore } from '@/hooks/stores/useAuthStore';
 import { useFetch, RequestMethod, AuthStore } from '@/hooks/fetch/useFetch';
-import { useNavigate } from 'react-router-dom';
-import { useNotificationStore } from '../notification/useNotificationStore';
 
 export default function Card({ vocab }: { vocab: Vocab }) {
-  const { notificationWarning } = useNotificationStore();
+  const [isShowSignInUpPopup, setIsShowSignInUpPopup] = useState(false);
   const navigate = useNavigate();
   const { languages, fetchLanguages } = useLanguagesStore();
   const authStore = useAuthStore();
@@ -74,89 +75,94 @@ export default function Card({ vocab }: { vocab: Vocab }) {
     if (response.ok) {
       navigate(`/vocabulary/${response.data['id']}`);
     } else {
-      notificationWarning(response.data['msg'] || response.data);
+      setIsShowSignInUpPopup(true);
     }
   }
 
   return (
-    <div className='flex bg-gray-300 h-fit shadow shadow-blue-300'>
-      <div className='flex w-0'>
-        <div className='relative size-5 top-1 left-1'>
-          {vocab.accessID === 0 ? (
-            <LockClosedIcon
-              className='size-5 text-red-500'
-              title='Private'
-            />
-          ) : vocab.accessID === 1 ? (
-            <LockOpenIcon
-              className='size-5 text-yellow-500'
-              title='For subscribers'
-            />
-          ) : (
-            vocab.accessID === 2 && (
-              <LockOpenIcon
-                className='size-5 text-green-500'
-                title='Public'
+    <>
+      <div className='flex bg-gray-300 h-fit shadow shadow-blue-300'>
+        <div className='flex w-0'>
+          <div className='relative size-5 top-1 left-1'>
+            {vocab.accessID === 0 ? (
+              <LockClosedIcon
+                className='size-5 text-red-500'
+                title='Private'
               />
-            )
-          )}
+            ) : vocab.accessID === 1 ? (
+              <LockOpenIcon
+                className='size-5 text-yellow-500'
+                title='For subscribers'
+              />
+            ) : (
+              vocab.accessID === 2 && (
+                <LockOpenIcon
+                  className='size-5 text-green-500'
+                  title='Public'
+                />
+              )
+            )}
+          </div>
+        </div>
+        <button
+          className='flex flex-col w-full justify-around items-center mx-1'
+          onClick={() => {
+            OpenVocabulary();
+          }}>
+          <div className='flex w-full justify-center items-center my-2 gap-1'>
+            <div>
+              <span className='text-lg font-bold'>{vocab.name}</span>
+            </div>
+            <div>
+              from{' '}
+              <span className='text-lg font-bold'>
+                {languages.get(vocab.nativeLang)}
+              </span>
+            </div>
+            <div>
+              to{' '}
+              <span className='text-lg font-bold'>
+                {languages.get(vocab.translateLang)}
+              </span>
+            </div>
+            <div>
+              with <span className='text-lg font-bold'>{vocab.wordsCount}</span>{' '}
+              words
+            </div>
+          </div>
+          <div className='flex w-full justify-center items-center'>
+            <div>{vocab.description || 'No description'}</div>
+          </div>
+          <div className='flex bottom-12 w-full justify-start items-center mt-2'>
+            <div className='text-sm text-gray-500'>
+              Created by <span className='font-bold'>{vocab.userName}</span>
+              {' at '}
+              {vocab.updatedAt.toLocaleDateString('en-GB')}
+            </div>
+          </div>
+        </button>
+        <div className='content-center h-28'>
+          <RightPanel
+            onCopy={() => {
+              if (authStore.isActiveToken()) {
+                CopyVocabulary();
+              } else {
+                console.log('Please login first');
+              }
+            }}
+            onSubscribe={() => {
+              if (authStore.isActiveToken()) {
+                SubscribeToCreator();
+              } else {
+                console.log('Please login first');
+              }
+            }}
+          />
         </div>
       </div>
-      <button
-        className='flex flex-col w-full justify-around items-center mx-1'
-        onClick={() => {
-          OpenVocabulary();
-        }}>
-        <div className='flex w-full justify-center items-center my-2 gap-1'>
-          <div>
-            <span className='text-lg font-bold'>{vocab.name}</span>
-          </div>
-          <div>
-            from{' '}
-            <span className='text-lg font-bold'>
-              {languages.get(vocab.nativeLang)}
-            </span>
-          </div>
-          <div>
-            to{' '}
-            <span className='text-lg font-bold'>
-              {languages.get(vocab.translateLang)}
-            </span>
-          </div>
-          <div>
-            with <span className='text-lg font-bold'>{vocab.wordsCount}</span>{' '}
-            words
-          </div>
-        </div>
-        <div className='flex w-full justify-center items-center'>
-          <div>{vocab.description || 'No description'}</div>
-        </div>
-        <div className='flex bottom-12 w-full justify-start items-center mt-2'>
-          <div className='text-sm text-gray-500'>
-            Created by <span className='font-bold'>{vocab.userName}</span>
-            {' at '}
-            {vocab.updatedAt.toLocaleDateString('en-GB')}
-          </div>
-        </div>
-      </button>
-      <div className='content-center h-28'>
-        <RightPanel
-          onCopy={() => {
-            if (authStore.isActiveToken()) {
-              CopyVocabulary();
-            } else {
-              console.log('Please login first');
-            }
-          }}
-          onSubscribe={() => {
-            if (authStore.isActiveToken()) {
-              SubscribeToCreator();
-            } else {
-              console.log('Please login first');
-            }
-          }}
-        />
-      </div>
-    </div>
+      {isShowSignInUpPopup && (
+        <AuthPopup close={() => setIsShowSignInUpPopup(false)} />
+      )}
+    </>
   );
 }

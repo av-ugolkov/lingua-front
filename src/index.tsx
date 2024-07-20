@@ -12,7 +12,7 @@ ReactDOM.createRoot(root!).render(
     <NotificationContainer
       position='bottom'
       side='right'
-      timeout={70000}
+      timeout={7000}
       max={5}
     />
     <RouterProvider router={router} />

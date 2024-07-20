@@ -42,20 +42,7 @@ export function useFetch(
 
     if (authStore !== AuthStore.NO) {
       let token = getAccessToken();
-      if (token === '') {
-        const respToken = await refreshToken();
-        if (respToken.ok) {
-          setAccessToken(respToken.data);
-          token = respToken.data;
-        } else {
-          clearAccessToken();
-          if (authStore == AuthStore.USE) {
-            return respToken;
-          }
-        }
-      }
-
-      if (!isActiveToken()) {
+      if (token === '' || !isActiveToken()) {
         const respToken = await refreshToken();
         if (respToken.ok) {
           setAccessToken(respToken.data);
