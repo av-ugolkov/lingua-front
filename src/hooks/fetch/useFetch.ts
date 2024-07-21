@@ -21,7 +21,7 @@ export function useFetch(
   method: RequestMethod,
   authStore: AuthStore = AuthStore.NO
 ) {
-  const { getAccessToken, setAccessToken, clearAccessToken, isActiveToken } =
+  const { getAccessToken, setAccessToken, deleteAccessToken, isActiveToken } =
     useAuthStore();
 
   const funcFetch = async function asyncFetchData({
@@ -33,6 +33,7 @@ export function useFetch(
   }): Promise<IResponseData> {
     const init: RequestInit = {
       method: method.toString(),
+      credentials: 'include',
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
@@ -48,7 +49,7 @@ export function useFetch(
           setAccessToken(respToken.data);
           token = respToken.data;
         } else {
-          clearAccessToken();
+          deleteAccessToken();
           if (authStore == AuthStore.USE) {
             return respToken;
           }

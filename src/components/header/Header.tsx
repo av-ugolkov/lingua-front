@@ -64,10 +64,20 @@ export default function Header() {
           name='Contact'
           url='/contact'
         />
-        <Account
-          isAuth={isAuth}
-          accountName={accountName}
-        />
+        {isAuth ? (
+          <Account accountName={accountName} />
+        ) : (
+          <div className='flex'>
+            <HeaderBtn
+              name='Sign Up'
+              url='/sign_up'
+            />
+            <HeaderBtn
+              name='Sign In'
+              url='/sign_in'
+            />
+          </div>
+        )}
       </div>
     </header>
   );
