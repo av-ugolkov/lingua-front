@@ -6,18 +6,16 @@ import {
   VocabularyState,
   useVocabulariesStore,
 } from '@/hooks/stores/useVocabulariesStore';
-import {
-  RequestMethod,
-  useFetchWithToken,
-} from '@/hooks/fetch/useFetchWithToken';
+import { RequestMethod, AuthStore, useFetch } from '@/hooks/fetch/useFetch';
 
 export default function List() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const vocabulariesStore = useVocabulariesStore();
-  const { funcFetch: fetchVocabularies } = useFetchWithToken(
+  const { funcFetch: fetchVocabularies } = useFetch(
     '/account/vocabularies',
-    RequestMethod.GET
+    RequestMethod.GET,
+    AuthStore.USE
   );
 
   useEffect(() => {
@@ -29,10 +27,12 @@ export default function List() {
           vocabularies.push({
             id: item['id'],
             name: item['name'],
+            accessID: item['access_id'],
             nativeLang: item['native_lang'],
             translateLang: item['translate_lang'],
+            description: item['description'],
             tags: item['tags'],
-            userId: item['user_id'],
+            userID: item['user_id'],
           });
         });
         vocabulariesStore.setVocabularies(vocabularies);
@@ -53,10 +53,7 @@ export default function List() {
       {vocabulariesStore.vocabularies.map((item) => (
         <Card
           key={item.id}
-          id={item.id}
-          title={item.name}
-          nativeLang={item.nativeLang}
-          translateLang={item.translateLang}
+          vocab={item}
           onClick={() => {
             navigate(`/vocabulary/${item.id}`);
           }}

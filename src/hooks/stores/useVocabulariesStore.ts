@@ -3,10 +3,12 @@ import { create } from 'zustand';
 export interface VocabularyState {
   id: string;
   name: string;
+  accessID: number;
   nativeLang: string;
   translateLang: string;
+  description: string;
   tags: string[];
-  userId: string;
+  userID: string;
 }
 
 interface VocabulariesState {
@@ -21,10 +23,12 @@ interface VocabulariesState {
 export const EmptyVocabulary: VocabularyState = {
   id: '',
   name: '',
+  accessID: 2,
   nativeLang: '',
   translateLang: '',
+  description: '',
   tags: [],
-  userId: '',
+  userID: '',
 };
 
 export const useVocabulariesStore = create<VocabulariesState>((set, get) => ({

@@ -1,18 +1,11 @@
 import { create } from 'zustand';
 
-interface SortedWordsState {
+import { Sorted } from '@/models/Sorted';
+
+export interface SortedWordsState {
   orderType: Sorted;
   setOrderType: (search: Sorted) => void;
   setDefaultOrderType: () => void;
-}
-
-export enum Sorted {
-  'Newest',
-  'Oldest',
-  'UpdateAsc',
-  'UpdateDesc',
-  'AtoZ',
-  'ZtoA',
 }
 
 export const useSortedWordsStore = create<SortedWordsState>((set) => ({

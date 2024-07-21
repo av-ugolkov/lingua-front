@@ -3,10 +3,7 @@ import { useState } from 'react';
 import List from '@/components/vocabularies/List';
 import Button from '@/components/elements/Button';
 import Create from '@/components/vocabularies/Create';
-import {
-  RequestMethod,
-  useFetchWithToken,
-} from '@/hooks/fetch/useFetchWithToken';
+import { RequestMethod, AuthStore, useFetch } from '@/hooks/fetch/useFetch';
 import {
   useVocabulariesStore,
   VocabularyState,
@@ -15,30 +12,35 @@ import {
 export default function Vocabularies() {
   const [isShowCreatePopup, setIsShowCreatePopup] = useState(false);
   const vocabulariesStore = useVocabulariesStore();
-  const { funcFetch: fetchCreateVocabulary } = useFetchWithToken(
+  const { funcFetch: fetchCreateVocabulary } = useFetch(
     `/account/vocabulary`,
-    RequestMethod.POST
+    RequestMethod.POST,
+    AuthStore.USE
   );
 
   function createVocabulary(vocab: VocabularyState) {
     async function asyncFetchCreateVocabulary() {
       const body = JSON.stringify({
         name: vocab.name,
+        access_id: vocab.accessID,
         native_lang: vocab.nativeLang,
         translate_lang: vocab.translateLang,
+        description: vocab.description,
         tags: [],
       });
       const response = await fetchCreateVocabulary({
         body: body,
       });
       if (response.ok) {
-        const newVocab = {
+        const newVocab: VocabularyState = {
           id: response.data['id'],
-          name: response.data['name'],
-          nativeLang: response.data['native_lang'],
-          translateLang: response.data['translate_lang'],
-          tags: response.data['tags'] || [],
-          userId: response.data['user_id'],
+          name: vocab.name,
+          accessID: vocab.accessID,
+          nativeLang: vocab.nativeLang,
+          translateLang: vocab.translateLang,
+          description: vocab.description,
+          tags: vocab.tags,
+          userID: vocab.userID,
         };
         vocabulariesStore.addVocabulary(newVocab);
         setIsShowCreatePopup(false);

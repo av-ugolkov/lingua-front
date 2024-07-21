@@ -29,7 +29,7 @@ export default function SelectLanguages({
         onChange={(e) => {
           onSelect(languages.find((l) => l.lang === e.target.value)!.code);
         }}
-        className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5'>
+        className='block w-full p-2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500'>
         <option
           disabled
           value={title}>

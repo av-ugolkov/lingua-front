@@ -6,22 +6,28 @@ import Button from '../elements/Button';
 import SelectLanguages from './SelectLanguages';
 import { VocabularyState } from '@/hooks/stores/useVocabulariesStore';
 import { fetchData } from '@/scripts/fetch/fetchData';
+import { ILanguage, useLanguagesStore } from '@/hooks/stores/useLanguagesStore';
 
-export interface ILanguage {
-  lang: string;
-  code: string;
+export interface IAccess {
+  id: number;
+  type: string;
+  name: string;
 }
 
 const tempVocabulary: VocabularyState = {
   id: '',
   name: '',
+  accessID: 2,
   nativeLang: '',
   translateLang: '',
+  description: '',
   tags: [],
-  userId: '',
+  userID: '',
 };
 
-const tempLanguage: ILanguage[] = [];
+const tempLanguages: ILanguage[] = [];
+const tempAccesses: IAccess[] = [];
+const maxDescriptionLength = 150;
 
 export default function Create({
   addCallback,
@@ -31,11 +37,29 @@ export default function Create({
   closeCallback: () => void;
 }) {
   const [vocab, setVocab] = useState(tempVocabulary);
-  const [languages, setLanguages] = useState(tempLanguage);
+  const { languages: languagesStore, fetchLanguages } = useLanguagesStore();
+  const [languages, setLanguages] = useState(tempLanguages);
+  const [accesses, setAccesses] = useState(tempAccesses);
 
   useEffect(() => {
-    async function asyncFetchData() {
-      const respData = await fetchData('/languages', {
+    if (languagesStore.size > 0) {
+      languagesStore.forEach((v, k) => {
+        setLanguages((prev) => [
+          ...prev,
+          {
+            lang: v,
+            code: k,
+          },
+        ]);
+      });
+    } else {
+      fetchLanguages();
+    }
+  }, [languagesStore]);
+
+  useEffect(() => {
+    async function asyncFetchAccesses() {
+      const respData = await fetchData('/accesses', {
         method: 'get',
         headers: {
           Accept: 'application/json',
@@ -43,21 +67,21 @@ export default function Create({
         },
       });
       if (respData.ok) {
+        let accessesData: IAccess[] = [];
         respData.data.forEach((item: any) => {
-          setLanguages((prev) => {
-            return [
-              ...prev,
-              {
-                lang: item['language'],
-                code: item['code'],
-              },
-            ];
+          accessesData.push({
+            id: item['id'],
+            type: item['type'],
+            name: item['name'],
           });
         });
+        const sorted = accessesData.sort((a, b) => (a.id < b.id ? 1 : -1));
+        setAccesses(sorted);
+      } else {
+        console.error(respData);
       }
     }
-
-    asyncFetchData();
+    asyncFetchAccesses();
   }, []);
 
   return (
@@ -65,9 +89,9 @@ export default function Create({
       <div className='flex justify-center items-center w-full h-full'>
         <div className='flex justify-center items-center p-4 w-full max-w-md max-h-full'>
           <div className='relative bg-white shadow-md shadow-blue-300'>
-            <div className='flex items-center justify-between p-4 border-b rounded-t'>
+            <div className='flex items-center justify-between p-2 border-b rounded-t'>
               <h3 className='text-lg font-semibold text-gray-900'>
-                Create new vocabulary
+                New vocabulary
               </h3>
               <button
                 type='button'
@@ -76,15 +100,16 @@ export default function Create({
                 <XMarkIcon className='size-5' />
               </button>
             </div>
+
             <form className='p-4'>
               <div className='grid gap-4 mb-4 grid-cols-2'>
                 <div className='col-span-2'>
-                  <span className='block mb-2 text-sm font-medium text-gray-900'>
+                  <span className='flex text-center content-center mb-2 text-sm font-medium text-gray-900'>
                     Name
                   </span>
                   <input
                     type='text'
-                    className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5'
+                    className='block w-full p-2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500'
                     placeholder='Vocabulary name'
                     required={true}
                     value={vocab.name}
@@ -105,6 +130,49 @@ export default function Create({
                   languages={languages}
                   onSelect={(e) => setVocab({ ...vocab, translateLang: e })}
                 />
+
+                <div className='col-span-2'>
+                  <div>
+                    <label className='mb-1 block text-sm font-medium text-gray-700'>
+                      Description
+                    </label>
+                    <textarea
+                      id='example2'
+                      className='block w-full p-2 resize-none bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500'
+                      rows={3}
+                      maxLength={maxDescriptionLength}
+                      onChange={(e) =>
+                        setVocab({ ...vocab, description: e.target.value })
+                      }
+                      placeholder='Leave a description'></textarea>
+                    <p className='mt-1 text-sm text-gray-500'>
+                      {vocab.description.length}/{maxDescriptionLength}
+                    </p>
+                  </div>
+                </div>
+
+                <div className='col-span-2'>
+                  <hr className='my-3 h-px border-0 bg-gray-300' />
+                  <span className='flex text-center content-center mb-2 text-sm font-medium text-gray-900'>
+                    Access
+                  </span>
+                  <select
+                    id='access'
+                    defaultValue='access'
+                    onChange={(e) => {
+                      setVocab({
+                        ...vocab,
+                        accessID: accesses.find(
+                          (l) => l.name === e.target.value
+                        )!.id,
+                      });
+                    }}
+                    className='block w-full p-2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500'>
+                    {accesses.map((access) => (
+                      <option key={access.id}>{access.name}</option>
+                    ))}
+                  </select>
+                </div>
               </div>
               <Button
                 bgColor='bg-indigo-600'

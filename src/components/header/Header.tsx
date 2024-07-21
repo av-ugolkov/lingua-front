@@ -3,18 +3,16 @@ import { useNavigate } from 'react-router-dom';
 
 import HeaderBtn from './HeaderBtn';
 import Account from './Account';
-import {
-  RequestMethod,
-  useFetchWithToken,
-} from '@/hooks/fetch/useFetchWithToken';
+import { RequestMethod, AuthStore, useFetch } from '@/hooks/fetch/useFetch';
 import { useAuthStore } from '@/hooks/stores/useAuthStore';
 
 export default function Header() {
   const navigate = useNavigate();
   const authStore = useAuthStore();
-  const { funcFetch: fetchUser } = useFetchWithToken(
+  const { funcFetch: fetchUser } = useFetch(
     '/user/id',
-    RequestMethod.GET
+    RequestMethod.GET,
+    AuthStore.USE
   );
 
   const [isAuth, setIsAuth] = useState(false);
@@ -42,7 +40,7 @@ export default function Header() {
   }
 
   return (
-    <header className='flex justify-between align-text-center bg-white shadow shadow-blue-300 min-w-max px-3 py-1 sticky top-0 z-50'>
+    <header className='flex justify-between align-text-center bg-white shadow shadow-blue-300 min-w-max px-3 py-1'>
       <div
         className='flex items-center'
         onClick={() => {

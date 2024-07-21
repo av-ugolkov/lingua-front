@@ -6,16 +6,19 @@ import {
   DocumentDuplicateIcon,
   TrashIcon,
   PencilIcon,
+  LockClosedIcon,
+  LockOpenIcon,
 } from '@heroicons/react/24/outline';
 
+import {
+  useVocabulariesStore,
+  VocabularyState,
+} from '@/hooks/stores/useVocabulariesStore';
 import DropdownMenu from '../elements/Dropdown/DropdownMenu';
 import DropdownItem from '../elements/Dropdown/Item';
-import {
-  RequestMethod,
-  useFetchWithToken,
-} from '@/hooks/fetch/useFetchWithToken';
-import Rename from './Rename';
-import { useVocabulariesStore } from '@/hooks/stores/useVocabulariesStore';
+import { RequestMethod, AuthStore, useFetch } from '@/hooks/fetch/useFetch';
+import Edit, { IEditData } from './Edit';
+import { useLanguagesStore } from '@/hooks/stores/useLanguagesStore';
 
 const CountRequestWords = '10';
 
@@ -26,47 +29,52 @@ interface IWord {
 const Words: IWord[] = [];
 
 export default function Card({
-  id,
-  title,
-  nativeLang,
-  translateLang,
+  vocab,
   onClick,
 }: {
-  id: string;
-  title: string;
-  nativeLang: string;
-  translateLang: string;
+  vocab: VocabularyState;
   onClick: () => void;
 }) {
-  const [name, setName] = useState(title);
+  const [vocabData, setVocabData] = useState(vocab);
   const [words, setWords] = useState(Words);
   const [loading, setLoading] = useState(true);
   const [isShowRenamePopup, setIsShowRenamePopup] = useState(false);
   const vocabulariesStore = useVocabulariesStore();
+  const { languages, fetchLanguages } = useLanguagesStore();
 
-  const { funcFetch: fetchRandomWords } = useFetchWithToken(
-    '/vocabulary/word/random',
-    RequestMethod.GET
+  const { funcFetch: fetchRandomWords } = useFetch(
+    '/vocabulary/words/random',
+    RequestMethod.GET,
+    AuthStore.USE
   );
-  const { funcFetch: fetchRenameVocabulary } = useFetchWithToken(
+  const { funcFetch: fetchEditVocabulary } = useFetch(
     `/account/vocabulary`,
-    RequestMethod.PUT
+    RequestMethod.PUT,
+    AuthStore.USE
   );
-  const { funcFetch: fetchDeleteVocabulary } = useFetchWithToken(
+  const { funcFetch: fetchDeleteVocabulary } = useFetch(
     `/account/vocabulary`,
-    RequestMethod.DELETE
+    RequestMethod.DELETE,
+    AuthStore.USE
   );
 
-  function renameVocabulary(newName: string) {
+  function renameVocabulary(editData: IEditData) {
     async function asyncRenameVocabulary() {
-      const response = await fetchRenameVocabulary({
-        queries: new Map([
-          ['id', id],
-          ['name', newName],
-        ]),
+      const response = await fetchEditVocabulary({
+        body: JSON.stringify({
+          id: vocab.id,
+          name: editData.name,
+          access_id: editData.accessID,
+        }),
       });
       if (response.ok) {
-        setName(newName);
+        setVocabData({
+          ...vocabData,
+          name: editData.name,
+          accessID: editData.accessID,
+        });
+        vocab.name = editData.name;
+        vocab.accessID = editData.accessID;
       } else {
         console.error(response);
       }
@@ -78,10 +86,10 @@ export default function Card({
   function deleteVocabulary() {
     async function asyncDeleteVocabulary() {
       const response = await fetchDeleteVocabulary({
-        queries: new Map<string, string>([['name', name]]),
+        queries: new Map<string, string>([['name', vocabData.name]]),
       });
       if (response.ok) {
-        vocabulariesStore.removeVocabulary(id);
+        vocabulariesStore.removeVocabulary(vocab.id);
       } else {
         console.error(response);
       }
@@ -91,10 +99,16 @@ export default function Card({
   }
 
   useEffect(() => {
+    if (languages.size === 0) {
+      fetchLanguages();
+    }
+  }, [languages]);
+
+  useEffect(() => {
     async function asyncFetchRandomWords() {
       const response = await fetchRandomWords({
         queries: new Map([
-          ['vocab_id', id],
+          ['vocab_id', vocab.id],
           ['limit', CountRequestWords],
         ]),
       });
@@ -115,7 +129,11 @@ export default function Card({
     }
 
     asyncFetchRandomWords();
-  }, [id]);
+
+    return () => {
+      setWords([]);
+    };
+  }, [vocab.id]);
 
   if (loading) {
     return <div></div>;
@@ -125,12 +143,23 @@ export default function Card({
     <>
       <div className='flex flex-col bg-gray-300 w-96 min-w-96 h-96 shadow-md shadow-blue-300 text-center'>
         <div className='flex align-middle justify-center'>
-          <div className='inline-block w-full cursor-default bg-gray-300 h-10 text-center font-semibold content-center text-xl ml-7 my-1 border-b-2 border-black'>
-            {name}
+          <div className='flex min-w-7 h-10 my-1 justify-center items-center'>
+            {vocab.accessID === 0 ? (
+              <LockClosedIcon className='size-5 text-red-500' />
+            ) : vocab.accessID === 1 ? (
+              <LockOpenIcon className='size-5 text-yellow-500' />
+            ) : (
+              vocab.accessID === 2 && (
+                <LockOpenIcon className='size-5 text-green-500' />
+              )
+            )}
+          </div>
+          <div className='inline-block w-full cursor-default bg-gray-300 h-10 text-center font-semibold content-center text-xl my-1 border-b-2 border-black'>
+            {vocabData.name}
           </div>
           <DropdownMenu>
             <DropdownItem onClick={() => setIsShowRenamePopup(true)}>
-              Rename
+              Edit
               <PencilIcon className='size-5' />
             </DropdownItem>
             <DropdownItem disable>
@@ -148,9 +177,9 @@ export default function Card({
         </div>
 
         <div className='flex justify-center items-center mt-1 gap-x-2'>
-          <span>{nativeLang}</span>
+          <span>{languages.get(vocab.nativeLang)}</span>
           <ChevronDoubleRightIcon className={'flex size-5'} />
-          <span>{translateLang}</span>
+          <span>{languages.get(vocab.translateLang)}</span>
         </div>
         <div
           className='flex relative w-96 h-80'
@@ -168,10 +197,10 @@ export default function Card({
         </div>
       </div>
       {isShowRenamePopup && (
-        <Rename
-          name={title}
-          saveCallback={(newName) => {
-            renameVocabulary(newName);
+        <Edit
+          editData={{ name: vocab.name, accessID: vocab.accessID }}
+          saveCallback={(editData) => {
+            renameVocabulary(editData);
             setIsShowRenamePopup(false);
           }}
           cancelCallback={() => setIsShowRenamePopup(false)}
@@ -180,40 +209,3 @@ export default function Card({
     </>
   );
 }
-/*
-function renameVocabulary(id: string, vocabularyName: string) {
-  const abortController = new AbortController();
-
-  refreshToken(
-    abortController.signal,
-    (token) => {
-      fetchData(
-        '/account/vocabulary',
-        {
-          method: 'put',
-          headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-            Authorization: token,
-          },
-          body: JSON.stringify({ id: id }),
-        },
-        new Map<string, string>([['name', vocabularyName]])
-      )
-        .then((response) => {
-          console.log(response);
-          // notification.value.SuccessNotification('Success');
-        })
-        .catch((error) => {
-          // notification.value.ErrorNotification(data);
-          console.error(error.message);
-        });
-    },
-    () => {
-      // setIsAuth(false);
-      // setAccountName('');
-      // router.push('/');
-    }
-  );
-}
-*/

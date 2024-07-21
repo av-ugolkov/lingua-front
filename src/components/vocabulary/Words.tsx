@@ -8,10 +8,7 @@ import {
 } from '@/hooks/stores/useVocabWordsStore';
 import { useSearchWordStore } from '@/hooks/stores/useSearchWordStore';
 import { useSortedWordsStore } from '@/hooks/stores/useSortedWordsStore';
-import {
-  RequestMethod,
-  useFetchWithToken,
-} from '@/hooks/fetch/useFetchWithToken';
+import { RequestMethod, AuthStore, useFetch } from '@/hooks/fetch/useFetch';
 
 const tempWordState: VocabWordState = {
   id: '',
@@ -27,27 +24,29 @@ const tempWordState: VocabWordState = {
 
 export default function Words() {
   const { id } = useParams();
-  const vocabID = id || '';
-  const [tempWord, setTempWord] = useState(tempWordState);
   const navigate = useNavigate();
+  const [tempWord, setTempWord] = useState(tempWordState);
+  const [editable, setEditable] = useState(false);
   const vocabWordsStore = useVocabWordsStore();
   const searchWordStore = useSearchWordStore();
   const sortedWordsStore = useSortedWordsStore();
 
-  const { funcFetch: fetchWords } = useFetchWithToken(
-    '/vocabulary/word/all',
-    RequestMethod.GET
+  const { funcFetch: fetchWords } = useFetch(
+    '/vocabulary/words',
+    RequestMethod.GET,
+    AuthStore.OPTIONAL
   );
 
   useEffect(() => {
     async function asyncFetchWords() {
+      const vocabID = id || '';
       const response = await fetchWords({
         queries: new Map([['vocab_id', vocabID]]),
       });
 
       if (response.ok) {
         const words: VocabWordState[] = [];
-        response.data.forEach((item: any) => {
+        response.data['words'].forEach((item: any) => {
           words.push({
             id: item['id'],
             vocabID: vocabID,
@@ -61,6 +60,7 @@ export default function Words() {
           });
         });
         vocabWordsStore.setWords(words);
+        setEditable(response.data['editable']);
       } else {
         navigate('/');
       }
@@ -74,12 +74,14 @@ export default function Words() {
 
   return (
     <>
-      <WordCard
-        word={tempWord}
-        updateWord={(newState) => {
-          setTempWord((prev) => ({ ...prev, ...newState }));
-        }}
-      />
+      {editable && (
+        <WordCard
+          word={tempWord}
+          updateWord={(newState) => {
+            setTempWord((prev) => ({ ...prev, ...newState }));
+          }}
+        />
+      )}
       {vocabWordsStore
         .getOrderedWords(sortedWordsStore.orderType)
         .filter((word) => {
@@ -95,6 +97,7 @@ export default function Words() {
             <WordCard
               word={word}
               updateWord={vocabWordsStore.updateWord}
+              editable={editable}
             />
           </div>
         ))}

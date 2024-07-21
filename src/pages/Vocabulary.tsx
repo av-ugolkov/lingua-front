@@ -3,27 +3,27 @@ import { useParams } from 'react-router-dom';
 
 import SearchAndOrder from '@/components/vocabulary/SearchAndOrder';
 import Words from '@/components/vocabulary/Words';
-import {
-  RequestMethod,
-  useFetchWithToken,
-} from '@/hooks/fetch/useFetchWithToken';
+import { RequestMethod, AuthStore, useFetch } from '@/hooks/fetch/useFetch';
 
 export default function Vocabulary() {
   const { id } = useParams();
   const [name, setName] = useState(false);
   const [loading, setLoading] = useState(true);
-  const { funcFetch: fetchGetVocabulary } = useFetchWithToken(
-    `/account/vocabulary`,
-    RequestMethod.GET
+  const { funcFetch: fetchGetVocabulary } = useFetch(
+    `/vocabulary`,
+    RequestMethod.GET,
+    AuthStore.USE
   );
 
   useEffect(() => {
     async function asyncFetchVocabulary() {
-      const response = await fetchGetVocabulary({
-        queries: new Map([['id', id || '']]),
-      });
-      if (response.ok) {
-        setName(response.data['name']);
+      if (id) {
+        const response = await fetchGetVocabulary({
+          queries: new Map([['id', id]]),
+        });
+        if (response.ok) {
+          setName(response.data['name']);
+        }
       }
       setLoading(false);
     }

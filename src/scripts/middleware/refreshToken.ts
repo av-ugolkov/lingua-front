@@ -15,7 +15,10 @@ async function fetchToken(): Promise<IResponseData> {
         'Content-Type': 'application/json',
       },
     });
-    return { ...response, data: response.data['access_token'] };
+    if (response.ok) {
+      return { ...response, data: response.data['access_token'] };
+    }
+    return response;
   } catch (error: any) {
     return {
       ok: false,
