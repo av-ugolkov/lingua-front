@@ -5,7 +5,7 @@ interface AuthState {
   getAccessToken: () => string;
   isActiveToken: () => boolean;
   setAccessToken: (token: string) => void;
-  clearAccessToken: () => void;
+  deleteAccessToken: () => void;
 }
 
 export const useAuthStore = create<AuthState>((set, get) => ({
@@ -33,7 +33,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     localStorage.setItem('access_token', token);
     set({ accessToken: token });
   },
-  clearAccessToken: () => {
+  deleteAccessToken: () => {
     set({ accessToken: '' });
     localStorage.removeItem('access_token');
   },
