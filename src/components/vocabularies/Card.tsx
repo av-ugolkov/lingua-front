@@ -2,8 +2,6 @@ import { useEffect, useState } from 'react';
 
 import {
   ChevronDoubleRightIcon,
-  ShareIcon,
-  DocumentDuplicateIcon,
   TrashIcon,
   PencilIcon,
   LockClosedIcon,
@@ -161,13 +159,6 @@ export default function Card({
             <DropdownItem onClick={() => setIsShowRenamePopup(true)}>
               Edit
               <PencilIcon className='size-5' />
-            </DropdownItem>
-            <DropdownItem disable>
-              Share
-              <ShareIcon className='size-5' />
-            </DropdownItem>
-            <DropdownItem disable>
-              Copy <DocumentDuplicateIcon className='size-5 ' />
             </DropdownItem>
             <DropdownItem onClick={deleteVocabulary}>
               Delete

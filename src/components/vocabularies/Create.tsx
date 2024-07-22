@@ -95,7 +95,7 @@ export default function Create({
               </h3>
               <button
                 type='button'
-                className='text-gray-900 bg-transparent hover:bg-gray-400 hover:text-white rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center'
+                className='bg-transparent rounded-lg text-sm text-black w-8 h-8 ms-auto hover:bg-gray-400 hover:text-white inline-flex justify-center items-center'
                 onClick={closeCallback}>
                 <XMarkIcon className='size-5' />
               </button>
@@ -104,12 +104,12 @@ export default function Create({
             <form className='p-4'>
               <div className='grid gap-4 mb-4 grid-cols-2'>
                 <div className='col-span-2'>
-                  <span className='flex text-center content-center mb-2 text-sm font-medium text-gray-900'>
+                  <span className='flex text-center content-center mb-2 text-sm text-black font-medium'>
                     Name
                   </span>
                   <input
                     type='text'
-                    className='block w-full p-2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500'
+                    className='block w-full p-2 border text-sm text-black bg-input-gray rounded-lg borderGray focus:ring-primary-500 focus:border-primary-500'
                     placeholder='Vocabulary name'
                     required={true}
                     value={vocab.name}
@@ -133,27 +133,26 @@ export default function Create({
 
                 <div className='col-span-2'>
                   <div>
-                    <label className='mb-1 block text-sm font-medium text-gray-700'>
+                    <label className='mb-1 block text-sm text-black font-medium'>
                       Description
                     </label>
                     <textarea
-                      id='example2'
-                      className='block w-full p-2 resize-none bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500'
+                      id='description'
+                      className='block w-full p-2 resize-none border text-sm text-black bg-input-gray rounded-lg borderGray focus:ring-primary-500 focus:border-primary-500'
                       rows={3}
                       maxLength={maxDescriptionLength}
                       onChange={(e) =>
                         setVocab({ ...vocab, description: e.target.value })
                       }
                       placeholder='Leave a description'></textarea>
-                    <p className='mt-1 text-sm text-gray-500'>
+                    <p className='mt-1 text-sm text-black'>
                       {vocab.description.length}/{maxDescriptionLength}
                     </p>
                   </div>
                 </div>
-
                 <div className='col-span-2'>
-                  <hr className='my-3 h-px border-0 bg-gray-300' />
-                  <span className='flex text-center content-center mb-2 text-sm font-medium text-gray-900'>
+                  <hr className='mb-3 h-px border-0 bg-black' />
+                  <span className='flex text-center content-center mb-2 text-sm text-black font-medium'>
                     Access
                   </span>
                   <select
@@ -167,7 +166,7 @@ export default function Create({
                         )!.id,
                       });
                     }}
-                    className='block w-full p-2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500'>
+                    className='block w-full p-2 border text-sm text-black bg-input-gray rounded-lg borderGray focus:ring-primary-500 focus:border-primary-500'>
                     {accesses.map((access) => (
                       <option key={access.id}>{access.name}</option>
                     ))}

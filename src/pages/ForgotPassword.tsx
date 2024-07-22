@@ -2,35 +2,36 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import Button from '@/components/elements/Button';
-import { fetchData } from '@/scripts/fetch/fetchData';
-import { setLocalStorage } from '@/scripts/localStorage';
+import { useAuthStore } from '@/hooks/stores/useAuthStore';
+import { AuthStore, RequestMethod, useFetch } from '@/hooks/fetch/useFetch';
+import { useNotificationStore } from '@/components/notification/useNotificationStore';
 
 export default function ForgotPsw() {
+  const { notificationError } = useNotificationStore();
+  const { setAccessToken } = useAuthStore();
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
 
+  const { funcFetch: fetchRecoveryPsw } = useFetch(
+    '/auth/recovery_password',
+    RequestMethod.POST,
+    AuthStore.NO
+  );
+
   function recoveryPsw() {
-    fetchData('/auth/recovery_password', {
-      method: 'post',
-      credentials: 'include',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ email: email }),
-    })
-      .then((resp) => {
-        if (resp.ok) {
-          setLocalStorage('access_token', resp.data.access_token);
-          navigate('/');
-        } else {
-          console.error(resp.data);
-          //notification.value.ErrorNotification(data);
-        }
-      })
-      .catch((error) => {
-        console.error(error.message);
+    async function asyncRecoveryPsw() {
+      const response = await fetchRecoveryPsw({
+        body: JSON.stringify({ email: email }),
       });
+      if (response.ok) {
+        setAccessToken(response.data['access_token']);
+        navigate('/');
+      } else {
+        notificationError(response.data);
+      }
+    }
+
+    asyncRecoveryPsw();
   }
 
   return (

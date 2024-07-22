@@ -11,7 +11,7 @@ export default function AuthPopup({ close }: { close: () => void }) {
     <div className='fixed justify-center items-center bg-gray-500 bg-opacity-60 z-50 w-full inset-0 h-full'>
       <div className='flex justify-center items-center w-full h-full'>
         <div className='flex justify-center items-center p-4 w-full max-w-md max-h-full'>
-          <div className='relative w-80  bg-white shadow-md shadow-blue-300'>
+          <div className='relative w-80 bg-white shadow-md shadow-blue-300'>
             <div className='flex items-center justify-between pl-4 py-1 border-b'>
               <h3 className='flex flex-row gap-x-2 items-center text-lg font-semibold text-gray-900'>
                 <ExclamationCircleIcon className='size-5 text-yellow-500' />
@@ -28,7 +28,7 @@ export default function AuthPopup({ close }: { close: () => void }) {
             <form className='p-4'>
               <div className='grid gap-4 mb-4 grid-cols-2'>
                 <div className='col-span-2'>
-                  <div className='flex text-center content-center mb-2 text-sm font-medium text-gray-900'>
+                  <div className='flex text-center content-center mb-2 text-sm text-black font-medium'>
                     You can sign in or sign up.
                   </div>
                 </div>
