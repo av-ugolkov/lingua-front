@@ -24,7 +24,7 @@ export default function Tags({
             className='flex h-auto items-center px-1 mb-2 mr-2 text-wrap bg-gray-200 shadow shadow-blue-300'>
             {tag}
             <XMarkIcon
-              className='min-w-5 w-5 h-5 ml-1 hover:shadow hover:shadow-blue-300'
+              className='min-w-5 w-5 h-5 ml-1 hover:shadow hover:shadow-blue-400'
               onClick={() => onRemoveTag(ind)}
             />
           </span>
