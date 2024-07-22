@@ -64,6 +64,10 @@ export default function Header() {
           name='Contact'
           url='/contact'
         />
+        <HeaderBtn
+          name='Vocabularies'
+          url='/vocabularies'
+        />
         {isAuth ? (
           <Account accountName={accountName} />
         ) : (

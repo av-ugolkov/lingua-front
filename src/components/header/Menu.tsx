@@ -76,7 +76,7 @@ export default function Menu() {
 function MenuButton(
   label: string,
   icon: JSX.Element,
-  callback?: () => void
+  callback: () => void
 ): JSX.Element {
   return (
     <button

@@ -6,8 +6,9 @@ import About from '@/pages/About';
 import SignUp from '@/pages/SignUp';
 import SignIn from '@/pages/SignIn';
 import Contact from '@/pages/Contact';
+import AccountVocabularies from '@/pages/AccountVocabularies';
+import Vocabulary from '@/pages/Vocabulary';
 import Vocabularies from '@/pages/Vocabularies';
-import Vocabulary from './pages/Vocabulary';
 
 export const router = createBrowserRouter([
   {
@@ -33,6 +34,10 @@ export const router = createBrowserRouter([
       {
         path: 'vocabularies',
         element: <Vocabularies />,
+      },
+      {
+        path: 'account/vocabularies',
+        element: <AccountVocabularies />,
       },
       {
         path: 'vocabulary/:id',

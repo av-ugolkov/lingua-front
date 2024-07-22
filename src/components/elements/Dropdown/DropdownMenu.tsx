@@ -19,9 +19,7 @@ export default function DropdownMenu({
       <button
         className='flex w-full h-full items-center font-semibold text-gray-900'
         onBlur={() => setTimeout(() => setOpen(false), 100)}
-        onClick={() => {
-          setOpen(!open);
-        }}>
+        onClick={() => setOpen(!open)}>
         <EllipsisVerticalIcon className='size-7' />
       </button>
 
