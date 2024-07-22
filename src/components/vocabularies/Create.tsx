@@ -90,7 +90,7 @@ export default function Create({
         <div className='flex justify-center items-center p-4 w-full max-w-md max-h-full'>
           <div className='relative bg-white shadow-md shadow-blue-300'>
             <div className='flex items-center justify-between p-2 border-b rounded-t'>
-              <h3 className='text-lg font-semibold text-gray-900'>
+              <h3 className='text-lg font-semibold text-black'>
                 New vocabulary
               </h3>
               <button
@@ -109,7 +109,7 @@ export default function Create({
                   </span>
                   <input
                     type='text'
-                    className='block w-full p-2 border text-sm text-black bg-input-gray rounded-lg borderGray focus:ring-primary-500 focus:border-primary-500'
+                    className='block w-full p-2 border text-sm text-black bg-gray-100 rounded-lg borderGray focus:ring-primary-500 focus:border-primary-500'
                     placeholder='Vocabulary name'
                     required={true}
                     value={vocab.name}
@@ -138,7 +138,7 @@ export default function Create({
                     </label>
                     <textarea
                       id='description'
-                      className='block w-full p-2 resize-none border text-sm text-black bg-input-gray rounded-lg borderGray focus:ring-primary-500 focus:border-primary-500'
+                      className='block w-full p-2 resize-none border text-sm text-black bg-gray-100 rounded-lg borderGray focus:ring-primary-500 focus:border-primary-500'
                       rows={3}
                       maxLength={maxDescriptionLength}
                       onChange={(e) =>
@@ -166,7 +166,7 @@ export default function Create({
                         )!.id,
                       });
                     }}
-                    className='block w-full p-2 border text-sm text-black bg-input-gray rounded-lg borderGray focus:ring-primary-500 focus:border-primary-500'>
+                    className='block w-full p-2 border text-sm text-black bg-gray-100 rounded-lg borderGray focus:ring-primary-500 focus:border-primary-500'>
                     {accesses.map((access) => (
                       <option key={access.id}>{access.name}</option>
                     ))}

@@ -170,7 +170,7 @@ export default function List() {
                     languages.find((tp) => tp.lang === value) || languages[0];
                   setNativeLang(lang.code);
                 }}
-                classSelect='block w-fit p-1 ml-2 bg-transparent border border-gray-300 text-gray-900 text-sm focus:ring-primary-500 focus:border-primary-500'
+                classSelect='block w-fit p-1 ml-2 bg-transparent border border-gray-300 text-black text-sm focus:ring-primary-500 focus:border-primary-500'
               />
               <ListBox
                 id='translate_language'
@@ -181,7 +181,7 @@ export default function List() {
                     languages.find((tp) => tp.lang === value) || languages[0];
                   setTranslateLang(lang.code);
                 }}
-                classSelect='block w-fit p-1 ml-2 bg-transparent border border-gray-300 text-gray-900 text-sm focus:ring-primary-500 focus:border-primary-500'
+                classSelect='block w-fit p-1 ml-2 bg-transparent border border-gray-300 text-black text-sm focus:ring-primary-500 focus:border-primary-500'
               />
               <ListBox
                 id='type_sorted'
@@ -192,7 +192,7 @@ export default function List() {
                     SortTypes.find((tp) => tp.name === value) || SortTypes[0];
                   setSortedType(typeSort);
                 }}
-                classSelect='block w-fit p-1 ml-2 bg-transparent border border-gray-300 text-gray-900 text-sm focus:ring-primary-500 focus:border-primary-500'
+                classSelect='block w-fit p-1 ml-2 bg-transparent border border-gray-300 text-black text-sm focus:ring-primary-500 focus:border-primary-500'
               />
               <ListBox
                 id='count_items'
@@ -202,7 +202,7 @@ export default function List() {
                   setPageNum(1);
                   setCountItemsPerPage(+value);
                 }}
-                classSelect='block w-fit p-1 ml-3 bg-transparent border border-gray-300 text-gray-900 text-sm focus:ring-primary-500 focus:border-primary-500'
+                classSelect='block w-fit p-1 ml-3 bg-transparent border border-gray-300 text-black text-sm focus:ring-primary-500 focus:border-primary-500'
               />
             </div>
           </div>
