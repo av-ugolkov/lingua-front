@@ -11,7 +11,7 @@ export default function RightPanel({
   onSubscribe: () => void;
 }) {
   return (
-    <div className='flex flex-col h-28 justify-evenly bg-gray-300'>
+    <div className='flex flex-col h-28 justify-evenly bg-gray-200'>
       <button className='w-6 h-6'>
         <DocumentDuplicateIcon
           className='w-6 h-6 text-blue-500 duration-300 hover:text-blue-700 hover:duration-300'
