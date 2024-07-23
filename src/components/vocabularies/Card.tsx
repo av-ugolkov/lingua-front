@@ -2,8 +2,6 @@ import { useEffect, useState } from 'react';
 
 import {
   ChevronDoubleRightIcon,
-  ShareIcon,
-  DocumentDuplicateIcon,
   TrashIcon,
   PencilIcon,
   LockClosedIcon,
@@ -141,7 +139,7 @@ export default function Card({
 
   return (
     <>
-      <div className='flex flex-col bg-gray-300 w-96 min-w-96 h-96 shadow-md shadow-blue-300 text-center'>
+      <div className='flex flex-col bg-blue-100 w-96 min-w-96 h-96 shadow-md shadow-blue-300 text-center'>
         <div className='flex align-middle justify-center'>
           <div className='flex min-w-7 h-10 my-1 justify-center items-center'>
             {vocab.accessID === 0 ? (
@@ -154,20 +152,13 @@ export default function Card({
               )
             )}
           </div>
-          <div className='inline-block w-full cursor-default bg-gray-300 h-10 text-center font-semibold content-center text-xl my-1 border-b-2 border-black'>
+          <div className='inline-block w-full cursor-default bg-transparent h-10 text-center font-semibold content-center text-xl my-1 border-b-2 border-black'>
             {vocabData.name}
           </div>
           <DropdownMenu>
             <DropdownItem onClick={() => setIsShowRenamePopup(true)}>
               Edit
               <PencilIcon className='size-5' />
-            </DropdownItem>
-            <DropdownItem disable>
-              Share
-              <ShareIcon className='size-5' />
-            </DropdownItem>
-            <DropdownItem disable>
-              Copy <DocumentDuplicateIcon className='size-5 ' />
             </DropdownItem>
             <DropdownItem onClick={deleteVocabulary}>
               Delete
