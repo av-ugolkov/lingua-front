@@ -1,5 +1,6 @@
 import ReactDOM from 'react-dom/client';
 import '@/index.css';
+import '@/styles/globals.css';
 
 import { RouterProvider } from 'react-router-dom';
 import { router } from './Router';

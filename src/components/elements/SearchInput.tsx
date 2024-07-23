@@ -16,7 +16,7 @@ export default function SearchInput({
           <input
             type='text'
             name='search'
-            className='flex p-0.5 bg-transparent border-none w-full outline-none whitespace-nowrap active:border-none empty:before:bg-gray-500'
+            className='flex p-0.5 bg-transparent border-none w-full outline-none whitespace-nowrap active:border-none'
             placeholder='Search'
             value={searchValue}
             onChange={(e) => onChange(e.target.value)}

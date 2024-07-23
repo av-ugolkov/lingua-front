@@ -17,7 +17,7 @@ export default function DropdownMenu({
       className='relative inline-block w-7 h-10 my-1 z-[3]'
       title={title}>
       <button
-        className='flex w-full h-full items-center font-semibold text-gray-900'
+        className='flex w-full h-full items-center font-semibold text-black'
         onBlur={() => setTimeout(() => setOpen(false), 100)}
         onClick={() => setOpen(!open)}>
         <EllipsisVerticalIcon className='size-7' />
@@ -26,7 +26,7 @@ export default function DropdownMenu({
       <Transition
         show={open}
         duration={300}>
-        <div className='absolute right-1 w-fit origin-top-right bg-gray-200 shadow-md shadow-blue-300'>
+        <div className='absolute right-1 w-fit origin-top-right bg-gray-300 shadow-md shadow-blue-300'>
           {children}
         </div>
       </Transition>
