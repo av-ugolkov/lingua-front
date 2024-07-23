@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { LockClosedIcon, LockOpenIcon } from '@heroicons/react/24/outline';
 
 import RightPanel from './RightPanel';
-import AuthPopup from '../elements/AuthPopup/AuthPopup';
+import AuthPopup from '../elements/Auth/AuthPopup';
 import { Vocab } from './List';
 import { useLanguagesStore } from '@/hooks/stores/useLanguagesStore';
 import { useAuthStore } from '@/hooks/stores/useAuthStore';

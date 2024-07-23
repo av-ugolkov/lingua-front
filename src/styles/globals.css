@@ -3,12 +3,12 @@
 @tailwind utilities;
 @tailwind variants;
 
-.bg-input-gray {
-  @apply bg-gray-100;
+.input-form {
+  @apply bg-gray-100 text-black placeholder:text-gray-600 border border-gray-400 focus:outline-none focus:border-indigo-500 active:border-indigo-500;
 }
 
-.input-vocabulary-form {
-  @apply bg-gray-100 text-black placeholder:text-gray-600 border border-gray-400 focus:outline-none focus:border-indigo-500 active:border-indigo-500;
+.input-white-form {
+  @apply bg-white text-black placeholder:text-gray-600 border border-gray-400 focus:outline-none focus:border-indigo-500 active:border-indigo-500;
 }
 
 .bg-lock {

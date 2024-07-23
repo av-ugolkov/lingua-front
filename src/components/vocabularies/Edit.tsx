@@ -76,7 +76,7 @@ export default function Edit({
               <input
                 type='text'
                 id='name'
-                className='text-sm block w-full p-2.5 input-vocabulary-form'
+                className='text-sm block w-full p-2.5 input-form'
                 placeholder='Vocabulary name'
                 required={true}
                 value={edit.name}
@@ -100,7 +100,7 @@ export default function Edit({
                   accessID: accesses.find((l) => l.name === e.target.value)!.id,
                 });
               }}
-              className='block w-full p-2 text-sm input-vocabulary-form'>
+              className='block w-full p-2 text-sm input-form'>
               {accesses.map((access) => (
                 <option key={access.id}>{access.name}</option>
               ))}

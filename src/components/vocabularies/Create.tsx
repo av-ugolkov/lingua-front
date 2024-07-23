@@ -104,7 +104,7 @@ export default function Create({
               </span>
               <input
                 type='text'
-                className='block w-full p-2 text-sm input-vocabulary-form'
+                className='block w-full p-2 text-sm input-form'
                 placeholder='Vocabulary name'
                 required={true}
                 value={vocab.name}
@@ -131,7 +131,7 @@ export default function Create({
                 </label>
                 <textarea
                   id='description'
-                  className='block w-full p-2 resize-none text-sm input-vocabulary-form'
+                  className='block w-full p-2 resize-none text-sm input-form'
                   rows={3}
                   maxLength={maxDescriptionLength}
                   onChange={(e) =>
@@ -158,7 +158,7 @@ export default function Create({
                       .id,
                   });
                 }}
-                className='block w-full p-2 border text-sm input-vocabulary-form'>
+                className='block w-full p-2 border text-sm input-form'>
                 {accesses.map((access) => (
                   <option key={access.id}>{access.name}</option>
                 ))}
