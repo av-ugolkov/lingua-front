@@ -19,7 +19,7 @@ export default function AuthPopup({ close }: { close: () => void }) {
               </h3>
               <button
                 type='button'
-                className='text-black bg-transparent hover:bg-gray-200 hover:text-gray-600 text-sm w-6 h-6 mr-2 ms-auto inline-flex justify-center items-center'
+                className='text-black bg-transparent hover:bg-gray-300 hover:text-gray-600 text-sm w-6 h-6 mr-2 ms-auto inline-flex justify-center items-center'
                 onClick={close}>
                 <XMarkIcon className='size-5' />
               </button>

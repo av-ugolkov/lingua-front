@@ -23,7 +23,7 @@ export default function Pagination({
   const pageNums = getPaginationItems(currentPage, maxPage, 7);
 
   return (
-    <div className='flex items-center justify-between border border-gray-200 bg-white px-4 py-3 sm:px-6'>
+    <div className='flex items-center justify-between border border-gray-300 bg-white px-4 py-3 sm:px-6'>
       <div className='flex flex-1 items-center justify-between'>
         <p className='text-sm min-w-24 text-black mr-1'>
           Showing{' '}
@@ -43,7 +43,7 @@ export default function Pagination({
             onClick={() => {
               if (currentPage > 1) previusPage(currentPage - 1);
             }}
-            className='relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0'>
+            className='relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-100 focus:z-20 focus:outline-offset-0'>
             <span className='sr-only'>Previous</span>
             <ChevronLeftIcon
               aria-hidden='true'
@@ -66,7 +66,7 @@ export default function Pagination({
             onClick={() => {
               if (currentPage < maxPage) nextPage(currentPage + 1);
             }}
-            className='relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0'>
+            className='relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-100 focus:z-20 focus:outline-offset-0'>
             <span className='sr-only'>Next</span>
             <ChevronRightIcon
               aria-hidden='true'

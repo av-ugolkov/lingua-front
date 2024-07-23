@@ -75,7 +75,7 @@ export default function Edit({
                   <input
                     type='text'
                     id='name'
-                    className='bg-gray-50 border border-gray-300 text-black text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5'
+                    className='bg-gray-100 border border-gray-300 text-black text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5'
                     placeholder='Vocabulary name'
                     required={true}
                     value={edit.name}
@@ -100,7 +100,7 @@ export default function Edit({
                         .id,
                     });
                   }}
-                  className='block w-full p-2 bg-gray-50 border border-gray-300 text-black text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500'>
+                  className='block w-full p-2 bg-gray-100 border border-gray-300 text-black text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500'>
                   {accesses.map((access) => (
                     <option key={access.id}>{access.name}</option>
                   ))}
