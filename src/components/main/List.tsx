@@ -146,7 +146,7 @@ export default function List() {
   return (
     <>
       {loading && (
-        <div className='grid gap-5 grid-cols-1 min-w-full'>
+        <div className='grid min-w-[480px] gap-5 grid-cols-1'>
           <div className='flex justify-between'>
             <div>
               <SearchInput
