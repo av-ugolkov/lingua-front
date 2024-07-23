@@ -38,12 +38,12 @@ export default function Pagination({
         </p>
         <nav
           aria-label='Pagination'
-          className='isolate inline-flex -space-x-px rounded-md shadow-sm'>
+          className='isolate inline-flex -space-x-px shadow-sm'>
           <div
             onClick={() => {
               if (currentPage > 1) previusPage(currentPage - 1);
             }}
-            className='relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-100 focus:z-20 focus:outline-offset-0'>
+            className='relative inline-flex items-center px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-100 focus:z-20 focus:outline-offset-0'>
             <span className='sr-only'>Previous</span>
             <ChevronLeftIcon
               aria-hidden='true'
@@ -66,7 +66,7 @@ export default function Pagination({
             onClick={() => {
               if (currentPage < maxPage) nextPage(currentPage + 1);
             }}
-            className='relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-100 focus:z-20 focus:outline-offset-0'>
+            className='relative inline-flex items-center px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-100 focus:z-20 focus:outline-offset-0'>
             <span className='sr-only'>Next</span>
             <ChevronRightIcon
               aria-hidden='true'

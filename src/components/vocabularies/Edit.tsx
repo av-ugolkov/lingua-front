@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import Button from '../elements/Button';
 import { fetchData } from '@/scripts/fetch/fetchData';
 import { IAccess } from './Create';
+import CloseBtn from './CloseBtn';
 
 export interface IEditData {
   name: string;
@@ -59,10 +60,11 @@ export default function Edit({
       <div className='flex justify-center items-center w-full h-full'>
         <div className='flex justify-center items-center p-4 w-full max-w-md max-h-full'>
           <div className='relative bg-white shadow-md shadow-blue-300'>
-            <div className='flex items-center justify-between p-2 border-b rounded-t'>
-              <h3 className='text-lg font-semibold text-black'>
+            <div className='flex items-center justify-between p-2 border-b'>
+              <h3 className='ml-2 text-lg font-semibold text-black'>
                 Edit vocabulary
               </h3>
+              <CloseBtn closeCallback={cancelCallback} />
             </div>
             <form className='p-4'>
               <div className='grid gap-4 mb-4 grid-cols-2'>
@@ -75,7 +77,7 @@ export default function Edit({
                   <input
                     type='text'
                     id='name'
-                    className='bg-gray-100 border border-gray-300 text-black text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5'
+                    className='text-sm block w-full p-2.5 input-vocabulary-form'
                     placeholder='Vocabulary name'
                     required={true}
                     value={edit.name}
@@ -100,7 +102,7 @@ export default function Edit({
                         .id,
                     });
                   }}
-                  className='block w-full p-2 bg-gray-100 border border-gray-300 text-black text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500'>
+                  className='block w-full p-2 text-sm input-vocabulary-form'>
                   {accesses.map((access) => (
                     <option key={access.id}>{access.name}</option>
                   ))}
@@ -113,13 +115,6 @@ export default function Edit({
                   focusOutlineColor='focus-visible:outline-indigo-600'
                   callback={() => saveCallback(edit)}>
                   Save
-                </Button>
-                <Button
-                  bgColor='bg-gray-600'
-                  hoverBgColor='hover:bg-indigo-500'
-                  focusOutlineColor='focus-visible:outline-indigo-600'
-                  callback={cancelCallback}>
-                  Cancel
                 </Button>
               </div>
             </form>

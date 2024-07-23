@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
 
-import { PlusIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { PlusIcon } from '@heroicons/react/24/outline';
 
 import Button from '../elements/Button';
 import SelectLanguages from './SelectLanguages';
 import { VocabularyState } from '@/hooks/stores/useVocabulariesStore';
 import { fetchData } from '@/scripts/fetch/fetchData';
 import { ILanguage, useLanguagesStore } from '@/hooks/stores/useLanguagesStore';
+import CloseBtn from './CloseBtn';
 
 export interface IAccess {
   id: number;
@@ -89,16 +90,11 @@ export default function Create({
       <div className='flex justify-center items-center w-full h-full'>
         <div className='flex justify-center items-center p-4 w-full max-w-md max-h-full'>
           <div className='relative bg-white shadow-md shadow-blue-300'>
-            <div className='flex items-center justify-between p-2 border-b rounded-t'>
-              <h3 className='text-lg font-semibold text-black'>
+            <div className='flex items-center justify-between p-2 border-b'>
+              <h3 className='text-lg font-semibold ml-2 text-black'>
                 New vocabulary
               </h3>
-              <button
-                type='button'
-                className='bg-transparent rounded-lg text-sm text-black w-8 h-8 ms-auto hover:bg-gray-400 hover:text-white inline-flex justify-center items-center'
-                onClick={closeCallback}>
-                <XMarkIcon className='size-5' />
-              </button>
+              <CloseBtn closeCallback={closeCallback} />
             </div>
 
             <form className='p-4'>
@@ -109,7 +105,7 @@ export default function Create({
                   </span>
                   <input
                     type='text'
-                    className='block w-full p-2 border text-sm text-black bg-gray-100 rounded-lg borderGray focus:ring-primary-500 focus:border-primary-500'
+                    className='block w-full p-2 text-sm input-vocabulary-form'
                     placeholder='Vocabulary name'
                     required={true}
                     value={vocab.name}
@@ -138,7 +134,7 @@ export default function Create({
                     </label>
                     <textarea
                       id='description'
-                      className='block w-full p-2 resize-none border text-sm text-black bg-gray-100 rounded-lg borderGray focus:ring-primary-500 focus:border-primary-500'
+                      className='block w-full p-2 resize-none text-sm input-vocabulary-form'
                       rows={3}
                       maxLength={maxDescriptionLength}
                       onChange={(e) =>
@@ -166,7 +162,7 @@ export default function Create({
                         )!.id,
                       });
                     }}
-                    className='block w-full p-2 border text-sm text-black bg-gray-100 rounded-lg borderGray focus:ring-primary-500 focus:border-primary-500'>
+                    className='block w-full p-2 border text-sm input-vocabulary-form'>
                     {accesses.map((access) => (
                       <option key={access.id}>{access.name}</option>
                     ))}
