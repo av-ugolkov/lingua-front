@@ -1,64 +1,126 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 import Card from './Card';
-import {
-  VocabularyState,
-  useVocabulariesStore,
-} from '@/hooks/stores/useVocabulariesStore';
-import { RequestMethod, AuthStore, useFetch } from '@/hooks/fetch/useFetch';
+import { Order, Sorted } from '@/models/Sorted';
+import Pagination from './Pagination';
+import { AuthStore, RequestMethod, useFetch } from '@/hooks/fetch/useFetch';
 
-export default function List() {
-  const navigate = useNavigate();
-  const [loading, setLoading] = useState(true);
-  const vocabulariesStore = useVocabulariesStore();
-  const { funcFetch: fetchVocabularies } = useFetch(
-    '/account/vocabularies',
+export interface Vocab {
+  id: string;
+  name: string;
+  description: string;
+  wordsCount: number;
+  userID: string;
+  userName: string;
+  accessID: number;
+  nativeLang: string;
+  translateLang: string;
+  tags: string[];
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const vocabsEmpty: Vocab[] = [];
+
+interface SortedInputProps {
+  searchValue: string;
+  sortType: Sorted;
+  orderType: Order;
+  nativeLang: string;
+  translateLang: string;
+}
+
+export default function List({
+  searchValue,
+  sortType,
+  orderType,
+  nativeLang,
+  translateLang,
+}: SortedInputProps) {
+  const [pageNum, setPageNum] = useState(1);
+  const [countItemsPerPage, setCountItemsPerPage] = useState(0);
+  const [countItems, setCountItems] = useState(0);
+
+  const { funcFetch: fetchVocabs } = useFetch(
+    '/vocabularies',
     RequestMethod.GET,
-    AuthStore.USE
+    AuthStore.OPTIONAL
   );
 
+  const [vocabs, setVocabs] = useState(vocabsEmpty);
+
   useEffect(() => {
-    async function asyncFetchVocabularies() {
-      const response = await fetchVocabularies({});
+    async function asyncFetchVocabs() {
+      const response = await fetchVocabs({
+        queries: new Map<string, any>([
+          ['page', pageNum],
+          ['per_page', countItemsPerPage],
+          ['search', searchValue],
+          ['order', sortType],
+          ['order', orderType],
+          ['native_lang', nativeLang],
+          ['translate_lang', translateLang],
+        ]),
+      });
+
       if (response.ok) {
-        let vocabularies: VocabularyState[] = [];
-        response.data.forEach((item: any) => {
-          vocabularies.push({
+        const vocabs: Vocab[] = [];
+        response.data['vocabularies'].forEach((item: any) => {
+          vocabs.push({
             id: item['id'],
             name: item['name'],
+            userID: item['user_id'],
+            userName: item['user_name'],
             accessID: item['access_id'],
             nativeLang: item['native_lang'],
             translateLang: item['translate_lang'],
             description: item['description'],
+            wordsCount: item['words_count'],
             tags: item['tags'],
-            userID: item['user_id'],
+            createdAt: new Date(item['created_at']),
+            updatedAt: new Date(item['updated_at']),
           });
         });
-        vocabulariesStore.setVocabularies(vocabularies);
+        setVocabs(vocabs);
+        setCountItems(response.data['total_count']);
       } else {
-        navigate('/');
+        console.error(response);
       }
-      setLoading(false);
     }
-    asyncFetchVocabularies();
-  }, []);
 
-  if (loading) {
-    return <div></div>;
-  }
+    asyncFetchVocabs();
+
+    return () => {
+      setVocabs(vocabsEmpty);
+      setCountItems(0);
+    };
+  }, [
+    countItemsPerPage,
+    searchValue,
+    pageNum,
+    sortType,
+    orderType,
+    nativeLang,
+    translateLang,
+  ]);
 
   return (
-    <div className='grid gap-10 grid-cols-[repeat(auto-fill,_384px)]'>
-      {vocabulariesStore.vocabularies.map((item) => (
+    <div className='grid min-w-[540px] w-full gap-5 grid-cols-1'>
+      {vocabs.map((item) => (
         <Card
           key={item.id}
           vocab={item}
-          onClick={() => {
-            navigate(`/vocabulary/${item.id}`);
-          }}
         />
       ))}
+      <Pagination
+        currentPage={pageNum}
+        countItems={countItems}
+        setPageNum={setPageNum}
+        countItemsPerPage={(value) => {
+          console.log(value);
+          setCountItemsPerPage(value);
+        }}
+      />
     </div>
   );
 }

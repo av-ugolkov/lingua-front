@@ -3,11 +3,9 @@ import { MagnifyingGlassIcon, XMarkIcon } from '@heroicons/react/24/outline';
 export default function SearchInput({
   searchValue,
   onChange,
-  onClear,
 }: {
   searchValue: string;
   onChange: (value: string) => void;
-  onClear: () => void;
 }) {
   return (
     <>
@@ -26,7 +24,7 @@ export default function SearchInput({
           <MagnifyingGlassIcon className='size-6 py-0.5 mr-1 pl-0.5' />
         ) : (
           <XMarkIcon
-            onClick={onClear}
+            onClick={() => onChange('')}
             className='size-6 py-0.5 mr-1 pl-0.5'
           />
         )}

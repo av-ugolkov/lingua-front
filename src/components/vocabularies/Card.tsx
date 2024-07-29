@@ -1,201 +1,167 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-import {
-  ChevronDoubleRightIcon,
-  TrashIcon,
-  PencilIcon,
-  LockClosedIcon,
-  LockOpenIcon,
-} from '@heroicons/react/24/outline';
+import { LockClosedIcon, LockOpenIcon } from '@heroicons/react/24/outline';
 
-import {
-  useVocabulariesStore,
-  VocabularyState,
-} from '@/hooks/stores/useVocabulariesStore';
-import DropdownMenu from '../elements/Dropdown/DropdownMenu';
-import DropdownItem from '../elements/Dropdown/Item';
-import { RequestMethod, AuthStore, useFetch } from '@/hooks/fetch/useFetch';
-import Edit, { IEditData } from './Edit';
+import RightPanel from './RightPanel';
+import AuthPopup from '../elements/Auth/AuthPopup';
+import { Vocab } from './List';
 import { useLanguagesStore } from '@/hooks/stores/useLanguagesStore';
+import { useAuthStore } from '@/hooks/stores/useAuthStore';
+import { useFetch, RequestMethod, AuthStore } from '@/hooks/fetch/useFetch';
 
-const CountRequestWords = '10';
-
-interface IWord {
-  value: string;
-  pronunciation: string;
-}
-const Words: IWord[] = [];
-
-export default function Card({
-  vocab,
-  onClick,
-}: {
-  vocab: VocabularyState;
-  onClick: () => void;
-}) {
-  const [vocabData, setVocabData] = useState(vocab);
-  const [words, setWords] = useState(Words);
-  const [loading, setLoading] = useState(true);
-  const [isShowRenamePopup, setIsShowRenamePopup] = useState(false);
-  const vocabulariesStore = useVocabulariesStore();
+export default function Card({ vocab }: { vocab: Vocab }) {
+  const [isShowSignInUpPopup, setIsShowSignInUpPopup] = useState(false);
+  const navigate = useNavigate();
   const { languages, fetchLanguages } = useLanguagesStore();
-
-  const { funcFetch: fetchRandomWords } = useFetch(
-    '/vocabulary/words/random',
+  const authStore = useAuthStore();
+  const [loading, setLoading] = useState(true);
+  const { funcFetch: fetchOpenVocabulary } = useFetch(
+    '/vocabulary',
     RequestMethod.GET,
-    AuthStore.USE
+    AuthStore.OPTIONAL
   );
-  const { funcFetch: fetchEditVocabulary } = useFetch(
-    `/account/vocabulary`,
-    RequestMethod.PUT,
-    AuthStore.USE
-  );
-  const { funcFetch: fetchDeleteVocabulary } = useFetch(
-    `/account/vocabulary`,
-    RequestMethod.DELETE,
+
+  const { funcFetch: fetchCopyVocabulary } = useFetch(
+    '/vocabulary/copy',
+    RequestMethod.POST,
     AuthStore.USE
   );
 
-  function renameVocabulary(editData: IEditData) {
-    async function asyncRenameVocabulary() {
-      const response = await fetchEditVocabulary({
-        body: JSON.stringify({
-          id: vocab.id,
-          name: editData.name,
-          access_id: editData.accessID,
-        }),
-      });
-      if (response.ok) {
-        setVocabData({
-          ...vocabData,
-          name: editData.name,
-          accessID: editData.accessID,
-        });
-        vocab.name = editData.name;
-        vocab.accessID = editData.accessID;
-      } else {
-        console.error(response);
-      }
-    }
-
-    asyncRenameVocabulary();
-  }
-
-  function deleteVocabulary() {
-    async function asyncDeleteVocabulary() {
-      const response = await fetchDeleteVocabulary({
-        queries: new Map<string, string>([['name', vocabData.name]]),
-      });
-      if (response.ok) {
-        vocabulariesStore.removeVocabulary(vocab.id);
-      } else {
-        console.error(response);
-      }
-    }
-
-    asyncDeleteVocabulary();
-  }
+  const { funcFetch: fetchSubscribeToCreator } = useFetch(
+    '/account/subscribe',
+    RequestMethod.POST,
+    AuthStore.USE
+  );
 
   useEffect(() => {
-    if (languages.size === 0) {
+    if (languages.size > 0) {
+      setLoading(false);
+    } else {
       fetchLanguages();
     }
   }, [languages]);
-
-  useEffect(() => {
-    async function asyncFetchRandomWords() {
-      const response = await fetchRandomWords({
-        queries: new Map([
-          ['vocab_id', vocab.id],
-          ['limit', CountRequestWords],
-        ]),
-      });
-      if (response.ok) {
-        response.data.forEach((item: any) => {
-          setWords((words) => [
-            ...words,
-            {
-              value: item['native']['text'],
-              pronunciation: item['native']['pronunciation'],
-            },
-          ]);
-        });
-      } else {
-        console.error(response.data);
-      }
-      setLoading(false);
-    }
-
-    asyncFetchRandomWords();
-
-    return () => {
-      setWords([]);
-    };
-  }, [vocab.id]);
 
   if (loading) {
     return <div></div>;
   }
 
+  async function CopyVocabulary() {
+    const response = await fetchCopyVocabulary({
+      queries: new Map<string, string>([['id', vocab.id]]),
+    });
+    if (response.ok) {
+      console.log(response.data);
+    } else {
+      console.warn(response);
+    }
+  }
+
+  async function SubscribeToCreator() {
+    const response = await fetchSubscribeToCreator({
+      body: JSON.stringify({ user_id: vocab.userID }),
+    });
+    if (response.ok) {
+      console.log(response.data);
+    } else {
+      console.warn(response);
+    }
+  }
+
+  async function OpenVocabulary() {
+    const response = await fetchOpenVocabulary({
+      queries: new Map<string, string>([['id', vocab.id]]),
+    });
+    if (response.ok) {
+      navigate(`/vocabulary/${response.data['id']}`);
+    } else {
+      setIsShowSignInUpPopup(true);
+    }
+  }
+
   return (
     <>
-      <div className='flex flex-col bg-blue-100 w-96 min-w-96 h-96 shadow-md shadow-blue-300 text-center'>
-        <div className='flex align-middle justify-center'>
-          <div className='flex min-w-7 h-10 my-1 justify-center items-center'>
+      <div className='flex bg-gray-300 h-fit shadow shadow-blue-300'>
+        <div className='flex w-0'>
+          <div className='relative size-5 top-1 left-1'>
             {vocab.accessID === 0 ? (
-              <LockClosedIcon className='size-5 text-red-500' />
+              <LockClosedIcon
+                className='size-5 text-red-500'
+                title='Private'
+              />
             ) : vocab.accessID === 1 ? (
-              <LockOpenIcon className='size-5 text-yellow-500' />
+              <LockOpenIcon
+                className='size-5 text-yellow-500'
+                title='For subscribers'
+              />
             ) : (
               vocab.accessID === 2 && (
-                <LockOpenIcon className='size-5 text-green-500' />
+                <LockOpenIcon
+                  className='size-5 text-green-500'
+                  title='Public'
+                />
               )
             )}
           </div>
-          <div className='inline-block w-full cursor-default bg-transparent h-10 text-center font-semibold content-center text-xl my-1 border-b-2 border-black'>
-            {vocabData.name}
-          </div>
-          <DropdownMenu>
-            <DropdownItem onClick={() => setIsShowRenamePopup(true)}>
-              Edit
-              <PencilIcon className='size-5' />
-            </DropdownItem>
-            <DropdownItem onClick={deleteVocabulary}>
-              Delete
-              <TrashIcon className='size-5' />
-            </DropdownItem>
-          </DropdownMenu>
         </div>
-
-        <div className='flex justify-center items-center mt-1 gap-x-2'>
-          <span>{languages.get(vocab.nativeLang)}</span>
-          <ChevronDoubleRightIcon className={'flex size-5'} />
-          <span>{languages.get(vocab.translateLang)}</span>
-        </div>
-        <div
-          className='flex relative w-96 h-80'
-          onClick={onClick}>
-          <div className='mx-auto no-underline w-96 text-xs pt-1'>
-            {words.map((word, key) => (
-              <div
-                className='block pb-1 text-black whitespace-nowrap no-underline overflow-hidden text-ellipsis'
-                key={key}>
-                <div>{word.value}</div>
-                <div className='font-weight-300'>{word.pronunciation}</div>
-              </div>
-            ))}
+        <button
+          className='flex flex-col w-full justify-around items-center mx-1'
+          onClick={() => {
+            OpenVocabulary();
+          }}>
+          <div className='flex w-full justify-center items-center my-2 gap-1'>
+            <div>
+              <span className='text-lg font-bold'>{vocab.name}</span>
+            </div>
+            <div>
+              from{' '}
+              <span className='text-lg font-bold'>
+                {languages.get(vocab.nativeLang)}
+              </span>
+            </div>
+            <div>
+              to{' '}
+              <span className='text-lg font-bold'>
+                {languages.get(vocab.translateLang)}
+              </span>
+            </div>
+            <div>
+              with <span className='text-lg font-bold'>{vocab.wordsCount}</span>{' '}
+              words
+            </div>
           </div>
+          <div className='flex w-full justify-center items-center'>
+            <div>{vocab.description || 'No description'}</div>
+          </div>
+          <div className='flex bottom-12 w-full justify-start items-center mt-2'>
+            <div className='text-sm text-gray-500'>
+              Created by <span className='font-bold'>{vocab.userName}</span>
+              {' at '}
+              {vocab.updatedAt.toLocaleDateString('en-GB')}
+            </div>
+          </div>
+        </button>
+        <div className='content-center h-28'>
+          <RightPanel
+            onCopy={() => {
+              if (authStore.isActiveToken()) {
+                CopyVocabulary();
+              } else {
+                console.log('Please login first');
+              }
+            }}
+            onSubscribe={() => {
+              if (authStore.isActiveToken()) {
+                SubscribeToCreator();
+              } else {
+                console.log('Please login first');
+              }
+            }}
+          />
         </div>
       </div>
-      {isShowRenamePopup && (
-        <Edit
-          editData={{ name: vocab.name, accessID: vocab.accessID }}
-          saveCallback={(editData) => {
-            renameVocabulary(editData);
-            setIsShowRenamePopup(false);
-          }}
-          cancelCallback={() => setIsShowRenamePopup(false)}
-        />
+      {isShowSignInUpPopup && (
+        <AuthPopup close={() => setIsShowSignInUpPopup(false)} />
       )}
     </>
   );
