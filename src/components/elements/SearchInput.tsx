@@ -10,7 +10,7 @@ export default function SearchInput({
   return (
     <>
       <div className='flex w-[30%] min-w-48 justify-between items-center border-solid border-[1px] border-black'>
-        <div className='ml-2'>
+        <div className='ml-1'>
           <input
             type='text'
             name='search'

@@ -2,7 +2,7 @@ import clsx from 'clsx';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/20/solid';
 
 import getPaginationItems from './getPaginationItems';
-import ListBox, { IListBoxItem } from './ListBox';
+import ListBox, { IListBoxItem } from '../elements/ListBox';
 import { useEffect, useState } from 'react';
 
 const countsItemsPerPage = [5, 10, 15, 20, 25];

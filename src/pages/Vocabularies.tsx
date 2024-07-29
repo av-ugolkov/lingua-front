@@ -1,9 +1,10 @@
 import SearchInput from '@/components/elements/SearchInput';
 import SortedPanel from '@/components/elements/SortedPanel';
 import List from '@/components/vocabularies/List';
-import ListBox, { IListBoxItem } from '@/components/vocabularies/ListBox';
+import ListBox, { IListBoxItem } from '@/components/elements/ListBox';
 import { useLanguagesStore } from '@/hooks/stores/useLanguagesStore';
 import { Order, Sorted, SortWordTypes } from '@/models/Sorted';
+import { ChevronDoubleRightIcon, FlagIcon } from '@heroicons/react/24/outline';
 import { useEffect, useState } from 'react';
 
 export default function Vocabularies() {
@@ -49,28 +50,32 @@ export default function Vocabularies() {
               setSearchValue(value);
             }}
           />
-          <ListBox
-            id='native_language'
-            items={mapToLanguages()}
-            defaultIndexValue={0}
-            onChange={(value) => {
-              const lang =
-                languages.find((tp) => tp.lang === value) || languages[0];
-              setNativeLang(lang.code);
-            }}
-            classSelect='block w-fit p-1 ml-2 bg-transparent border border-gray-300 text-black text-sm focus:ring-primary-500 focus:border-primary-500'
-          />
-          <ListBox
-            id='translate_language'
-            items={mapToLanguages()}
-            defaultIndexValue={0}
-            onChange={(value) => {
-              const lang =
-                languages.find((tp) => tp.lang === value) || languages[0];
-              setTranslateLang(lang.code);
-            }}
-            classSelect='block w-fit p-1 ml-2 bg-transparent border border-gray-300 text-black text-sm focus:ring-primary-500 focus:border-primary-500'
-          />
+          <div className='flex items-center ml-3'>
+            <FlagIcon className='size-6 mr-1' />
+            <ListBox
+              id='native_language'
+              items={mapToLanguages()}
+              defaultIndexValue={0}
+              onChange={(value) => {
+                const lang =
+                  languages.find((tp) => tp.lang === value) || languages[0];
+                setNativeLang(lang.code);
+              }}
+              classSelect='block w-fit p-1 bg-transparent border border-black text-black text-sm focus:ring-primary-500 focus:border-primary-500'
+            />
+            <ChevronDoubleRightIcon className='size-6 mx-1' />
+            <ListBox
+              id='translate_language'
+              items={mapToLanguages()}
+              defaultIndexValue={0}
+              onChange={(value) => {
+                const lang =
+                  languages.find((tp) => tp.lang === value) || languages[0];
+                setTranslateLang(lang.code);
+              }}
+              classSelect='block w-fit p-1 bg-transparent border border-black text-black text-sm focus:ring-primary-500 focus:border-primary-500'
+            />
+          </div>
         </div>
         <div className='flex justify-end items-center'>
           <SortedPanel

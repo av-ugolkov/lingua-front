@@ -65,6 +65,10 @@ export default function Header() {
           url='/contact'
         />
         <HeaderBtn
+          name='Users'
+          url='/users'
+        />
+        <HeaderBtn
           name='Vocabularies'
           url='/vocabularies'
         />
