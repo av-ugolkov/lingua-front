@@ -4,17 +4,17 @@ import clsx from 'clsx';
 import { useState } from 'react';
 
 export default function SortedPanel({
-  currentSortedType,
+  sortedType,
   sortedTypes,
+  order,
   setSorted,
 }: {
-  currentSortedType: Sorted;
+  sortedType: Sorted;
   sortedTypes: ISortType[];
+  order: Order;
   setSorted: (value: Sorted, type: Order) => void;
 }) {
-  const [typeSort, setTypeSort] = useState(currentSortedType);
-  const [order, setOrder] = useState(Order.DESC);
-  const [scaleX, setScaleX] = useState(1);
+  const [scaleX, setScaleX] = useState(-1);
 
   return (
     <div className='flex w-full h-full items-center'>
@@ -23,11 +23,11 @@ export default function SortedPanel({
         onClick={() => {
           if (scaleX === 1) {
             setScaleX(-1);
+            setSorted(sortedType, Order.DESC);
           } else {
             setScaleX(1);
+            setSorted(sortedType, Order.ASC);
           }
-          setOrder(scaleX === 1 ? Order.DESC : Order.ASC);
-          setSorted(typeSort, order);
         }}>
         <ChartBarIcon
           className={clsx('min-w-6 pr-0.5', `scale-x-[${scaleX}]`)}
@@ -40,7 +40,6 @@ export default function SortedPanel({
           const typeSort =
             sortedTypes.find((tp) => tp.type.toString() === e.target.value) ||
             sortedTypes[0];
-          setTypeSort(typeSort.type);
           setSorted(typeSort.type, order);
         }}>
         {sortedTypes.map((tp) => (

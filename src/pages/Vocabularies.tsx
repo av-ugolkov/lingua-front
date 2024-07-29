@@ -79,8 +79,9 @@ export default function Vocabularies() {
         </div>
         <div className='flex justify-end items-center'>
           <SortedPanel
-            currentSortedType={SortWordTypes[0].type}
+            sortedType={sortedType}
             sortedTypes={SortWordTypes}
+            order={orderType}
             setSorted={(value: Sorted, type: Order) => {
               setSortedType(value);
               setOrterType(type);

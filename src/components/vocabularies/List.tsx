@@ -38,7 +38,7 @@ export default function List({
   translateLang,
 }: SortedInputProps) {
   const [pageNum, setPageNum] = useState(1);
-  const [countItemsPerPage, setCountItemsPerPage] = useState(0);
+  const [countItemsPerPage, setCountItemsPerPage] = useState(5);
   const [countItems, setCountItems] = useState(0);
 
   const { funcFetch: fetchVocabs } = useFetch(
@@ -56,7 +56,7 @@ export default function List({
           ['page', pageNum],
           ['per_page', countItemsPerPage],
           ['search', searchValue],
-          ['order', sortType],
+          ['sort', sortType],
           ['order', orderType],
           ['native_lang', nativeLang],
           ['translate_lang', translateLang],
@@ -117,7 +117,6 @@ export default function List({
         countItems={countItems}
         setPageNum={setPageNum}
         countItemsPerPage={(value) => {
-          console.log(value);
           setCountItemsPerPage(value);
         }}
       />

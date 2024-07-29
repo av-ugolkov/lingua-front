@@ -1,7 +1,7 @@
 import SearchInput from '@/components/elements/SearchInput';
 import SortedPanel from '@/components/elements/SortedPanel';
 import { AuthStore, RequestMethod, useFetch } from '@/hooks/fetch/useFetch';
-import { SortUserTypes } from '@/models/Sorted';
+import { Order, Sorted, SortUserTypes } from '@/models/Sorted';
 import { useEffect, useState } from 'react';
 
 interface IUser {
@@ -15,6 +15,8 @@ interface IUser {
 }
 
 export default function Users() {
+  const [sortedType, setSortedType] = useState(SortUserTypes[1].type);
+  const [orderType, setOrterType] = useState(Order.DESC);
   const [searchValue, setSearchValue] = useState('');
   const [users, setUsers] = useState<IUser[]>([]);
   const { funcFetch: fetchUsers } = useFetch(
@@ -56,9 +58,13 @@ export default function Users() {
           onChange={setSearchValue}
         />
         <SortedPanel
-          currentSortedType={SortUserTypes[0].type}
+          sortedType={sortedType}
           sortedTypes={SortUserTypes}
-          setSorted={() => {}}
+          order={orderType}
+          setSorted={(value: Sorted, type: Order) => {
+            setSortedType(value);
+            setOrterType(type);
+          }}
         />
       </div>
       {users.map((item) => (
