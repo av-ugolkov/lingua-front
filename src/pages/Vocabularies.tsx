@@ -4,7 +4,10 @@ import List from '@/components/vocabularies/List';
 import ListBox, { IListBoxItem } from '@/components/elements/ListBox';
 import { useLanguagesStore } from '@/hooks/stores/useLanguagesStore';
 import { Order, Sorted, SortWordTypes } from '@/models/Sorted';
-import { ChevronDoubleRightIcon, FlagIcon } from '@heroicons/react/24/outline';
+import {
+  ChevronDoubleRightIcon,
+  LanguageIcon,
+} from '@heroicons/react/24/outline';
 import { useEffect, useState } from 'react';
 
 export default function Vocabularies() {
@@ -51,7 +54,7 @@ export default function Vocabularies() {
             }}
           />
           <div className='flex items-center ml-3'>
-            <FlagIcon className='size-6 mr-1' />
+            <LanguageIcon className='size-6 mr-1' />
             <ListBox
               id='native_language'
               items={mapToLanguages()}

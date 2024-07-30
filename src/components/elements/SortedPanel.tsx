@@ -17,7 +17,7 @@ export default function SortedPanel({
   const [scaleX, setScaleX] = useState(-1);
 
   return (
-    <div className='flex w-full h-full items-center'>
+    <div className='flex h-full items-center'>
       <button
         className='w-6 h-6 hover:text-blue-400 hover:duration-300 duration-300'
         onClick={() => {

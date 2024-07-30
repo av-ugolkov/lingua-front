@@ -1,7 +1,22 @@
-export default function Tag() {
+import clsx from 'clsx';
+
+export default function Tag({
+  value,
+  className,
+  children,
+}: {
+  value: string;
+  className?: string;
+  children?: React.ReactNode;
+}) {
   return (
-    <>
-      <div>TAG</div>
-    </>
+    <span
+      className={clsx(
+        className,
+        'flex h-auto items-center px-1 mb-2 mr-2 select-none text-wrap bg-gray-300 shadow shadow-blue-300'
+      )}>
+      {value}
+      {children}
+    </span>
   );
 }

@@ -7,11 +7,11 @@ export default function Avatar({
 }: {
   name: string;
   className?: string;
-  callback: () => void;
+  callback?: () => void;
 }) {
   return (
     <button
-      onBlur={() => setTimeout(() => callback(), 150)}
+      onBlur={() => setTimeout(() => callback?.(), 150)}
       onClick={callback}
       className={clsx(
         className,

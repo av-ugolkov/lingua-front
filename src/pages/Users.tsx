@@ -1,17 +1,15 @@
 import SearchInput from '@/components/elements/SearchInput';
 import SortedPanel from '@/components/elements/SortedPanel';
+import Card from '@/components/users/Card';
 import { AuthStore, RequestMethod, useFetch } from '@/hooks/fetch/useFetch';
 import { Order, Sorted, SortUserTypes } from '@/models/Sorted';
 import { useEffect, useState } from 'react';
 
-interface IUser {
+export interface IUser {
   id: number;
   name: string;
-  email: string;
   role: string;
-  countWords: number;
-  createdAt: string;
-  lastVisited: string;
+  lastVisited: Date;
 }
 
 export default function Users() {
@@ -35,11 +33,8 @@ export default function Users() {
           users.push({
             id: item['id'],
             name: item['name'],
-            email: item['email'],
             role: item['role'],
-            countWords: item['count_words'],
-            createdAt: item['created_at'],
-            lastVisited: item['last_visited'],
+            lastVisited: new Date(item['last_visited']),
           });
         });
         setUsers(users);
@@ -51,7 +46,7 @@ export default function Users() {
   }, [searchValue]);
 
   return (
-    <>
+    <div className='grid p-4 min-w-[540px] w-full gap-5 grid-cols-1'>
       <div className='flex justify-between'>
         <SearchInput
           searchValue={searchValue}
@@ -67,9 +62,11 @@ export default function Users() {
           }}
         />
       </div>
-      {users.map((item) => (
-        <div>{item.name}</div>
-      ))}
-    </>
+      <div>
+        {users.map((item) => (
+          <Card {...item} />
+        ))}
+      </div>
+    </div>
   );
 }
