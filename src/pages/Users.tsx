@@ -64,7 +64,10 @@ export default function Users() {
       </div>
       <div>
         {users.map((item) => (
-          <Card {...item} />
+          <Card
+            key={item.id}
+            {...item}
+          />
         ))}
       </div>
     </div>
