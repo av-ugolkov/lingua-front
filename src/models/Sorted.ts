@@ -1,10 +1,14 @@
 export enum Sorted {
-  'Newest',
-  'Oldest',
-  'UpdateAsc',
-  'UpdateDesc',
-  'AtoZ',
-  'ZtoA',
+  'Created',
+  'Updated',
+  'Visit',
+  'ABC',
+  'WordCount',
+}
+
+export enum Order {
+  'ASC',
+  'DESC',
 }
 
 export interface ISortType {
@@ -12,29 +16,28 @@ export interface ISortType {
   type: Sorted;
 }
 
-export const SortTypes: ISortType[] = [
+export const SortWordTypes: ISortType[] = [
   {
-    name: 'Newest',
-    type: Sorted.Newest,
+    name: 'By created',
+    type: Sorted.Created,
   },
   {
-    name: 'Oldest',
-    type: Sorted.Oldest,
+    name: 'By update',
+    type: Sorted.Updated,
   },
   {
-    name: 'Update asc',
-    type: Sorted.UpdateAsc,
+    name: 'By ABC',
+    type: Sorted.ABC,
+  },
+];
+
+export const SortUserTypes: ISortType[] = [
+  {
+    name: 'By visit',
+    type: Sorted.Visit,
   },
   {
-    name: 'Update desc',
-    type: Sorted.UpdateDesc,
-  },
-  {
-    name: 'A to Z',
-    type: Sorted.AtoZ,
-  },
-  {
-    name: 'Z to A',
-    type: Sorted.ZtoA,
+    name: 'By name',
+    type: Sorted.ABC,
   },
 ];

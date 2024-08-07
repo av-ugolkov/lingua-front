@@ -1,8 +1,8 @@
 import { useState } from 'react';
 
-import List from '@/components/vocabularies/List';
+import List from '@/components/user_vocabularies/List';
 import Button from '@/components/elements/Button';
-import Create from '@/components/vocabularies/Create';
+import Create from '@/components/user_vocabularies/Create';
 import { RequestMethod, AuthStore, useFetch } from '@/hooks/fetch/useFetch';
 import {
   useVocabulariesStore,

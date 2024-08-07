@@ -10,7 +10,7 @@ export default function Account({ accountName }: { accountName: string }) {
       <div className='flex items-center'>
         <Avatar
           name={accountName}
-          className='ml-2'
+          className='size-8 ml-2'
           callback={() => setIsShowMenu(!isShowMenu)}
         />
       </div>

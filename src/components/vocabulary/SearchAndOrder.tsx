@@ -2,7 +2,7 @@ import { ChartBarIcon } from '@heroicons/react/24/outline';
 
 import { useSortedWordsStore } from '@/hooks/stores/useSortedWordsStore';
 import { useSearchWordStore } from '@/hooks/stores/useSearchWordStore';
-import { SortTypes } from '@/models/Sorted';
+import { SortWordTypes } from '@/models/Sorted';
 import SearchInput from '../elements/SearchInput';
 
 export default function SearchAndOrder() {
@@ -24,12 +24,13 @@ export default function SearchAndOrder() {
             className='bg-transparent outline-none'
             onChange={(e) => {
               const typeSort =
-                SortTypes.find((tp) => tp.type.toString() === e.target.value) ||
-                SortTypes[0];
+                SortWordTypes.find(
+                  (tp) => tp.type.toString() === e.target.value
+                ) || SortWordTypes[0];
 
               sortedWordsStore.setOrderType(typeSort.type);
             }}>
-            {SortTypes.map((tp) => (
+            {SortWordTypes.map((tp) => (
               <option
                 value={tp.type}
                 key={tp.type}>

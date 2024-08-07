@@ -5,10 +5,12 @@ import HeaderBtn from './HeaderBtn';
 import Account from './Account';
 import { RequestMethod, AuthStore, useFetch } from '@/hooks/fetch/useFetch';
 import { useAuthStore } from '@/hooks/stores/useAuthStore';
+import { useLanguagesStore } from '@/hooks/stores/useLanguagesStore';
 
 export default function Header() {
   const navigate = useNavigate();
   const authStore = useAuthStore();
+  const { languages, fetchLanguages } = useLanguagesStore();
   const { funcFetch: fetchUser } = useFetch(
     '/user/id',
     RequestMethod.GET,
@@ -18,6 +20,10 @@ export default function Header() {
   const [isAuth, setIsAuth] = useState(false);
   const [loading, setLoading] = useState(true);
   const [accountName, setAccountName] = useState('');
+
+  useEffect(() => {
+    if (languages.size === 0) fetchLanguages();
+  }, []);
 
   useEffect(() => {
     async function asyncFetchUser() {
@@ -63,6 +69,10 @@ export default function Header() {
         <HeaderBtn
           name='Contact'
           url='/contact'
+        />
+        <HeaderBtn
+          name='Users'
+          url='/users'
         />
         <HeaderBtn
           name='Vocabularies'
