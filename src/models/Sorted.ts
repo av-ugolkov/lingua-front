@@ -37,10 +37,6 @@ export const SortUserTypes: ISortType[] = [
     type: Sorted.Visit,
   },
   {
-    name: 'By word count',
-    type: Sorted.WordCount,
-  },
-  {
     name: 'By name',
     type: Sorted.ABC,
   },

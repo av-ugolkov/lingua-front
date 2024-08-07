@@ -68,8 +68,7 @@ export default function Card(user: IUser) {
             <div className='flex items-center mb-5 gap-x-5'>
               <Avatar
                 name={user.name}
-                size={16}
-                className='text-4xl'
+                className='size-16 text-4xl'
               />
               <div className='w-36'>
                 <h2

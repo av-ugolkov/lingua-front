@@ -1,6 +1,7 @@
 import SearchInput from '@/components/elements/SearchInput';
 import SortedPanel from '@/components/elements/SortedPanel';
 import Card from '@/components/users/Card';
+import Pagination from '@/components/vocabularies/Pagination';
 import { AuthStore, RequestMethod, useFetch } from '@/hooks/fetch/useFetch';
 import { Order, Sorted, SortUserTypes } from '@/models/Sorted';
 import { useEffect, useState } from 'react';
@@ -13,7 +14,10 @@ export interface IUser {
 }
 
 export default function Users() {
-  const [sortedType, setSortedType] = useState(SortUserTypes[1].type);
+  const [pageNum, setPageNum] = useState(1);
+  const [countItemsPerPage, setCountItemsPerPage] = useState(5);
+  const [countItems, setCountItems] = useState(0);
+  const [sortedType, setSortedType] = useState(SortUserTypes[0].type);
   const [orderType, setOrterType] = useState(Order.DESC);
   const [searchValue, setSearchValue] = useState('');
   const [users, setUsers] = useState<IUser[]>([]);
@@ -25,11 +29,19 @@ export default function Users() {
 
   useEffect(() => {
     async function asyncFetchUsers() {
-      const response = await fetchUsers({});
+      const response = await fetchUsers({
+        queries: new Map<string, any>([
+          ['page', pageNum],
+          ['per_page', countItemsPerPage],
+          ['search', searchValue],
+          ['sort', sortedType],
+          ['order', orderType],
+        ]),
+      });
 
       if (response.ok) {
         var users: IUser[] = [];
-        response.data.forEach((item: any) => {
+        response.data['users'].forEach((item: any) => {
           users.push({
             id: item['id'],
             name: item['name'],
@@ -38,12 +50,13 @@ export default function Users() {
           });
         });
         setUsers(users);
+        setCountItems(response.data['count_users']);
       } else {
         console.log(response.data);
       }
     }
     asyncFetchUsers();
-  }, [searchValue]);
+  }, [pageNum, countItemsPerPage, orderType, sortedType, searchValue]);
 
   return (
     <div className='grid p-4 min-w-[540px] w-full gap-5 grid-cols-1'>
@@ -70,6 +83,14 @@ export default function Users() {
           />
         ))}
       </div>
+      <Pagination
+        currentPage={pageNum}
+        countItems={countItems}
+        setPageNum={setPageNum}
+        countItemsPerPage={(value) => {
+          setCountItemsPerPage(value);
+        }}
+      />
     </div>
   );
 }

@@ -30,12 +30,16 @@ export default function SortedPanel({
           }
         }}>
         <ChartBarIcon
-          className={clsx('min-w-6 pr-0.5', `scale-x-[${scaleX}]`)}
+          className={clsx(
+            'min-w-6 pr-0.5',
+            scaleX === 1 ? 'scale-x-1' : 'scale-x-[-1]'
+          )}
         />
       </button>
       <select
         id='sort_panel'
         className='bg-transparent outline-none'
+        defaultValue={sortedType}
         onChange={(e) => {
           const typeSort =
             sortedTypes.find((tp) => tp.type.toString() === e.target.value) ||
