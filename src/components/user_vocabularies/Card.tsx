@@ -4,8 +4,6 @@ import {
   ChevronDoubleRightIcon,
   TrashIcon,
   PencilIcon,
-  LockClosedIcon,
-  LockOpenIcon,
 } from '@heroicons/react/24/outline';
 
 import {
@@ -17,6 +15,7 @@ import DropdownItem from '../elements/Dropdown/Item';
 import { RequestMethod, AuthStore, useFetch } from '@/hooks/fetch/useFetch';
 import Edit, { IEditData } from './Edit';
 import { useLanguagesStore } from '@/hooks/stores/useLanguagesStore';
+import LockItem from '../elements/LockItem';
 
 const CountRequestWords = '10';
 
@@ -142,15 +141,10 @@ export default function Card({
       <div className='flex flex-col bg-blue-100 w-96 min-w-96 h-96 shadow-md shadow-blue-300 text-center'>
         <div className='flex align-middle justify-center'>
           <div className='flex min-w-7 h-10 my-1 justify-center items-center'>
-            {vocab.accessID === 0 ? (
-              <LockClosedIcon className='size-5 text-red-500' />
-            ) : vocab.accessID === 1 ? (
-              <LockOpenIcon className='size-5 text-yellow-500' />
-            ) : (
-              vocab.accessID === 2 && (
-                <LockOpenIcon className='size-5 text-green-500' />
-              )
-            )}
+            <LockItem
+              size={5}
+              accessID={vocab.accessID}
+            />
           </div>
           <div className='inline-block w-full cursor-default bg-transparent h-10 text-center font-semibold content-center text-xl my-1 border-b-2 border-black'>
             {vocabData.name}

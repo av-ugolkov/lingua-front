@@ -4,31 +4,30 @@ import { IUser } from '@/pages/Users';
 import Avatar from '../header/Avatar';
 import Button from '../elements/Button';
 import { AuthStore, RequestMethod, useFetch } from '@/hooks/fetch/useFetch';
+import VocabTag from './VocabTag';
 import { useLanguagesStore } from '@/hooks/stores/useLanguagesStore';
 
-interface IVocab {
+export interface IVocab {
   id: string;
   name: string;
-  accessID: string;
+  accessID: number;
   nativeLang: string;
   translateLang: string;
   wordsCount: number;
 }
 
 export default function Card(user: IUser) {
-  const { languages, fetchLanguages } = useLanguagesStore();
   const [vocabularies, setVocabularies] = useState<IVocab[]>([]);
+  const { languages } = useLanguagesStore();
   const { funcFetch: fetchVocabularies } = useFetch(
     '/vocabularies/user',
     RequestMethod.GET,
     AuthStore.OPTIONAL
   );
 
-  useEffect(() => {
-    if (languages.size == 0) {
-      fetchLanguages();
-    }
-  }, [languages]);
+  if (languages.size == 0) {
+    return <></>;
+  }
 
   useEffect(() => {
     async function asyncFetchVocabularies() {
@@ -101,22 +100,10 @@ export default function Card(user: IUser) {
         <div className='flex-1 pl-5'>
           <ul className='flex flex-col gap-y-3'>
             {vocabularies.map((vocab) => (
-              <button
+              <VocabTag
                 key={vocab.id}
-                className='flex flex-col px-3 py-1 bg-gray-300 duration-300 hover:shadow hover:shadow-blue-500 hover:duration-300'
-                onClick={() => {}}>
-                <div className='flex content-start'>{vocab.name}</div>
-                <div
-                  id='sub'
-                  className='flex w-full justify-between text-gray-600'>
-                  <div className='flex'>{`${languages.get(
-                    vocab.nativeLang
-                  )} ↔ ${languages.get(vocab.translateLang)}`}</div>
-                  <div className='flex'>
-                    {vocab.wordsCount} word{vocab.wordsCount != 1 && 's'}
-                  </div>
-                </div>
-              </button>
+                {...vocab}
+              />
             ))}
           </ul>
         </div>
