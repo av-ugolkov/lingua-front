@@ -39,7 +39,7 @@ export default function Create({
   closeCallback: () => void;
 }) {
   const [vocab, setVocab] = useState(tempVocabulary);
-  const { languages: languagesStore, fetchLanguages } = useLanguagesStore();
+  const { languages: languagesStore } = useLanguagesStore();
   const [languages, setLanguages] = useState(tempLanguages);
   const [accesses, setAccesses] = useState(tempAccesses);
 
@@ -54,8 +54,6 @@ export default function Create({
           },
         ]);
       });
-    } else {
-      fetchLanguages();
     }
   }, [languagesStore]);
 

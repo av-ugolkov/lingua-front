@@ -37,7 +37,7 @@ export default function Card({
   const [loading, setLoading] = useState(true);
   const [isShowRenamePopup, setIsShowRenamePopup] = useState(false);
   const vocabulariesStore = useVocabulariesStore();
-  const { languages, fetchLanguages } = useLanguagesStore();
+  const { languages } = useLanguagesStore();
 
   const { funcFetch: fetchRandomWords } = useFetch(
     '/vocabulary/words/random',
@@ -94,12 +94,6 @@ export default function Card({
 
     asyncDeleteVocabulary();
   }
-
-  useEffect(() => {
-    if (languages.size === 0) {
-      fetchLanguages();
-    }
-  }, [languages]);
 
   useEffect(() => {
     async function asyncFetchRandomWords() {

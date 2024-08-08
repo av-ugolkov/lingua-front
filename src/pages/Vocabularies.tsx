@@ -11,7 +11,7 @@ import {
 import { useEffect, useState } from 'react';
 
 export default function Vocabularies() {
-  const { languages: languagesStore, fetchLanguages } = useLanguagesStore();
+  const { languages: languagesStore } = useLanguagesStore();
   const [languages, setLanguages] = useState([{ lang: 'Any', code: 'any' }]);
   const [searchValue, setSearchValue] = useState('');
   const [sortedType, setSortedType] = useState(SortWordTypes[1].type);
@@ -30,8 +30,6 @@ export default function Vocabularies() {
           },
         ]);
       });
-    } else {
-      fetchLanguages();
     }
   }, [languagesStore]);
 

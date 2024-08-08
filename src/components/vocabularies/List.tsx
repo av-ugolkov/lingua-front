@@ -1,24 +1,9 @@
 import { useEffect, useState } from 'react';
 
-import Card from './Card';
+import Card, { Vocab } from '@/components/elements/Vocabulary/Card';
 import { Order, Sorted } from '@/models/Sorted';
 import Pagination from './Pagination';
 import { AuthStore, RequestMethod, useFetch } from '@/hooks/fetch/useFetch';
-
-export interface Vocab {
-  id: string;
-  name: string;
-  description: string;
-  wordsCount: number;
-  userID: string;
-  userName: string;
-  accessID: number;
-  nativeLang: string;
-  translateLang: string;
-  tags: string[];
-  createdAt: Date;
-  updatedAt: Date;
-}
 
 const vocabsEmpty: Vocab[] = [];
 
@@ -109,7 +94,8 @@ export default function List({
       {vocabs.map((item) => (
         <Card
           key={item.id}
-          vocab={item}
+          id={item.id}
+          authStore={AuthStore.OPTIONAL}
         />
       ))}
       <Pagination
