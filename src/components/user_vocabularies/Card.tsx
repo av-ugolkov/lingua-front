@@ -143,7 +143,7 @@ export default function Card({
           <div className='inline-block w-full cursor-default bg-transparent h-10 text-center font-semibold content-center text-xl my-1 border-b-2 border-black'>
             {vocabData.name}
           </div>
-          <DropdownMenu>
+          <DropdownMenu baseSize='w-7 h-10'>
             <DropdownItem onClick={() => setIsShowRenamePopup(true)}>
               Edit
               <PencilIcon className='size-5' />
