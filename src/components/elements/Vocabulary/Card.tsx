@@ -11,6 +11,7 @@ import {
 import Tag from '../Tags/Tag';
 import DropdownMenu from '../Dropdown/DropdownMenu';
 import DropdownItem from '../Dropdown/Item';
+import ArrowBothSide from '@/assets/ArrowBothSide';
 
 const CountRequestWords = '12';
 
@@ -141,9 +142,11 @@ export default function Card({
         </div>
         <div className='flex flex-col w-full border-t border-black mt-2 pt-2'>
           <div className='flex justify-between items-center text-gray-500'>
-            <p className='m-0'>{`${languages.get(
-              vocab.nativeLang
-            )} ↔ ${languages.get(vocab.translateLang)}`}</p>
+            <div className='flex'>
+              <p className='m-0'>{languages.get(vocab.nativeLang)}</p>
+              <ArrowBothSide className='w-5 mx-1' />
+              <p className='m-0'>{languages.get(vocab.translateLang)}</p>
+            </div>
             <p className='m-0'>
               {vocab.wordsCount} word{vocab.wordsCount != 1 && 's'}
             </p>
