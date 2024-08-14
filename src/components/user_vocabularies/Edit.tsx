@@ -4,11 +4,12 @@ import { fetchData } from '@/scripts/fetch/fetchData';
 import { IAccess } from './Create';
 import CloseBtn from './CloseBtn';
 import BgLock from '../elements/BgLock';
+import { AccessID } from '@/models/Access';
 
 export interface IEditData {
   name: string;
   description: string;
-  accessID: number;
+  accessID: AccessID;
 }
 
 const tempAccesses: IAccess[] = [];

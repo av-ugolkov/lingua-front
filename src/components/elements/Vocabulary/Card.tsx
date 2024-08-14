@@ -106,11 +106,15 @@ export default function Card({
     };
   }, []);
 
+  function openVocabulary() {
+    if (vocab.accessID) setIsShowSignInUpPopup(true);
+  }
+
   return (
     <div className='relative bg-blue-100 shadow-md shadow-blue-300 duration-300 hover:shadow-lg hover:shadow-blue-400 hover:duration-300'>
       <button
         className='flex flex-col justify-between items-start w-full px-5 py-4'
-        onClick={() => setIsShowSignInUpPopup(true)}>
+        onClick={openVocabulary}>
         <div className='flex gap-x-1 items-center'>
           <h2 className='flex items-center mr-1 text-xl'>{vocab.name}</h2>
           <LockItem accessID={vocab.accessID} />

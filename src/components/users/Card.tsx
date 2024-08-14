@@ -6,11 +6,12 @@ import Button from '../elements/Button';
 import { AuthStore, RequestMethod, useFetch } from '@/hooks/fetch/useFetch';
 import VocabTag from './VocabTag';
 import { useLanguagesStore } from '@/hooks/stores/useLanguagesStore';
+import { AccessID } from '@/models/Access';
 
 export interface IVocab {
   id: string;
   name: string;
-  accessID: number;
+  accessID: AccessID;
   nativeLang: string;
   translateLang: string;
   wordsCount: number;

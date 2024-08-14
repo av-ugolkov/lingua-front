@@ -9,6 +9,7 @@ import { fetchData } from '@/scripts/fetch/fetchData';
 import { ILanguage, useLanguagesStore } from '@/hooks/stores/useLanguagesStore';
 import CloseBtn from './CloseBtn';
 import BgLock from '../elements/BgLock';
+import { AccessID } from '@/models/Access';
 
 export interface IAccess {
   id: number;
@@ -19,7 +20,7 @@ export interface IAccess {
 const tempVocabulary: VocabularyState = {
   id: '',
   name: '',
-  accessID: 2,
+  accessID: AccessID.Public,
   nativeLang: '',
   translateLang: '',
   description: '',
