@@ -4,16 +4,8 @@ import AuthPopup from '../Auth/AuthPopup';
 import LockItem from '../LockItem';
 import { AuthStore, RequestMethod, useFetch } from '@/hooks/fetch/useFetch';
 import { useLanguagesStore } from '@/hooks/stores/useLanguagesStore';
-import {
-  DocumentDuplicateIcon,
-  PencilIcon,
-  TrashIcon,
-} from '@heroicons/react/24/outline';
 import Tag from '../Tags/Tag';
-import DropdownMenu from '../Dropdown/DropdownMenu';
-import DropdownItem from '../Dropdown/Item';
 import ArrowBothSide from '@/assets/ArrowBothSide';
-import { useAuthStore } from '@/hooks/stores/useAuthStore';
 
 const CountRequestWords = '12';
 
@@ -46,7 +38,6 @@ export default function Card({
 }) {
   const [vocab, setVocab] = useState<Vocab>({} as Vocab);
   const [isShowSignInUpPopup, setIsShowSignInUpPopup] = useState(false);
-  const { getUserID } = useAuthStore();
   const { languages } = useLanguagesStore();
   const [words, setWords] = useState<IWord[]>([]);
   const { funcFetch: fetchVocab } = useFetch(
@@ -116,7 +107,7 @@ export default function Card({
   }, []);
 
   return (
-    <div className='relative bg-blue-100 shadow-md shadow-blue-300'>
+    <div className='relative bg-blue-100 shadow-md shadow-blue-300 duration-300 hover:shadow-lg hover:shadow-blue-400 hover:duration-300'>
       <button
         className='flex flex-col justify-between items-start w-full px-5 py-4'
         onClick={() => setIsShowSignInUpPopup(true)}>
@@ -150,9 +141,6 @@ export default function Card({
           </div>
         </div>
       </button>
-      <div className='absolute top-2 right-2'>
-        {DropdownMenuFn(getUserID() === vocab.userID)}
-      </div>
       {isShowSignInUpPopup && (
         <AuthPopup
           close={() => {
@@ -161,29 +149,5 @@ export default function Card({
         />
       )}
     </div>
-  );
-}
-
-function DropdownMenuFn(owner: boolean) {
-  return (
-    <DropdownMenu baseSize='w-7 h-7'>
-      {owner ? (
-        <>
-          <DropdownItem onClick={() => {}}>
-            Edit
-            <PencilIcon className='size-5' />
-          </DropdownItem>
-          <DropdownItem onClick={() => {}}>
-            Delete
-            <TrashIcon className='size-5' />
-          </DropdownItem>
-        </>
-      ) : (
-        <DropdownItem onClick={() => {}}>
-          Copy
-          <DocumentDuplicateIcon className='size-5' />
-        </DropdownItem>
-      )}
-    </DropdownMenu>
   );
 }

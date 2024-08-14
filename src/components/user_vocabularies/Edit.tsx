@@ -7,6 +7,7 @@ import BgLock from '../elements/BgLock';
 
 export interface IEditData {
   name: string;
+  description: string;
   accessID: number;
 }
 
@@ -58,7 +59,7 @@ export default function Edit({
 
   return (
     <BgLock>
-      <div className='relative bg-white shadow-md shadow-blue-300'>
+      <div className='relative bg-white w-96 shadow-md shadow-blue-300'>
         <div className='flex items-center justify-between p-2 border-b'>
           <h3 className='ml-2 text-lg font-semibold text-black'>
             Edit vocabulary
@@ -81,6 +82,23 @@ export default function Edit({
                 required={true}
                 value={edit.name}
                 onChange={(e) => setEdit({ ...edit, name: e.target.value })}
+              />
+            </div>
+            <div className='col-span-2'>
+              <label
+                htmlFor='name'
+                className='block mb-2 text-sm font-medium text-black'>
+                Description
+              </label>
+              <textarea
+                id='name'
+                className='text-sm block w-full p-2.5 input-form'
+                placeholder='Vocabulary description'
+                required={true}
+                value={edit.description}
+                onChange={(e) =>
+                  setEdit({ ...edit, description: e.target.value })
+                }
               />
             </div>
           </div>

@@ -174,7 +174,11 @@ export default function Card({
       </div>
       {isShowRenamePopup && (
         <Edit
-          editData={{ name: vocab.name, accessID: vocab.accessID }}
+          editData={{
+            name: vocab.name,
+            description: vocab.description,
+            accessID: vocab.accessID,
+          }}
           saveCallback={(editData) => {
             renameVocabulary(editData);
             setIsShowRenamePopup(false);
