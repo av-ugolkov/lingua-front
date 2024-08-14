@@ -5,13 +5,15 @@ import LockItem from '../LockItem';
 import { AuthStore, RequestMethod, useFetch } from '@/hooks/fetch/useFetch';
 import { useLanguagesStore } from '@/hooks/stores/useLanguagesStore';
 import {
-  ArrowTopRightOnSquareIcon,
   DocumentDuplicateIcon,
+  PencilIcon,
+  TrashIcon,
 } from '@heroicons/react/24/outline';
 import Tag from '../Tags/Tag';
 import DropdownMenu from '../Dropdown/DropdownMenu';
 import DropdownItem from '../Dropdown/Item';
 import ArrowBothSide from '@/assets/ArrowBothSide';
+import { useAuthStore } from '@/hooks/stores/useAuthStore';
 
 const CountRequestWords = '12';
 
@@ -44,6 +46,7 @@ export default function Card({
 }) {
   const [vocab, setVocab] = useState<Vocab>({} as Vocab);
   const [isShowSignInUpPopup, setIsShowSignInUpPopup] = useState(false);
+  const { getUserID } = useAuthStore();
   const { languages } = useLanguagesStore();
   const [words, setWords] = useState<IWord[]>([]);
   const { funcFetch: fetchVocab } = useFetch(
@@ -113,23 +116,13 @@ export default function Card({
   }, []);
 
   return (
-    <>
-      <div className='flex flex-col justify-between items-start w-full px-5 py-4 bg-blue-100 shadow-md shadow-blue-300'>
-        <div className='flex w-full justify-between'>
-          <div className='flex gap-x-1 items-center'>
-            <h2 className='flex items-center mr-1 text-xl'>{vocab.name}</h2>
-            <LockItem accessID={vocab.accessID} />
-          </div>
-          <DropdownMenu baseSize='w-7 h-7'>
-            <DropdownItem onClick={() => {}}>
-              Open
-              <ArrowTopRightOnSquareIcon className='size-5' />
-            </DropdownItem>
-            <DropdownItem onClick={() => {}}>
-              Copy
-              <DocumentDuplicateIcon className='size-5' />
-            </DropdownItem>
-          </DropdownMenu>
+    <div className='relative bg-blue-100 shadow-md shadow-blue-300'>
+      <button
+        className='flex flex-col justify-between items-start w-full px-5 py-4'
+        onClick={() => setIsShowSignInUpPopup(true)}>
+        <div className='flex gap-x-1 items-center'>
+          <h2 className='flex items-center mr-1 text-xl'>{vocab.name}</h2>
+          <LockItem accessID={vocab.accessID} />
         </div>
         <div className='flex w-full text-gray-500'>{vocab.description}</div>
         <div className='flex flex-wrap w-full gap-1 mt-2'>
@@ -156,10 +149,41 @@ export default function Card({
             <p className='m-0'>{vocab.createdAt?.toLocaleString('en-GB')}</p>
           </div>
         </div>
+      </button>
+      <div className='absolute top-2 right-2'>
+        {DropdownMenuFn(getUserID() === vocab.userID)}
       </div>
       {isShowSignInUpPopup && (
-        <AuthPopup close={() => setIsShowSignInUpPopup(false)} />
+        <AuthPopup
+          close={() => {
+            setIsShowSignInUpPopup(false);
+          }}
+        />
       )}
-    </>
+    </div>
+  );
+}
+
+function DropdownMenuFn(owner: boolean) {
+  return (
+    <DropdownMenu baseSize='w-7 h-7'>
+      {owner ? (
+        <>
+          <DropdownItem onClick={() => {}}>
+            Edit
+            <PencilIcon className='size-5' />
+          </DropdownItem>
+          <DropdownItem onClick={() => {}}>
+            Delete
+            <TrashIcon className='size-5' />
+          </DropdownItem>
+        </>
+      ) : (
+        <DropdownItem onClick={() => {}}>
+          Copy
+          <DocumentDuplicateIcon className='size-5' />
+        </DropdownItem>
+      )}
+    </DropdownMenu>
   );
 }

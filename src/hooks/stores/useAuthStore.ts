@@ -2,6 +2,7 @@ import { create } from 'zustand';
 
 interface AuthState {
   accessToken: string;
+  getUserID: () => string;
   getAccessToken: () => string;
   isActiveToken: () => boolean;
   setAccessToken: (token: string) => void;
@@ -10,6 +11,10 @@ interface AuthState {
 
 export const useAuthStore = create<AuthState>((set, get) => ({
   accessToken: '',
+  getUserID: () => {
+    const payload = JSON.parse(atob(get().accessToken.split('.')[1]));
+    return payload['user_id'];
+  },
   getAccessToken: () => {
     if (get().accessToken === '') {
       const token = localStorage.getItem('access_token');

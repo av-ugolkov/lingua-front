@@ -1,10 +1,7 @@
 import { useEffect, useState } from 'react';
 
-import {
-  ChevronDoubleRightIcon,
-  TrashIcon,
-  PencilIcon,
-} from '@heroicons/react/24/outline';
+import { TrashIcon, PencilIcon } from '@heroicons/react/24/outline';
+import ArrowBothSide from '@/assets/ArrowBothSide';
 
 import {
   useVocabulariesStore,
@@ -157,7 +154,7 @@ export default function Card({
 
         <div className='flex justify-center items-center mt-1 gap-x-2'>
           <span>{languages.get(vocab.nativeLang)}</span>
-          <ChevronDoubleRightIcon className={'flex size-5'} />
+          <ArrowBothSide className={'flex size-5'} />
           <span>{languages.get(vocab.translateLang)}</span>
         </div>
         <div
