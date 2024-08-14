@@ -17,7 +17,7 @@ export default function DropdownMenu({
 
   return (
     <div
-      className={clsx('relative inline-block z-[3]', baseSize)}
+      className={clsx('relative inline-block', baseSize)}
       title={title}>
       <button
         className='flex w-full h-full items-center font-semibold text-black'
