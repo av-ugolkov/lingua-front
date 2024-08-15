@@ -6,6 +6,9 @@ import { AuthStore, RequestMethod, useFetch } from '@/hooks/fetch/useFetch';
 import { useLanguagesStore } from '@/hooks/stores/useLanguagesStore';
 import Tag from '../Tags/Tag';
 import ArrowBothSide from '@/assets/ArrowBothSide';
+import { AccessID } from '@/models/Access';
+import { useAuthStore } from '@/hooks/stores/useAuthStore';
+import { useNavigate } from 'react-router-dom';
 
 const CountRequestWords = '12';
 
@@ -36,9 +39,11 @@ export default function Card({
   id: string;
   authStore: AuthStore;
 }) {
+  const navigate = useNavigate();
   const [vocab, setVocab] = useState<Vocab>({} as Vocab);
   const [isShowSignInUpPopup, setIsShowSignInUpPopup] = useState(false);
   const { languages } = useLanguagesStore();
+  const { getAccessToken } = useAuthStore();
   const [words, setWords] = useState<IWord[]>([]);
   const { funcFetch: fetchVocab } = useFetch(
     '/vocabulary/info',
@@ -47,6 +52,11 @@ export default function Card({
   );
   const { funcFetch: fetchRandomWords } = useFetch(
     '/vocabulary/words/random',
+    RequestMethod.GET,
+    authStore
+  );
+  const { funcFetch: fetchVocabAccess } = useFetch(
+    '/vocabulary/access/user',
     RequestMethod.GET,
     authStore
   );
@@ -80,7 +90,7 @@ export default function Card({
     async function asyncFetchRandomWords() {
       const response = await fetchRandomWords({
         queries: new Map([
-          ['vocab_id', id],
+          ['id', id],
           ['limit', CountRequestWords],
         ]),
       });
@@ -107,7 +117,23 @@ export default function Card({
   }, []);
 
   function openVocabulary() {
-    if (vocab.accessID) setIsShowSignInUpPopup(true);
+    if (getAccessToken() === '') {
+      setIsShowSignInUpPopup(true);
+      return;
+    } else if (vocab.accessID === AccessID.Subscribers) {
+      async function asyncVocabAccess() {
+        const response = await fetchVocabAccess({
+          queries: new Map([['id', id]]),
+        });
+        if (response.ok) {
+        } else {
+          console.error(response.data);
+        }
+      }
+      asyncVocabAccess();
+    } else {
+      navigate(`/vocabulary/${id}`);
+    }
   }
 
   return (

@@ -96,7 +96,7 @@ export default function Card({
     async function asyncFetchRandomWords() {
       const response = await fetchRandomWords({
         queries: new Map([
-          ['vocab_id', vocab.id],
+          ['id', vocab.id],
           ['limit', CountRequestWords],
         ]),
       });

@@ -41,7 +41,7 @@ export default function Words() {
     async function asyncFetchWords() {
       const vocabID = id || '';
       const response = await fetchWords({
-        queries: new Map([['vocab_id', vocabID]]),
+        queries: new Map([['id', vocabID]]),
       });
 
       if (response.ok) {

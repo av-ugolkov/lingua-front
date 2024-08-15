@@ -221,7 +221,9 @@ export default function WordCard({
           ) : (
             editable && (
               <>
-                <DropdownMenu title='Menu'>
+                <DropdownMenu
+                  title='Menu'
+                  baseSize='w-7 h-7'>
                   <DropdownItem disable>
                     <span className='block text-nowrap'>Copy to</span>
                     <DocumentDuplicateIcon className='size-5' />
