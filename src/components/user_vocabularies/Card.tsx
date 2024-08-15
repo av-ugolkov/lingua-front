@@ -1,10 +1,7 @@
 import { useEffect, useState } from 'react';
 
-import {
-  ChevronDoubleRightIcon,
-  TrashIcon,
-  PencilIcon,
-} from '@heroicons/react/24/outline';
+import { TrashIcon, PencilIcon } from '@heroicons/react/24/outline';
+import ArrowBothSide from '@/assets/ArrowBothSide';
 
 import {
   useVocabulariesStore,
@@ -37,7 +34,7 @@ export default function Card({
   const [loading, setLoading] = useState(true);
   const [isShowRenamePopup, setIsShowRenamePopup] = useState(false);
   const vocabulariesStore = useVocabulariesStore();
-  const { languages, fetchLanguages } = useLanguagesStore();
+  const { languages } = useLanguagesStore();
 
   const { funcFetch: fetchRandomWords } = useFetch(
     '/vocabulary/words/random',
@@ -96,16 +93,10 @@ export default function Card({
   }
 
   useEffect(() => {
-    if (languages.size === 0) {
-      fetchLanguages();
-    }
-  }, [languages]);
-
-  useEffect(() => {
     async function asyncFetchRandomWords() {
       const response = await fetchRandomWords({
         queries: new Map([
-          ['vocab_id', vocab.id],
+          ['id', vocab.id],
           ['limit', CountRequestWords],
         ]),
       });
@@ -149,7 +140,7 @@ export default function Card({
           <div className='inline-block w-full cursor-default bg-transparent h-10 text-center font-semibold content-center text-xl my-1 border-b-2 border-black'>
             {vocabData.name}
           </div>
-          <DropdownMenu>
+          <DropdownMenu baseSize='w-7 h-10'>
             <DropdownItem onClick={() => setIsShowRenamePopup(true)}>
               Edit
               <PencilIcon className='size-5' />
@@ -163,7 +154,7 @@ export default function Card({
 
         <div className='flex justify-center items-center mt-1 gap-x-2'>
           <span>{languages.get(vocab.nativeLang)}</span>
-          <ChevronDoubleRightIcon className={'flex size-5'} />
+          <ArrowBothSide className={'flex size-5'} />
           <span>{languages.get(vocab.translateLang)}</span>
         </div>
         <div
@@ -183,7 +174,11 @@ export default function Card({
       </div>
       {isShowRenamePopup && (
         <Edit
-          editData={{ name: vocab.name, accessID: vocab.accessID }}
+          editData={{
+            name: vocab.name,
+            description: vocab.description,
+            accessID: vocab.accessID,
+          }}
           saveCallback={(editData) => {
             renameVocabulary(editData);
             setIsShowRenamePopup(false);

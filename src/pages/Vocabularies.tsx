@@ -4,14 +4,12 @@ import List from '@/components/vocabularies/List';
 import ListBox, { IListBoxItem } from '@/components/elements/ListBox';
 import { useLanguagesStore } from '@/hooks/stores/useLanguagesStore';
 import { Order, Sorted, SortWordTypes } from '@/models/Sorted';
-import {
-  ChevronDoubleRightIcon,
-  LanguageIcon,
-} from '@heroicons/react/24/outline';
+import { LanguageIcon } from '@heroicons/react/24/outline';
 import { useEffect, useState } from 'react';
+import ArrowBothSide from '@/assets/ArrowBothSide';
 
 export default function Vocabularies() {
-  const { languages: languagesStore, fetchLanguages } = useLanguagesStore();
+  const { languages: languagesStore } = useLanguagesStore();
   const [languages, setLanguages] = useState([{ lang: 'Any', code: 'any' }]);
   const [searchValue, setSearchValue] = useState('');
   const [sortedType, setSortedType] = useState(SortWordTypes[1].type);
@@ -30,8 +28,6 @@ export default function Vocabularies() {
           },
         ]);
       });
-    } else {
-      fetchLanguages();
     }
   }, [languagesStore]);
 
@@ -66,7 +62,7 @@ export default function Vocabularies() {
               }}
               classSelect='block w-fit p-1 bg-transparent border border-black text-black text-sm focus:ring-primary-500 focus:border-primary-500'
             />
-            <ChevronDoubleRightIcon className='size-6 mx-1' />
+            <ArrowBothSide className='size-6 mx-1' />
             <ListBox
               id='translate_language'
               items={mapToLanguages()}

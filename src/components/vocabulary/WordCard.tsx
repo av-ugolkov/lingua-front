@@ -148,7 +148,7 @@ export default function WordCard({
 
   return (
     <>
-      <div className='flex flex-row min-w-[540px] mb-8 border-solid border-[1px] border-gray-300 shadow-md shadow-blue-300'>
+      <div className='flex flex-row min-w-[540px] bg-blue-100 mb-8 border-solid border-[1px] border-gray-300 shadow-md shadow-blue-300'>
         <div className='p-2 m-2 w-[96%]'>
           <div className='flex gap-x-3'>
             <InputField
@@ -221,7 +221,9 @@ export default function WordCard({
           ) : (
             editable && (
               <>
-                <DropdownMenu title='Menu'>
+                <DropdownMenu
+                  title='Menu'
+                  baseSize='w-7 h-7'>
                   <DropdownItem disable>
                     <span className='block text-nowrap'>Copy to</span>
                     <DocumentDuplicateIcon className='size-5' />

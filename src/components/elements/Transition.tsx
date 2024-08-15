@@ -10,13 +10,13 @@ export default function Transition({
   duration: number;
   children: React.ReactNode;
 }) {
-  const [className, setClassName] = useState('hidden');
+  const [visible, setVisible] = useState('hidden');
 
   useEffect(() => {
     if (show) {
-      setClassName('visible opacity-0 scale-0');
+      setVisible('visible opacity-0 scale-0');
       const timeout = setTimeout(() => {
-        setClassName(
+        setVisible(
           `visible transition opacity-100 scale-100 duration-${duration}`
         );
       }, 10);
@@ -25,9 +25,9 @@ export default function Transition({
         clearTimeout(timeout);
       };
     } else {
-      setClassName(`transition opacity-0 scale-0 duration-${duration}`);
+      setVisible(`transition opacity-0 scale-0 duration-${duration}`);
       const timeout = setTimeout(() => {
-        setClassName('hidden');
+        setVisible('hidden');
       }, duration);
 
       return () => {
@@ -36,5 +36,5 @@ export default function Transition({
     }
   }, [show, duration]);
 
-  return <div className={clsx(className)}>{children}</div>;
+  return <div className={clsx('relative z-10', visible)}>{children}</div>;
 }

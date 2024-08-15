@@ -1,3 +1,4 @@
+import { AccessID } from '@/models/Access';
 import { create } from 'zustand';
 
 export interface VocabularyState {
@@ -23,7 +24,7 @@ interface VocabulariesState {
 export const EmptyVocabulary: VocabularyState = {
   id: '',
   name: '',
-  accessID: 2,
+  accessID: AccessID.Public,
   nativeLang: '',
   translateLang: '',
   description: '',
