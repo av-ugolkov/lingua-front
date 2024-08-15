@@ -166,7 +166,7 @@ export default function Card({
             </p>
           </div>
           <div className='flex justify-between items-center text-gray-500'>
-            <p className='m-0'>{vocab.userName}</p>
+            <p className='m-0 font-bold'>{vocab.userName}</p>
             <p className='m-0'>{vocab.createdAt?.toLocaleString('en-GB')}</p>
           </div>
         </div>
