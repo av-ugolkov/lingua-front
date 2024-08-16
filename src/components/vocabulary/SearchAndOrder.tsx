@@ -2,7 +2,7 @@ import { ChartBarIcon } from '@heroicons/react/24/outline';
 
 import { useSortedWordsStore } from '@/hooks/stores/useSortedWordsStore';
 import { useSearchWordStore } from '@/hooks/stores/useSearchWordStore';
-import { SortWordTypes } from '@/models/Sorted';
+import { Order, SortWordTypes } from '@/models/Sorted';
 import SearchInput from '../elements/SearchInput';
 
 export default function SearchAndOrder() {
@@ -15,9 +15,8 @@ export default function SearchAndOrder() {
         <SearchInput
           searchValue={searchWordStore.searchWord}
           onChange={searchWordStore.setSearchWord}
-          onClear={searchWordStore.clearSearchWord}
         />
-        <div className='flex w-36 items-center'>
+        <div className='flex w-fil items-center'>
           <ChartBarIcon className='size-5 pr-0.5' />
           <select
             id='native_lang'
@@ -28,7 +27,7 @@ export default function SearchAndOrder() {
                   (tp) => tp.type.toString() === e.target.value
                 ) || SortWordTypes[0];
 
-              sortedWordsStore.setOrderType(typeSort.type);
+              sortedWordsStore.setOrderType(typeSort.type, Order.DESC);
             }}>
             {SortWordTypes.map((tp) => (
               <option

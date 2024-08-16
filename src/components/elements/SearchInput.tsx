@@ -10,7 +10,7 @@ export default function SearchInput({
   return (
     <>
       <div className='flex w-[30%] min-w-48 justify-between items-center border-solid border-[1px] border-black'>
-        <div className='ml-1'>
+        <div className='w-full mx-1'>
           <input
             type='text'
             name='search'
@@ -21,11 +21,11 @@ export default function SearchInput({
           />
         </div>
         {searchValue === '' ? (
-          <MagnifyingGlassIcon className='size-6 py-0.5 mr-1 pl-0.5' />
+          <MagnifyingGlassIcon className='size-6 py-0.5 mx-1 px-0.5' />
         ) : (
           <XMarkIcon
             onClick={() => onChange('')}
-            className='size-6 py-0.5 mr-1 pl-0.5'
+            className='size-6 py-0.5 mx-1 px-0.5'
           />
         )}
       </div>

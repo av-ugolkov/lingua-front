@@ -83,7 +83,7 @@ export default function Words() {
         />
       )}
       {vocabWordsStore
-        .getOrderedWords(sortedWordsStore.orderType)
+        .getOrderedWords(sortedWordsStore.sort, sortedWordsStore.order)
         .filter((word) => {
           return (
             word.wordValue.toLowerCase().includes(searchWordStore.searchWord) ||

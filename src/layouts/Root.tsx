@@ -11,6 +11,8 @@ export default function Root() {
   useEffect(() => {
     if (languages.size === 0) {
       fetchLanguages().then(() => setLoading(false));
+    } else {
+      setLoading(false);
     }
   }, []);
 

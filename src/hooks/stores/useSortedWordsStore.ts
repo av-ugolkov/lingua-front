@@ -1,19 +1,21 @@
 import { create } from 'zustand';
 
-import { Sorted } from '@/models/Sorted';
+import { Order, Sorted } from '@/models/Sorted';
 
 export interface SortedWordsState {
-  orderType: Sorted;
-  setOrderType: (search: Sorted) => void;
+  sort: Sorted;
+  order: Order;
+  setOrderType: (s: Sorted, o: Order) => void;
   setDefaultOrderType: () => void;
 }
 
 export const useSortedWordsStore = create<SortedWordsState>((set) => ({
-  orderType: Sorted.Newest,
-  setOrderType: (orderType: Sorted) => {
-    set({ orderType });
+  sort: Sorted.Created,
+  order: Order.DESC,
+  setOrderType: (s: Sorted, o: Order) => {
+    set({ sort: s, order: o });
   },
   setDefaultOrderType: () => {
-    set({ orderType: Sorted.Newest });
+    set({ sort: Sorted.Created, order: Order.DESC });
   },
 }));

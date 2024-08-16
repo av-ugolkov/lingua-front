@@ -208,10 +208,7 @@ export default function WordCard({
         </div>
         <div className='flex flex-col justify-around align-middle mx-2'>
           {word.id === '' ? (
-            <BtnCard
-              onClick={() => {
-                addVocabWord();
-              }}>
+            <BtnCard onClick={addVocabWord}>
               <PlusCircleIcon
                 className='w-6'
                 color='blue'
