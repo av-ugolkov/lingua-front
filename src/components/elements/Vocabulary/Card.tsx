@@ -114,25 +114,27 @@ export default function Card({
     return () => {
       setWords([]);
     };
-  }, []);
+  }, [id]);
 
   function openVocabulary() {
     if (getAccessToken() === '') {
       setIsShowSignInUpPopup(true);
       return;
     } else if (vocab.accessID === AccessID.Subscribers) {
-      async function asyncVocabAccess() {
-        const response = await fetchVocabAccess({
-          queries: new Map([['id', id]]),
-        });
-        if (response.ok) {
-        } else {
-          console.error(response.data);
-        }
-      }
       asyncVocabAccess();
     } else {
       navigate(`/vocabulary/${id}`);
+    }
+  }
+
+  async function asyncVocabAccess() {
+    const response = await fetchVocabAccess({
+      queries: new Map([['id', id]]),
+    });
+    if (response.ok) {
+      console.warn(response.data);
+    } else {
+      console.error(response.data);
     }
   }
 

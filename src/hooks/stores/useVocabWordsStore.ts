@@ -43,7 +43,7 @@ export const useVocabWordsStore = create<VocabWordsState>((set, get) => ({
   words: [],
   setWords: (words) => set({ words }),
   getOrderedWords: (sort, order) => {
-    let words = get().words;
+    const words = get().words;
     switch (sort) {
       case Sorted.Created:
         if (order === Order.DESC) {

@@ -6,8 +6,8 @@ import {
   VocabWordState,
   useVocabWordsStore,
 } from '@/hooks/stores/useVocabWordsStore';
-import { useSearchWordStore } from '@/hooks/stores/useSearchWordStore';
-import { useSortedWordsStore } from '@/hooks/stores/useSortedWordsStore';
+import { useSearchStore } from '@/components/elements/SearchPanel/useSearchStore';
+import { useSortedStore } from '@/components/elements/SortAndOrder/useSortedStore';
 import { RequestMethod, AuthStore, useFetch } from '@/hooks/fetch/useFetch';
 
 const tempWordState: VocabWordState = {
@@ -28,8 +28,8 @@ export default function Words() {
   const [tempWord, setTempWord] = useState(tempWordState);
   const [editable, setEditable] = useState(false);
   const vocabWordsStore = useVocabWordsStore();
-  const searchWordStore = useSearchWordStore();
-  const sortedWordsStore = useSortedWordsStore();
+  const searchStore = useSearchStore();
+  const sortedStore = useSortedStore();
 
   const { funcFetch: fetchWords } = useFetch(
     '/vocabulary/words',
@@ -69,6 +69,8 @@ export default function Words() {
     asyncFetchWords();
     return () => {
       vocabWordsStore.clearWords();
+      searchStore.setSearchValue('');
+      sortedStore.setDefaultOrderType();
     };
   }, []);
 
@@ -83,12 +85,12 @@ export default function Words() {
         />
       )}
       {vocabWordsStore
-        .getOrderedWords(sortedWordsStore.sort, sortedWordsStore.order)
+        .getOrderedWords(sortedStore.sort, sortedStore.order)
         .filter((word) => {
           return (
-            word.wordValue.toLowerCase().includes(searchWordStore.searchWord) ||
+            word.wordValue.toLowerCase().includes(searchStore.searchValue) ||
             word.translates.some((item) =>
-              item.toLowerCase().includes(searchWordStore.searchWord)
+              item.toLowerCase().includes(searchStore.searchValue)
             )
           );
         })

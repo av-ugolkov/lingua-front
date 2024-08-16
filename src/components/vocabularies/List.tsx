@@ -4,11 +4,11 @@ import Card, { Vocab } from '@/components/elements/Vocabulary/Card';
 import { Order, Sorted } from '@/models/Sorted';
 import Pagination from './Pagination';
 import { AuthStore, RequestMethod, useFetch } from '@/hooks/fetch/useFetch';
+import { useSearchStore } from '../elements/SearchPanel/useSearchStore';
 
 const vocabsEmpty: Vocab[] = [];
 
 interface SortedInputProps {
-  searchValue: string;
   sortType: Sorted;
   orderType: Order;
   nativeLang: string;
@@ -16,7 +16,6 @@ interface SortedInputProps {
 }
 
 export default function List({
-  searchValue,
   sortType,
   orderType,
   nativeLang,
@@ -25,6 +24,7 @@ export default function List({
   const [pageNum, setPageNum] = useState(1);
   const [countItemsPerPage, setCountItemsPerPage] = useState(5);
   const [countItems, setCountItems] = useState(0);
+  const { searchValue } = useSearchStore();
 
   const { funcFetch: fetchVocabs } = useFetch(
     '/vocabularies',

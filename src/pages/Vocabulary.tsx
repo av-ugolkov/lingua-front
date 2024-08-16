@@ -3,18 +3,18 @@ import { useParams } from 'react-router-dom';
 
 import Words from '@/components/vocabulary/Words';
 import { RequestMethod, AuthStore, useFetch } from '@/hooks/fetch/useFetch';
-import SearchInput from '@/components/elements/SearchInput';
-import SortedPanel from '@/components/elements/SortedPanel';
+import SearchInput from '@/components/elements/SearchPanel/SearchInput';
+import SortedPanel from '@/components/elements/SortAndOrder/SortedPanel';
 import { SortWordTypes } from '@/models/Sorted';
-import { useSortedWordsStore } from '@/hooks/stores/useSortedWordsStore';
-import { useSearchWordStore } from '@/hooks/stores/useSearchWordStore';
+import { useSortedStore } from '@/components/elements/SortAndOrder/useSortedStore';
+import { useSearchStore } from '@/components/elements/SearchPanel/useSearchStore';
 
 export default function Vocabulary() {
   const { id } = useParams();
   const [name, setName] = useState(false);
   const [loading, setLoading] = useState(true);
-  const searchWordStore = useSearchWordStore();
-  const sortedWordsStore = useSortedWordsStore();
+  const searchStore = useSearchStore();
+  const sortedStore = useSortedStore();
   const { funcFetch: fetchGetVocabulary } = useFetch(
     `/vocabulary`,
     RequestMethod.GET,
@@ -35,6 +35,11 @@ export default function Vocabulary() {
     }
 
     asyncFetchVocabulary();
+
+    return () => {
+      searchStore.setSearchValue('');
+      sortedStore.setDefaultOrderType();
+    };
   }, [id]);
 
   if (loading) {
@@ -45,15 +50,12 @@ export default function Vocabulary() {
     <>
       <h2 className='pt-5 pb-2 text-2xl font-bold'>{name}</h2>
       <div className='flex justify-between'>
-        <SearchInput
-          searchValue={searchWordStore.searchWord}
-          onChange={searchWordStore.setSearchWord}
-        />
+        <SearchInput />
         <SortedPanel
-          sortedType={sortedWordsStore.sort}
+          sortedType={sortedStore.sort}
           sortedTypes={SortWordTypes}
-          order={sortedWordsStore.order}
-          setSorted={sortedWordsStore.setOrderType}
+          order={sortedStore.order}
+          setSorted={sortedStore.setOrderType}
         />
       </div>
       <div className='py-5'>

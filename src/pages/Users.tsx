@@ -1,5 +1,6 @@
-import SearchInput from '@/components/elements/SearchInput';
-import SortedPanel from '@/components/elements/SortedPanel';
+import SearchInput from '@/components/elements/SearchPanel/SearchInput';
+import { useSearchStore } from '@/components/elements/SearchPanel/useSearchStore';
+import SortedPanel from '@/components/elements/SortAndOrder/SortedPanel';
 import Card from '@/components/users/Card';
 import Pagination from '@/components/vocabularies/Pagination';
 import { AuthStore, RequestMethod, useFetch } from '@/hooks/fetch/useFetch';
@@ -19,7 +20,7 @@ export default function Users() {
   const [countItems, setCountItems] = useState(0);
   const [sortedType, setSortedType] = useState(SortUserTypes[0].type);
   const [orderType, setOrterType] = useState(Order.DESC);
-  const [searchValue, setSearchValue] = useState('');
+  const { searchValue, setSearchValue } = useSearchStore();
   const [users, setUsers] = useState<IUser[]>([]);
   const { funcFetch: fetchUsers } = useFetch(
     '/users',
@@ -40,7 +41,7 @@ export default function Users() {
       });
 
       if (response.ok) {
-        var users: IUser[] = [];
+        const users: IUser[] = [];
         response.data['users'].forEach((item: any) => {
           users.push({
             id: item['id'],
@@ -56,15 +57,16 @@ export default function Users() {
       }
     }
     asyncFetchUsers();
+
+    return () => {
+      setSearchValue('');
+    };
   }, [pageNum, countItemsPerPage, orderType, sortedType, searchValue]);
 
   return (
     <div className='grid p-4 min-w-[540px] w-full gap-5 grid-cols-1'>
       <div className='flex justify-between'>
-        <SearchInput
-          searchValue={searchValue}
-          onChange={setSearchValue}
-        />
+        <SearchInput />
         <SortedPanel
           sortedType={sortedType}
           sortedTypes={SortUserTypes}

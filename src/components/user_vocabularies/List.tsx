@@ -22,7 +22,7 @@ export default function List() {
     async function asyncFetchVocabularies() {
       const response = await fetchVocabularies({});
       if (response.ok) {
-        let vocabularies: VocabularyState[] = [];
+        const vocabularies: VocabularyState[] = [];
         response.data.forEach((item: any) => {
           vocabularies.push({
             id: item['id'],

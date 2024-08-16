@@ -2,14 +2,14 @@ import { create } from 'zustand';
 
 import { Order, Sorted } from '@/models/Sorted';
 
-export interface SortedWordsState {
+export interface SortedState {
   sort: Sorted;
   order: Order;
   setOrderType: (s: Sorted, o: Order) => void;
   setDefaultOrderType: () => void;
 }
 
-export const useSortedWordsStore = create<SortedWordsState>((set) => ({
+export const useSortedStore = create<SortedState>((set) => ({
   sort: Sorted.Created,
   order: Order.DESC,
   setOrderType: (s: Sorted, o: Order) => {

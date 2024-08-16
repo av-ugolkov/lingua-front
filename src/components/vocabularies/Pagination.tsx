@@ -27,7 +27,7 @@ export default function Pagination({
   }, []);
 
   function mapToCountItemsPerPage(): IListBoxItem[] {
-    let items: IListBoxItem[] = [];
+    const items: IListBoxItem[] = [];
     countsItemsPerPage.forEach((item) => {
       items.push({ key: item.toString(), value: item.toString() });
     });

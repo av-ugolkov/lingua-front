@@ -5,7 +5,6 @@ import Avatar from '../header/Avatar';
 import Button from '../elements/Button';
 import { AuthStore, RequestMethod, useFetch } from '@/hooks/fetch/useFetch';
 import VocabTag from './VocabTag';
-import { useLanguagesStore } from '@/hooks/stores/useLanguagesStore';
 import { AccessID } from '@/models/Access';
 
 export interface IVocab {
@@ -19,16 +18,11 @@ export interface IVocab {
 
 export default function Card(user: IUser) {
   const [vocabularies, setVocabularies] = useState<IVocab[]>([]);
-  const { languages } = useLanguagesStore();
   const { funcFetch: fetchVocabularies } = useFetch(
     '/vocabularies/user',
     RequestMethod.GET,
     AuthStore.OPTIONAL
   );
-
-  if (languages.size == 0) {
-    return <></>;
-  }
 
   useEffect(() => {
     async function asyncFetchVocabularies() {
