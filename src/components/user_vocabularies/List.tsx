@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import Card from './Card';
@@ -10,9 +10,8 @@ import { RequestMethod, AuthStore, useFetch } from '@/hooks/fetch/useFetch';
 
 export default function List() {
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(true);
   const { vocabularies, setVocabularies } = useVocabulariesStore();
-  const { response } = useFetch(
+  const { isLoading, response } = useFetch(
     '/account/vocabularies',
     RequestMethod.GET,
     AuthStore.USE
@@ -34,13 +33,12 @@ export default function List() {
         });
       });
       setVocabularies(vocabularies);
-    } else {
+    } else if (!isLoading) {
       navigate('/');
     }
-    setLoading(false);
-  }, [response, navigate, setVocabularies]);
+  }, [isLoading, response, navigate, setVocabularies]);
 
-  if (loading) {
+  if (isLoading) {
     return <div></div>;
   }
 

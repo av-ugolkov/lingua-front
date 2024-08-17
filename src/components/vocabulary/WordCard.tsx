@@ -7,7 +7,7 @@ import {
   XCircleIcon,
 } from '@heroicons/react/24/outline';
 
-import { RequestMethod, AuthStore, useFetch } from '@/hooks/fetch/useFetch';
+import { RequestMethod, AuthStore, useFetchFunc } from '@/hooks/fetch/useFetch';
 import {
   EmptyWord,
   InvalidateDate,
@@ -31,22 +31,22 @@ export default function WordCard({
 }) {
   const { id: vocabID } = useParams();
   const vocabWordsStore = useVocabWordsStore();
-  const addWordReq = useFetch(
+  const { fetchFunc: fetchAddWord } = useFetchFunc(
     '/vocabulary/word',
     RequestMethod.POST,
     AuthStore.USE
   );
-  const updateWordReq = useFetch(
+  const { fetchFunc: fetchUpdateWord } = useFetchFunc(
     '/vocabulary/word/update',
     RequestMethod.POST,
     AuthStore.USE
   );
-  const deleteWordReq = useFetch(
+  const { fetchFunc: fetchDeleteWord } = useFetchFunc(
     '/vocabulary/word',
     RequestMethod.DELETE,
     AuthStore.USE
   );
-  const wordReq = useFetch(
+  const { fetchFunc: fetchWord } = useFetchFunc(
     '/vocabulary/word',
     RequestMethod.GET,
     AuthStore.USE
@@ -66,7 +66,7 @@ export default function WordCard({
         examples: word.examples,
       };
       const bodyData = JSON.stringify(jsonBodyData);
-      const response = await addWordReq.fetch({ body: bodyData });
+      const response = await fetchAddWord({ body: bodyData });
       if (response.ok) {
         const newWord: VocabWordState = {
           id: response.data['id'],
@@ -104,7 +104,7 @@ export default function WordCard({
       };
       const bodyData = JSON.stringify(jsonBodyData);
 
-      const response = await updateWordReq.fetch({ body: bodyData });
+      const response = await fetchUpdateWord({ body: bodyData });
       console.warn('response: ', response.data);
     }
 
@@ -115,7 +115,7 @@ export default function WordCard({
     async function asyncDelete() {
       const jsonBodyData = { vocab_id: vocabID, word_id: word.id };
       const bodyData = JSON.stringify(jsonBodyData);
-      const response = await deleteWordReq.fetch({ body: bodyData });
+      const response = await fetchDeleteWord({ body: bodyData });
 
       if (response.ok) {
         vocabWordsStore.removeWord(word.id);
@@ -129,9 +129,7 @@ export default function WordCard({
 
   function cancelChanges() {
     async function asyncCancelChanges() {
-      const response = await wordReq.fetch({
-        queries: new Map([['id', word.id]]),
-      });
+      const response = await fetchWord({ query: `id=${word.id}` });
       if (response.ok) {
         word.wordValue = response.data['native']['text'];
         word.wordPronunciation = response.data['native']['pronunciation'] || '';

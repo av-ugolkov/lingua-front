@@ -10,8 +10,8 @@ import { useSortedStore } from '@/components/elements/SortAndOrder/useSortedStor
 
 export default function Vocabulary() {
   const { id } = useParams();
-  const [name, setName] = useState(false);
-  const sortedStore = useSortedStore();
+  const [name, setName] = useState('');
+  const { setDefaultOrderType } = useSortedStore();
   const { isLoading, response } = useFetch(
     `/vocabulary`,
     RequestMethod.GET,
@@ -24,9 +24,9 @@ export default function Vocabulary() {
       setName(response.data['name']);
     }
     return () => {
-      sortedStore.setDefaultOrderType();
+      setDefaultOrderType();
     };
-  }, [response, sortedStore]);
+  }, [response, setDefaultOrderType]);
 
   if (isLoading) {
     return <div></div>;
@@ -37,12 +37,7 @@ export default function Vocabulary() {
       <h2 className='pt-5 pb-2 text-2xl font-bold'>{name}</h2>
       <div className='flex justify-between'>
         <SearchInput />
-        <SortedPanel
-          sortedType={sortedStore.sort}
-          sortedTypes={SortWordTypes}
-          order={sortedStore.order}
-          setSorted={sortedStore.setOrderType}
-        />
+        <SortedPanel sortedTypes={SortWordTypes} />
       </div>
       <div className='py-5'>
         <Words />

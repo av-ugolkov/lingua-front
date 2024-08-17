@@ -27,24 +27,22 @@ export default function Words() {
   const navigate = useNavigate();
   const [tempWord, setTempWord] = useState(tempWordState);
   const [editable, setEditable] = useState(false);
-  const vocabWordsStore = useVocabWordsStore();
+  const { getOrderedWords, addWord, updateWord, clearWords } =
+    useVocabWordsStore();
   const searchStore = useSearchStore();
-  const sortedStore = useSortedStore();
+  const { sort, order, setDefaultOrderType } = useSortedStore();
 
-  const { response } = useFetch(
+  const { isLoading, response } = useFetch(
     '/vocabulary/words',
     RequestMethod.GET,
     AuthStore.OPTIONAL,
-    {
-      query: `id=${id}`,
-    }
+    { query: `id=${id}` }
   );
 
   useEffect(() => {
     if (response.ok) {
-      const words: VocabWordState[] = [];
-      response.data['words'].forEach((item: any) => {
-        words.push({
+      response.data.words.forEach((item: any) => {
+        addWord({
           id: item['id'],
           vocabID: id || '',
           wordID: item['native']['id'],
@@ -56,17 +54,28 @@ export default function Words() {
           created: new Date(item['created']),
         });
       });
-      vocabWordsStore.setWords(words);
       setEditable(response.data['editable']);
-    } else {
+    } else if (!isLoading) {
       navigate('/');
     }
 
     return () => {
-      vocabWordsStore.clearWords();
-      sortedStore.setDefaultOrderType();
+      clearWords();
+      setDefaultOrderType();
     };
-  }, [id, navigate, response, sortedStore, vocabWordsStore]);
+  }, [
+    isLoading,
+    response,
+    id,
+    setDefaultOrderType,
+    addWord,
+    clearWords,
+    navigate,
+  ]);
+
+  if (isLoading) {
+    return <div></div>;
+  }
 
   return (
     <>
@@ -78,8 +87,7 @@ export default function Words() {
           }}
         />
       )}
-      {vocabWordsStore
-        .getOrderedWords(sortedStore.sort, sortedStore.order)
+      {getOrderedWords(sort, order)
         .filter((word) => {
           return (
             word.wordValue.toLowerCase().includes(searchStore.searchValue) ||
@@ -92,7 +100,7 @@ export default function Words() {
           <div key={word.id}>
             <WordCard
               word={word}
-              updateWord={vocabWordsStore.updateWord}
+              updateWord={updateWord}
               editable={editable}
             />
           </div>

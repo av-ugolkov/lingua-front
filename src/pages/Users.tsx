@@ -6,7 +6,8 @@ import SortedPanel from '@/components/elements/SortAndOrder/SortedPanel';
 import Card from '@/components/users/Card';
 import Pagination from '@/components/vocabularies/Pagination';
 import { AuthStore, RequestMethod, useFetch } from '@/hooks/fetch/useFetch';
-import { Order, Sorted, SortUserTypes } from '@/models/Sorted';
+import { SortUserTypes } from '@/models/Sorted';
+import { useSortedStore } from '@/components/elements/SortAndOrder/useSortedStore';
 
 export interface IUser {
   id: number;
@@ -19,9 +20,8 @@ export default function Users() {
   const [pageNum, setPageNum] = useState(1);
   const [countItemsPerPage, setCountItemsPerPage] = useState(5);
   const [countItems, setCountItems] = useState(0);
-  const [sortedType, setSortedType] = useState(SortUserTypes[0].type);
-  const [orderType, setOrterType] = useState(Order.DESC);
   const { searchValue } = useSearchStore();
+  const { sort, order } = useSortedStore();
   const [users, setUsers] = useState<IUser[]>([]);
 
   const { isLoading, response } = useFetch(
@@ -29,7 +29,7 @@ export default function Users() {
     RequestMethod.GET,
     AuthStore.NO,
     {
-      query: `page=${pageNum}&per_page=${countItemsPerPage}&order=${orderType}&sort=${sortedType}&search=${searchValue}`,
+      query: `page=${pageNum}&per_page=${countItemsPerPage}&order=${order}&sort=${sort}&search=${searchValue}`,
     }
   );
 
@@ -58,15 +58,7 @@ export default function Users() {
     <div className='grid p-4 min-w-[540px] w-full gap-5 grid-cols-1'>
       <div className='flex justify-between'>
         <SearchInput />
-        <SortedPanel
-          sortedType={sortedType}
-          sortedTypes={SortUserTypes}
-          order={orderType}
-          setSorted={(value: Sorted, type: Order) => {
-            setSortedType(value);
-            setOrterType(type);
-          }}
-        />
+        <SortedPanel sortedTypes={SortUserTypes} />
       </div>
       <div>
         {users.map((item) => (

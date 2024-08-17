@@ -20,7 +20,6 @@ interface VocabWordsState {
   words: VocabWordState[];
   setWords: (words: VocabWordState[]) => void;
   getOrderedWords: (sort: Sorted, order: Order) => VocabWordState[];
-  getWord: (id: string) => VocabWordState;
   addWord: (word: VocabWordState) => void;
   updateWord: (word: VocabWordState) => void;
   removeWord: (id: string) => void;
@@ -42,6 +41,7 @@ export const EmptyWord: VocabWordState = {
 export const useVocabWordsStore = create<VocabWordsState>((set, get) => ({
   words: [],
   setWords: (words) => set({ words }),
+
   getOrderedWords: (sort, order) => {
     const words = get().words;
     switch (sort) {
@@ -69,13 +69,6 @@ export const useVocabWordsStore = create<VocabWordsState>((set, get) => ({
     }
     return words;
   },
-  getWord: (id) => {
-    const word = get().words.find((word) => word.id === id);
-    if (!word) {
-      throw new Error(`Word with id ${id} not found`);
-    }
-    return word;
-  },
   addWord: (vocabWord) => {
     set((state) => {
       if (state.words.find((item) => item.id === vocabWord.id)) {
@@ -97,6 +90,6 @@ export const useVocabWordsStore = create<VocabWordsState>((set, get) => ({
   removeWord: (id) =>
     set((state) => ({ words: state.words.filter((word) => word.id !== id) })),
   clearWords: () => {
-    set(() => ({ words: [] }));
+    set({ words: [] });
   },
 }));
