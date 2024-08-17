@@ -31,22 +31,22 @@ export default function WordCard({
 }) {
   const { id: vocabID } = useParams();
   const vocabWordsStore = useVocabWordsStore();
-  const { funcFetch: fetchAddWord } = useFetch(
+  const addWordReq = useFetch(
     '/vocabulary/word',
     RequestMethod.POST,
     AuthStore.USE
   );
-  const { funcFetch: fetchUpdateWord } = useFetch(
+  const updateWordReq = useFetch(
     '/vocabulary/word/update',
     RequestMethod.POST,
     AuthStore.USE
   );
-  const { funcFetch: fetchDeleteWord } = useFetch(
+  const deleteWordReq = useFetch(
     '/vocabulary/word',
     RequestMethod.DELETE,
     AuthStore.USE
   );
-  const { funcFetch: fetchGetWord } = useFetch(
+  const wordReq = useFetch(
     '/vocabulary/word',
     RequestMethod.GET,
     AuthStore.USE
@@ -66,7 +66,7 @@ export default function WordCard({
         examples: word.examples,
       };
       const bodyData = JSON.stringify(jsonBodyData);
-      const response = await fetchAddWord({ body: bodyData });
+      const response = await addWordReq.fetch({ body: bodyData });
       if (response.ok) {
         const newWord: VocabWordState = {
           id: response.data['id'],
@@ -104,7 +104,7 @@ export default function WordCard({
       };
       const bodyData = JSON.stringify(jsonBodyData);
 
-      const response = await fetchUpdateWord({ body: bodyData });
+      const response = await updateWordReq.fetch({ body: bodyData });
       console.warn('response: ', response.data);
     }
 
@@ -115,7 +115,7 @@ export default function WordCard({
     async function asyncDelete() {
       const jsonBodyData = { vocab_id: vocabID, word_id: word.id };
       const bodyData = JSON.stringify(jsonBodyData);
-      const response = await fetchDeleteWord({ body: bodyData });
+      const response = await deleteWordReq.fetch({ body: bodyData });
 
       if (response.ok) {
         vocabWordsStore.removeWord(word.id);
@@ -129,7 +129,7 @@ export default function WordCard({
 
   function cancelChanges() {
     async function asyncCancelChanges() {
-      const response = await fetchGetWord({
+      const response = await wordReq.fetch({
         queries: new Map([['id', word.id]]),
       });
       if (response.ok) {

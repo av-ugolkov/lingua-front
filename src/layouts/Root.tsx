@@ -14,7 +14,7 @@ export default function Root() {
     } else {
       setLoading(false);
     }
-  }, []);
+  }, [fetchLanguages, languages.size]);
 
   if (loading) {
     return <div></div>;

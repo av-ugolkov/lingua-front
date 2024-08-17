@@ -18,42 +18,38 @@ export interface IVocab {
 
 export default function Card(user: IUser) {
   const [vocabularies, setVocabularies] = useState<IVocab[]>([]);
-  const { funcFetch: fetchVocabularies } = useFetch(
+  const { isLoading, response } = useFetch(
     '/vocabularies/user',
     RequestMethod.GET,
-    AuthStore.OPTIONAL
+    AuthStore.OPTIONAL,
+    { query: `user_id=${user.id}` }
   );
 
   useEffect(() => {
-    async function asyncFetchVocabularies() {
-      const response = await fetchVocabularies({
-        queries: new Map<string, string>([['user_id', user.id.toString()]]),
+    if (response.ok) {
+      response.data.forEach((item: any) => {
+        setVocabularies((prev) => [
+          ...prev,
+          {
+            id: item['id'],
+            name: item['name'],
+            accessID: item['access_id'],
+            nativeLang: item['native_lang'],
+            translateLang: item['translate_lang'],
+            wordsCount: item['words_count'],
+          },
+        ]);
       });
-
-      if (response.ok) {
-        response.data.forEach((item: any) => {
-          setVocabularies((prev) => [
-            ...prev,
-            {
-              id: item['id'],
-              name: item['name'],
-              accessID: item['access_id'],
-              nativeLang: item['native_lang'],
-              translateLang: item['translate_lang'],
-              wordsCount: item['words_count'],
-            },
-          ]);
-        });
-      } else {
-        console.warn(response);
-      }
     }
-    asyncFetchVocabularies();
 
     return () => {
       setVocabularies([]);
     };
-  }, []);
+  }, [response]);
+
+  if (isLoading) {
+    return <></>;
+  }
 
   return (
     <>

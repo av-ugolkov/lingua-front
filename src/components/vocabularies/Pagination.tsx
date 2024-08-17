@@ -24,7 +24,7 @@ export default function Pagination({
 
   useEffect(() => {
     countItemsPerPage(itemsPerPage);
-  }, []);
+  }, [countItemsPerPage, itemsPerPage]);
 
   function mapToCountItemsPerPage(): IListBoxItem[] {
     const items: IListBoxItem[] = [];

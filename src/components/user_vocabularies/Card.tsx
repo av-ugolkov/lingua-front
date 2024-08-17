@@ -9,7 +9,12 @@ import {
 } from '@/hooks/stores/useVocabulariesStore';
 import DropdownMenu from '../elements/Dropdown/DropdownMenu';
 import DropdownItem from '../elements/Dropdown/Item';
-import { RequestMethod, AuthStore, useFetch } from '@/hooks/fetch/useFetch';
+import {
+  RequestMethod,
+  AuthStore,
+  useFetch,
+  useFetchFunc,
+} from '@/hooks/fetch/useFetch';
 import Edit, { IEditData } from './Edit';
 import { useLanguagesStore } from '@/hooks/stores/useLanguagesStore';
 import LockItem from '../elements/LockItem';
@@ -31,22 +36,22 @@ export default function Card({
 }) {
   const [vocabData, setVocabData] = useState(vocab);
   const [words, setWords] = useState(Words);
-  const [loading, setLoading] = useState(true);
   const [isShowRenamePopup, setIsShowRenamePopup] = useState(false);
   const vocabulariesStore = useVocabulariesStore();
   const { languages } = useLanguagesStore();
 
-  const { funcFetch: fetchRandomWords } = useFetch(
+  const { isLoading, response } = useFetch(
     '/vocabulary/words/random',
     RequestMethod.GET,
-    AuthStore.USE
+    AuthStore.USE,
+    { query: `id=${vocab.id}&limit=${CountRequestWords}` }
   );
-  const { funcFetch: fetchEditVocabulary } = useFetch(
+  const { fetchFunc: fetchEditVocabulary } = useFetchFunc(
     `/account/vocabulary`,
     RequestMethod.PUT,
     AuthStore.USE
   );
-  const { funcFetch: fetchDeleteVocabulary } = useFetch(
+  const { fetchFunc: fetchDeleteVocabulary } = useFetchFunc(
     `/account/vocabulary`,
     RequestMethod.DELETE,
     AuthStore.USE
@@ -80,7 +85,7 @@ export default function Card({
   function deleteVocabulary() {
     async function asyncDeleteVocabulary() {
       const response = await fetchDeleteVocabulary({
-        queries: new Map<string, string>([['name', vocabData.name]]),
+        query: `name=${vocabData.name}`,
       });
       if (response.ok) {
         vocabulariesStore.removeVocabulary(vocab.id);
@@ -93,37 +98,24 @@ export default function Card({
   }
 
   useEffect(() => {
-    async function asyncFetchRandomWords() {
-      const response = await fetchRandomWords({
-        queries: new Map([
-          ['id', vocab.id],
-          ['limit', CountRequestWords],
-        ]),
+    if (response.ok) {
+      response.data.forEach((item: any) => {
+        setWords((words) => [
+          ...words,
+          {
+            value: item['native']['text'],
+            pronunciation: item['native']['pronunciation'],
+          },
+        ]);
       });
-      if (response.ok) {
-        response.data.forEach((item: any) => {
-          setWords((words) => [
-            ...words,
-            {
-              value: item['native']['text'],
-              pronunciation: item['native']['pronunciation'],
-            },
-          ]);
-        });
-      } else {
-        console.error(response.data);
-      }
-      setLoading(false);
     }
-
-    asyncFetchRandomWords();
 
     return () => {
       setWords([]);
     };
-  }, [vocab.id]);
+  }, [response]);
 
-  if (loading) {
+  if (isLoading) {
     return <div></div>;
   }
 

@@ -31,48 +31,42 @@ export default function Words() {
   const searchStore = useSearchStore();
   const sortedStore = useSortedStore();
 
-  const { funcFetch: fetchWords } = useFetch(
+  const { response } = useFetch(
     '/vocabulary/words',
     RequestMethod.GET,
-    AuthStore.OPTIONAL
+    AuthStore.OPTIONAL,
+    {
+      query: `id=${id}`,
+    }
   );
 
   useEffect(() => {
-    async function asyncFetchWords() {
-      const vocabID = id || '';
-      const response = await fetchWords({
-        queries: new Map([['id', vocabID]]),
-      });
-
-      if (response.ok) {
-        const words: VocabWordState[] = [];
-        response.data['words'].forEach((item: any) => {
-          words.push({
-            id: item['id'],
-            vocabID: vocabID,
-            wordID: item['native']['id'],
-            wordValue: item['native']['text'],
-            wordPronunciation: item['native']['pronunciation'],
-            translates: item['translates'] || [],
-            examples: item['examples'] || [],
-            updated: new Date(item['updated']),
-            created: new Date(item['created']),
-          });
+    if (response.ok) {
+      const words: VocabWordState[] = [];
+      response.data['words'].forEach((item: any) => {
+        words.push({
+          id: item['id'],
+          vocabID: id || '',
+          wordID: item['native']['id'],
+          wordValue: item['native']['text'],
+          wordPronunciation: item['native']['pronunciation'],
+          translates: item['translates'] || [],
+          examples: item['examples'] || [],
+          updated: new Date(item['updated']),
+          created: new Date(item['created']),
         });
-        vocabWordsStore.setWords(words);
-        setEditable(response.data['editable']);
-      } else {
-        navigate('/');
-      }
+      });
+      vocabWordsStore.setWords(words);
+      setEditable(response.data['editable']);
+    } else {
+      navigate('/');
     }
 
-    asyncFetchWords();
     return () => {
       vocabWordsStore.clearWords();
-      searchStore.setSearchValue('');
       sortedStore.setDefaultOrderType();
     };
-  }, []);
+  }, [id, navigate, response, sortedStore, vocabWordsStore]);
 
   return (
     <>

@@ -16,13 +16,11 @@ export const emptyResponse: IResponseData = {
 export async function fetchData(
   url: string,
   init: RequestInit,
-  queries?: Map<string, string>
+  query?: string
 ): Promise<IResponseData> {
   const fullUrl = new URL(getAddr() + url);
-  if (queries) {
-    queries.forEach((value, key) => {
-      fullUrl.searchParams.append(key, value);
-    });
+  if (query && query !== '') {
+    fullUrl.search += query;
   }
   const finger = getBrowserFingerprint() || '';
   init.headers = {

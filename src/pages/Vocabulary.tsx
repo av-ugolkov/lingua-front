@@ -7,42 +7,28 @@ import SearchInput from '@/components/elements/SearchPanel/SearchInput';
 import SortedPanel from '@/components/elements/SortAndOrder/SortedPanel';
 import { SortWordTypes } from '@/models/Sorted';
 import { useSortedStore } from '@/components/elements/SortAndOrder/useSortedStore';
-import { useSearchStore } from '@/components/elements/SearchPanel/useSearchStore';
 
 export default function Vocabulary() {
   const { id } = useParams();
   const [name, setName] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const searchStore = useSearchStore();
   const sortedStore = useSortedStore();
-  const { funcFetch: fetchGetVocabulary } = useFetch(
+  const { isLoading, response } = useFetch(
     `/vocabulary`,
     RequestMethod.GET,
-    AuthStore.USE
+    AuthStore.USE,
+    { query: `id=${id}` }
   );
 
   useEffect(() => {
-    async function asyncFetchVocabulary() {
-      if (id) {
-        const response = await fetchGetVocabulary({
-          queries: new Map([['id', id]]),
-        });
-        if (response.ok) {
-          setName(response.data['name']);
-        }
-      }
-      setLoading(false);
+    if (response.ok) {
+      setName(response.data['name']);
     }
-
-    asyncFetchVocabulary();
-
     return () => {
-      searchStore.setSearchValue('');
       sortedStore.setDefaultOrderType();
     };
-  }, [id]);
+  }, [response, sortedStore]);
 
-  if (loading) {
+  if (isLoading) {
     return <div></div>;
   }
 

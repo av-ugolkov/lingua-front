@@ -1,8 +1,15 @@
 import { MagnifyingGlassIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { useSearchStore } from './useSearchStore';
+import { useEffect } from 'react';
 
 export default function SearchInput() {
-  const searchStore = useSearchStore();
+  const { searchValue, setSearchValue } = useSearchStore();
+
+  useEffect(() => {
+    return () => {
+      setSearchValue('');
+    };
+  }, [setSearchValue]);
 
   return (
     <>
@@ -13,15 +20,15 @@ export default function SearchInput() {
             name='search'
             className='flex p-0.5 bg-transparent border-none w-full outline-none whitespace-nowrap active:border-none'
             placeholder='Search'
-            value={searchStore.searchValue}
-            onChange={(e) => searchStore.setSearchValue(e.target.value)}
+            value={searchValue}
+            onChange={(e) => setSearchValue(e.target.value)}
           />
         </div>
-        {searchStore.searchValue === '' ? (
+        {searchValue === '' ? (
           <MagnifyingGlassIcon className='size-6 py-0.5 mx-1 px-0.5' />
         ) : (
           <XMarkIcon
-            onClick={() => searchStore.setSearchValue('')}
+            onClick={() => setSearchValue('')}
             className='size-6 py-0.5 mx-1 px-0.5'
           />
         )}

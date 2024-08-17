@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 import {
   DocumentDuplicateIcon,
   PencilIcon,
@@ -6,10 +8,9 @@ import {
 import DropdownMenu from '../Dropdown/DropdownMenu';
 import DropdownItem from '../Dropdown/Item';
 import { Vocab } from './Card';
-import { useAuthStore } from '@/hooks/stores/useAuthStore';
-import { AuthStore, RequestMethod, useFetch } from '@/hooks/fetch/useFetch';
-import { useState } from 'react';
+import { AuthStore, RequestMethod, useFetchFunc } from '@/hooks/fetch/useFetch';
 import Edit, { IEditData } from '@/components/user_vocabularies/Edit';
+import { getUserID } from '@/scripts/AuthToken';
 
 export default function Menu({
   vocab,
@@ -20,15 +21,14 @@ export default function Menu({
   changeVocab: (vocab: Vocab) => void;
   deleteVocab: (id: string) => void;
 }) {
-  const { getUserID } = useAuthStore();
   const [isShowEditPopup, setIsShowEditPopup] = useState(false);
 
-  const { funcFetch: fetchEditVocabulary } = useFetch(
+  const { fetchFunc: fetchEditVocabulary } = useFetchFunc(
     `/account/vocabulary`,
     RequestMethod.PUT,
     AuthStore.USE
   );
-  const { funcFetch: fetchDeleteVocabulary } = useFetch(
+  const { fetchFunc: fetchDeleteVocabulary } = useFetchFunc(
     `/account/vocabulary`,
     RequestMethod.DELETE,
     AuthStore.USE
@@ -60,7 +60,7 @@ export default function Menu({
   function deleteVocabulary() {
     async function asyncDeleteVocabulary() {
       const response = await fetchDeleteVocabulary({
-        queries: new Map<string, string>([['name', vocab.name]]),
+        query: `name=${vocab.name}`,
       });
       if (response.ok) {
         deleteVocab(vocab.id);

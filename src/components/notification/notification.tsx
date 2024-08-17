@@ -26,7 +26,7 @@ export default function Notification({
     setTimeout(() => {
       removeNotification(notification.id);
     }, timeout);
-  }, []);
+  }, [notification.id, removeNotification, timeout]);
 
   return (
     <>

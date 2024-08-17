@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react';
+
 import SearchInput from '@/components/elements/SearchPanel/SearchInput';
 import { useSearchStore } from '@/components/elements/SearchPanel/useSearchStore';
 import SortedPanel from '@/components/elements/SortAndOrder/SortedPanel';
@@ -5,7 +7,6 @@ import Card from '@/components/users/Card';
 import Pagination from '@/components/vocabularies/Pagination';
 import { AuthStore, RequestMethod, useFetch } from '@/hooks/fetch/useFetch';
 import { Order, Sorted, SortUserTypes } from '@/models/Sorted';
-import { useEffect, useState } from 'react';
 
 export interface IUser {
   id: number;
@@ -20,48 +21,38 @@ export default function Users() {
   const [countItems, setCountItems] = useState(0);
   const [sortedType, setSortedType] = useState(SortUserTypes[0].type);
   const [orderType, setOrterType] = useState(Order.DESC);
-  const { searchValue, setSearchValue } = useSearchStore();
+  const { searchValue } = useSearchStore();
   const [users, setUsers] = useState<IUser[]>([]);
-  const { funcFetch: fetchUsers } = useFetch(
+
+  const { isLoading, response } = useFetch(
     '/users',
     RequestMethod.GET,
-    AuthStore.NO
+    AuthStore.NO,
+    {
+      query: `page=${pageNum}&per_page=${countItemsPerPage}&order=${orderType}&sort=${sortedType}&search=${searchValue}`,
+    }
   );
 
   useEffect(() => {
-    async function asyncFetchUsers() {
-      const response = await fetchUsers({
-        queries: new Map<string, any>([
-          ['page', pageNum],
-          ['per_page', countItemsPerPage],
-          ['search', searchValue],
-          ['sort', sortedType],
-          ['order', orderType],
-        ]),
-      });
-
-      if (response.ok) {
-        const users: IUser[] = [];
-        response.data['users'].forEach((item: any) => {
-          users.push({
+    if (response.ok) {
+      response.data['users'].forEach((item: any) => {
+        setUsers((users) => [
+          ...users,
+          {
             id: item['id'],
             name: item['name'],
             role: item['role'],
             lastVisited: new Date(item['last_visited']),
-          });
-        });
-        setUsers(users);
-        setCountItems(response.data['count_users']);
-      } else {
-        console.log(response.data);
-      }
+          },
+        ]);
+      });
+      setCountItems(response.data['count_users']);
     }
-    asyncFetchUsers();
+  }, [response]);
 
-    return () => {
-      setSearchValue('');
-    };
-  }, [pageNum, countItemsPerPage, orderType, sortedType, searchValue]);
+  if (isLoading) {
+    return <></>;
+  }
 
   return (
     <div className='grid p-4 min-w-[540px] w-full gap-5 grid-cols-1'>

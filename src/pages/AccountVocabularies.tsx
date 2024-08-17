@@ -12,7 +12,7 @@ import {
 export default function Vocabularies() {
   const [isShowCreatePopup, setIsShowCreatePopup] = useState(false);
   const vocabulariesStore = useVocabulariesStore();
-  const { funcFetch: fetchCreateVocabulary } = useFetch(
+  const { fetch: fetchCreateVocabulary } = useFetch(
     `/account/vocabulary`,
     RequestMethod.POST,
     AuthStore.USE

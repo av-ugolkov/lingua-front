@@ -26,68 +26,44 @@ export default function List({
   const [countItems, setCountItems] = useState(0);
   const { searchValue } = useSearchStore();
 
-  const { funcFetch: fetchVocabs } = useFetch(
+  const { response } = useFetch(
     '/vocabularies',
     RequestMethod.GET,
-    AuthStore.OPTIONAL
+    AuthStore.OPTIONAL,
+    {
+      query: `page=${pageNum}&per_page=${countItemsPerPage}&order=${orderType}&sort=${sortType}&search=${searchValue}&native_lang=${nativeLang}&translate_lang=${translateLang}`,
+    }
   );
 
   const [vocabs, setVocabs] = useState(vocabsEmpty);
 
   useEffect(() => {
-    async function asyncFetchVocabs() {
-      const response = await fetchVocabs({
-        queries: new Map<string, any>([
-          ['page', pageNum],
-          ['per_page', countItemsPerPage],
-          ['search', searchValue],
-          ['sort', sortType],
-          ['order', orderType],
-          ['native_lang', nativeLang],
-          ['translate_lang', translateLang],
-        ]),
-      });
-
-      if (response.ok) {
-        const vocabs: Vocab[] = [];
-        response.data['vocabularies'].forEach((item: any) => {
-          vocabs.push({
-            id: item['id'],
-            name: item['name'],
-            userID: item['user_id'],
-            userName: item['user_name'],
-            accessID: item['access_id'],
-            nativeLang: item['native_lang'],
-            translateLang: item['translate_lang'],
-            description: item['description'],
-            wordsCount: item['words_count'],
-            tags: item['tags'],
-            createdAt: new Date(item['created_at']),
-            updatedAt: new Date(item['updated_at']),
-          });
+    if (response.ok) {
+      const vocabs: Vocab[] = [];
+      response.data['vocabularies'].forEach((item: any) => {
+        vocabs.push({
+          id: item['id'],
+          name: item['name'],
+          userID: item['user_id'],
+          userName: item['user_name'],
+          accessID: item['access_id'],
+          nativeLang: item['native_lang'],
+          translateLang: item['translate_lang'],
+          description: item['description'],
+          wordsCount: item['words_count'],
+          tags: item['tags'],
+          createdAt: new Date(item['created_at']),
+          updatedAt: new Date(item['updated_at']),
         });
-        setVocabs(vocabs);
-        setCountItems(response.data['total_count']);
-      } else {
-        console.error(response);
-      }
+      });
+      setVocabs(vocabs);
+      setCountItems(response.data['total_count']);
     }
-
-    asyncFetchVocabs();
-
     return () => {
       setVocabs(vocabsEmpty);
       setCountItems(0);
     };
-  }, [
-    countItemsPerPage,
-    searchValue,
-    pageNum,
-    sortType,
-    orderType,
-    nativeLang,
-    translateLang,
-  ]);
+  }, [response]);
 
   return (
     <div className='grid min-w-[540px] w-full gap-5 grid-cols-1'>
