@@ -155,7 +155,7 @@ export default function WordCard({
   function getPronunciation() {
     async function asyncGetPronunciation() {
       const response = await fetchPronunciation({
-        query: `id=${word.vocabID}&text=${word.wordValue}`,
+        query: `id=${vocabID}&text=${word.wordValue}`,
       });
       if (response.ok) {
         word.wordPronunciation = response.data['native']['pronunciation'];
