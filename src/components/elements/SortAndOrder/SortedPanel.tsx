@@ -1,19 +1,15 @@
-import { ISortType, Order, Sorted } from '@/models/Sorted';
+import { ISortType, Order } from '@/models/Sorted';
 import { ChartBarIcon } from '@heroicons/react/24/outline';
 import clsx from 'clsx';
 import { useState } from 'react';
+import { useSortedStore } from './useSortedStore';
 
 export default function SortedPanel({
-  sortedType,
   sortedTypes,
-  order,
-  setSorted,
 }: {
-  sortedType: Sorted;
   sortedTypes: ISortType[];
-  order: Order;
-  setSorted: (value: Sorted, type: Order) => void;
 }) {
+  const { sort, order, setOrderType } = useSortedStore();
   const [scaleX, setScaleX] = useState(-1);
 
   return (
@@ -23,10 +19,10 @@ export default function SortedPanel({
         onClick={() => {
           if (scaleX === 1) {
             setScaleX(-1);
-            setSorted(sortedType, Order.DESC);
+            setOrderType(sort, Order.DESC);
           } else {
             setScaleX(1);
-            setSorted(sortedType, Order.ASC);
+            setOrderType(sort, Order.ASC);
           }
         }}>
         <ChartBarIcon
@@ -39,12 +35,12 @@ export default function SortedPanel({
       <select
         id='sort_panel'
         className='bg-transparent outline-none'
-        defaultValue={sortedType}
+        defaultValue={sort}
         onChange={(e) => {
           const typeSort =
             sortedTypes.find((tp) => tp.type.toString() === e.target.value) ||
             sortedTypes[0];
-          setSorted(typeSort.type, order);
+          setOrderType(typeSort.type, order);
         }}>
         {sortedTypes.map((tp) => (
           <option

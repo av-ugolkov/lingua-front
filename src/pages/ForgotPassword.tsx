@@ -2,17 +2,16 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import Button from '@/components/elements/Button';
-import { useAuthStore } from '@/hooks/stores/useAuthStore';
-import { AuthStore, RequestMethod, useFetch } from '@/hooks/fetch/useFetch';
+import { AuthStore, RequestMethod, useFetchFunc } from '@/hooks/fetch/useFetch';
 import { useNotificationStore } from '@/components/notification/useNotificationStore';
+import { setAccessToken } from '@/scripts/AuthToken';
 
 export default function ForgotPsw() {
   const { notificationError } = useNotificationStore();
-  const { setAccessToken } = useAuthStore();
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
 
-  const { funcFetch: fetchRecoveryPsw } = useFetch(
+  const { fetchFunc: fetchRecoveryPsw } = useFetchFunc(
     '/auth/recovery_password',
     RequestMethod.POST,
     AuthStore.NO

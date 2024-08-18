@@ -1,5 +1,5 @@
-import SearchInput from '@/components/elements/SearchInput';
-import SortedPanel from '@/components/elements/SortedPanel';
+import SearchInput from '@/components/elements/SearchPanel/SearchInput';
+import SortedPanel from '@/components/elements/SortAndOrder/SortedPanel';
 import List from '@/components/vocabularies/List';
 import ListBox, { IListBoxItem } from '@/components/elements/ListBox';
 import { useLanguagesStore } from '@/hooks/stores/useLanguagesStore';
@@ -11,7 +11,6 @@ import ArrowBothSide from '@/assets/ArrowBothSide';
 export default function Vocabularies() {
   const { languages: languagesStore } = useLanguagesStore();
   const [languages, setLanguages] = useState([{ lang: 'Any', code: 'any' }]);
-  const [searchValue, setSearchValue] = useState('');
   const [sortedType, setSortedType] = useState(SortWordTypes[1].type);
   const [orderType, setOrterType] = useState(Order.DESC);
   const [nativeLang, setNativeLang] = useState('any');
@@ -32,7 +31,7 @@ export default function Vocabularies() {
   }, [languagesStore]);
 
   function mapToLanguages(): IListBoxItem[] {
-    let items: IListBoxItem[] = [];
+    const items: IListBoxItem[] = [];
     languages.forEach((item) => {
       items.push({ key: item.code, value: item.lang });
     });
@@ -43,12 +42,7 @@ export default function Vocabularies() {
     <div className='grid p-4 min-w-[540px] w-full gap-5 grid-cols-1'>
       <div className='flex justify-between'>
         <div className='flex justify-start'>
-          <SearchInput
-            searchValue={searchValue}
-            onChange={(value) => {
-              setSearchValue(value);
-            }}
-          />
+          <SearchInput />
           <div className='flex items-center ml-3'>
             <LanguageIcon className='size-6 mr-1' />
             <ListBox
@@ -89,7 +83,6 @@ export default function Vocabularies() {
         </div>
       </div>
       <List
-        searchValue={searchValue}
         sortType={sortedType}
         orderType={orderType}
         nativeLang={nativeLang}

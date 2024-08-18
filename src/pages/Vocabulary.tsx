@@ -1,47 +1,45 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import SearchAndOrder from '@/components/vocabulary/SearchAndOrder';
 import Words from '@/components/vocabulary/Words';
 import { RequestMethod, AuthStore, useFetch } from '@/hooks/fetch/useFetch';
+import SearchInput from '@/components/elements/SearchPanel/SearchInput';
+import SortedPanel from '@/components/elements/SortAndOrder/SortedPanel';
+import { SortWordTypes } from '@/models/Sorted';
+import { useSortedStore } from '@/components/elements/SortAndOrder/useSortedStore';
 
 export default function Vocabulary() {
   const { id } = useParams();
-  const [name, setName] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const { funcFetch: fetchGetVocabulary } = useFetch(
+  const [name, setName] = useState('');
+  const { setDefaultOrderType } = useSortedStore();
+  const { isLoading, response } = useFetch(
     `/vocabulary`,
     RequestMethod.GET,
-    AuthStore.USE
+    AuthStore.USE,
+    { query: `id=${id}` }
   );
 
   useEffect(() => {
-    async function asyncFetchVocabulary() {
-      if (id) {
-        const response = await fetchGetVocabulary({
-          queries: new Map([['id', id]]),
-        });
-        if (response.ok) {
-          setName(response.data['name']);
-        }
-      }
-      setLoading(false);
+    if (response.ok) {
+      setName(response.data['name']);
     }
+    return () => {
+      setDefaultOrderType();
+    };
+  }, [response, setDefaultOrderType]);
 
-    asyncFetchVocabulary();
-  }, [id]);
-
-  if (loading) {
+  if (isLoading) {
     return <div></div>;
   }
 
   return (
     <>
-      <h2 className='pt-5 px-5 text-2xl font-bold'>{name}</h2>
-      <div className='pt-5 px-5'>
-        <SearchAndOrder />
+      <h2 className='pt-5 pb-2 text-2xl font-bold'>{name}</h2>
+      <div className='flex justify-between'>
+        <SearchInput />
+        <SortedPanel sortedTypes={SortWordTypes} />
       </div>
-      <div className='px-2 py-5'>
+      <div className='py-5'>
         <Words />
       </div>
     </>

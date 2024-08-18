@@ -68,7 +68,7 @@ export default function Create({
         },
       });
       if (respData.ok) {
-        let accessesData: IAccess[] = [];
+        const accessesData: IAccess[] = [];
         respData.data.forEach((item: any) => {
           accessesData.push({
             id: item['id'],

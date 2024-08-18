@@ -20,7 +20,7 @@ export default function NotificationContainer({
 
   useEffect(() => {
     setSettings({ max });
-  }, [max]);
+  }, [max, setSettings]);
 
   return (
     <div className='relative w-full h-full'>

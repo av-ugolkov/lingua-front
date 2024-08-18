@@ -1,14 +1,19 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import AuthPopup from '../Auth/AuthPopup';
 import LockItem from '../LockItem';
-import { AuthStore, RequestMethod, useFetch } from '@/hooks/fetch/useFetch';
+import {
+  AuthStore,
+  RequestMethod,
+  useFetch,
+  useFetchFunc,
+} from '@/hooks/fetch/useFetch';
 import { useLanguagesStore } from '@/hooks/stores/useLanguagesStore';
 import Tag from '../Tags/Tag';
 import ArrowBothSide from '@/assets/ArrowBothSide';
 import { AccessID } from '@/models/Access';
-import { useAuthStore } from '@/hooks/stores/useAuthStore';
-import { useNavigate } from 'react-router-dom';
+import { getAccessToken } from '@/scripts/AuthToken';
 
 const CountRequestWords = '12';
 
@@ -43,96 +48,80 @@ export default function Card({
   const [vocab, setVocab] = useState<Vocab>({} as Vocab);
   const [isShowSignInUpPopup, setIsShowSignInUpPopup] = useState(false);
   const { languages } = useLanguagesStore();
-  const { getAccessToken } = useAuthStore();
   const [words, setWords] = useState<IWord[]>([]);
-  const { funcFetch: fetchVocab } = useFetch(
+  const { response: respVocabInfo } = useFetch(
     '/vocabulary/info',
     RequestMethod.GET,
-    authStore
+    authStore,
+    {
+      query: `id=${id}`,
+    }
   );
-  const { funcFetch: fetchRandomWords } = useFetch(
+  const { response: respRandomWords } = useFetch(
     '/vocabulary/words/random',
     RequestMethod.GET,
-    authStore
+    authStore,
+    { query: `id=${id}&limit=${CountRequestWords}` }
   );
-  const { funcFetch: fetchVocabAccess } = useFetch(
+  const { fetchFunc: fetchVocabAccess } = useFetchFunc(
     '/vocabulary/access/user',
     RequestMethod.GET,
     authStore
   );
 
   useEffect(() => {
-    async function asyncFetchVocab() {
-      const response = await fetchVocab({ queries: new Map([['id', id]]) });
-      if (response.ok) {
-        setVocab({
-          id: response.data['id'],
-          name: response.data['name'],
-          userID: response.data['user_id'],
-          userName: response.data['user_name'],
-          accessID: response.data['access_id'],
-          nativeLang: response.data['native_lang'],
-          translateLang: response.data['translate_lang'],
-          description: response.data['description'],
-          wordsCount: response.data['words_count'],
-          tags: response.data['tags'],
-          createdAt: new Date(response.data['created_at']),
-          updatedAt: new Date(response.data['updated_at']),
-        });
-      } else {
-        console.warn(response.data);
-      }
+    if (respVocabInfo.ok) {
+      setVocab({
+        id: respVocabInfo.data['id'],
+        name: respVocabInfo.data['name'],
+        userID: respVocabInfo.data['user_id'],
+        userName: respVocabInfo.data['user_name'],
+        accessID: respVocabInfo.data['access_id'],
+        nativeLang: respVocabInfo.data['native_lang'],
+        translateLang: respVocabInfo.data['translate_lang'],
+        description: respVocabInfo.data['description'],
+        wordsCount: respVocabInfo.data['words_count'],
+        tags: respVocabInfo.data['tags'],
+        createdAt: new Date(respVocabInfo.data['created_at']),
+        updatedAt: new Date(respVocabInfo.data['updated_at']),
+      });
     }
-    asyncFetchVocab();
-  }, [id]);
+  }, [respVocabInfo]);
 
   useEffect(() => {
-    async function asyncFetchRandomWords() {
-      const response = await fetchRandomWords({
-        queries: new Map([
-          ['id', id],
-          ['limit', CountRequestWords],
-        ]),
+    if (respRandomWords.ok) {
+      respRandomWords.data.forEach((item: any) => {
+        setWords((words) => [
+          ...words,
+          {
+            value: item['native']['text'],
+            pronunciation: item['native']['pronunciation'],
+          },
+        ]);
       });
-      if (response.ok) {
-        response.data.forEach((item: any) => {
-          setWords((words) => [
-            ...words,
-            {
-              value: item['native']['text'],
-              pronunciation: item['native']['pronunciation'],
-            },
-          ]);
-        });
-      } else {
-        console.error(response.data);
-      }
     }
-
-    asyncFetchRandomWords();
-
     return () => {
       setWords([]);
     };
-  }, []);
+  }, [respRandomWords]);
 
   function openVocabulary() {
     if (getAccessToken() === '') {
       setIsShowSignInUpPopup(true);
       return;
     } else if (vocab.accessID === AccessID.Subscribers) {
-      async function asyncVocabAccess() {
-        const response = await fetchVocabAccess({
-          queries: new Map([['id', id]]),
-        });
-        if (response.ok) {
-        } else {
-          console.error(response.data);
-        }
-      }
       asyncVocabAccess();
     } else {
       navigate(`/vocabulary/${id}`);
+    }
+  }
+
+  async function asyncVocabAccess() {
+    const response = await fetchVocabAccess({ query: `id=${id}` });
+    if (response.ok) {
+      console.warn(response.data);
+    } else {
+      console.error(response.data);
     }
   }
 

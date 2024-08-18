@@ -1,6 +1,6 @@
-import { AuthStore, RequestMethod, useFetch } from '@/hooks/fetch/useFetch';
-import { useAuthStore } from '@/hooks/stores/useAuthStore';
 import { useNavigate } from 'react-router-dom';
+
+import { AuthStore, RequestMethod, useFetchFunc } from '@/hooks/fetch/useFetch';
 import { useNotificationStore } from '../notification/useNotificationStore';
 import {
   ArrowLeftStartOnRectangleIcon,
@@ -9,12 +9,12 @@ import {
   EnvelopeIcon,
   UserGroupIcon,
 } from '@heroicons/react/24/outline';
+import { deleteAccessToken } from '@/scripts/AuthToken';
 
 export default function Menu() {
   const navigate = useNavigate();
   const { notificationWarning } = useNotificationStore();
-  const { deleteAccessToken } = useAuthStore();
-  const { funcFetch: signOut } = useFetch(
+  const { fetchFunc: signOut } = useFetchFunc(
     '/auth/sign_out',
     RequestMethod.POST,
     AuthStore.USE
@@ -56,7 +56,7 @@ export default function Menu() {
           <ArrowLeftStartOnRectangleIcon className='w-5 h-5 ml-2' />,
           () => {
             async function asyncLogout() {
-              const response = await signOut({});
+              const response = await signOut();
               if (response.ok) {
                 deleteAccessToken();
                 navigate('/');

@@ -7,7 +7,7 @@ import {
   XCircleIcon,
 } from '@heroicons/react/24/outline';
 
-import { RequestMethod, AuthStore, useFetch } from '@/hooks/fetch/useFetch';
+import { RequestMethod, AuthStore, useFetchFunc } from '@/hooks/fetch/useFetch';
 import {
   EmptyWord,
   InvalidateDate,
@@ -31,22 +31,22 @@ export default function WordCard({
 }) {
   const { id: vocabID } = useParams();
   const vocabWordsStore = useVocabWordsStore();
-  const { funcFetch: fetchAddWord } = useFetch(
+  const { fetchFunc: fetchAddWord } = useFetchFunc(
     '/vocabulary/word',
     RequestMethod.POST,
     AuthStore.USE
   );
-  const { funcFetch: fetchUpdateWord } = useFetch(
+  const { fetchFunc: fetchUpdateWord } = useFetchFunc(
     '/vocabulary/word/update',
     RequestMethod.POST,
     AuthStore.USE
   );
-  const { funcFetch: fetchDeleteWord } = useFetch(
+  const { fetchFunc: fetchDeleteWord } = useFetchFunc(
     '/vocabulary/word',
     RequestMethod.DELETE,
     AuthStore.USE
   );
-  const { funcFetch: fetchGetWord } = useFetch(
+  const { fetchFunc: fetchWord } = useFetchFunc(
     '/vocabulary/word',
     RequestMethod.GET,
     AuthStore.USE
@@ -129,9 +129,7 @@ export default function WordCard({
 
   function cancelChanges() {
     async function asyncCancelChanges() {
-      const response = await fetchGetWord({
-        queries: new Map([['id', word.id]]),
-      });
+      const response = await fetchWord({ query: `id=${word.id}` });
       if (response.ok) {
         word.wordValue = response.data['native']['text'];
         word.wordPronunciation = response.data['native']['pronunciation'] || '';
@@ -208,10 +206,7 @@ export default function WordCard({
         </div>
         <div className='flex flex-col justify-around align-middle mx-2'>
           {word.id === '' ? (
-            <BtnCard
-              onClick={() => {
-                addVocabWord();
-              }}>
+            <BtnCard onClick={addVocabWord}>
               <PlusCircleIcon
                 className='w-6'
                 color='blue'
