@@ -27,7 +27,7 @@ export default function Words() {
   const navigate = useNavigate();
   const [tempWord, setTempWord] = useState(tempWordState);
   const [editable, setEditable] = useState(false);
-  const { getOrderedWords, addWord, updateWord, clearWords } =
+  const { getOrderedWords, setWords, updateWord, clearWords } =
     useVocabWordsStore();
   const searchStore = useSearchStore();
   const { sort, order, setDefaultOrderType } = useSortedStore();
@@ -41,8 +41,9 @@ export default function Words() {
 
   useEffect(() => {
     if (response.ok) {
+      const words: VocabWordState[] = [];
       response.data.words.forEach((item: any) => {
-        addWord({
+        words.push({
           id: item['id'],
           vocabID: id || '',
           wordID: item['native']['id'],
@@ -54,6 +55,7 @@ export default function Words() {
           created: new Date(item['created']),
         });
       });
+      setWords(words);
       setEditable(response.data['editable']);
     } else if (!isLoading) {
       navigate('/');
@@ -68,7 +70,7 @@ export default function Words() {
     response,
     id,
     setDefaultOrderType,
-    addWord,
+    setWords,
     clearWords,
     navigate,
   ]);

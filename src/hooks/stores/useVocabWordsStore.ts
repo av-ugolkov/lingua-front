@@ -40,7 +40,7 @@ export const EmptyWord: VocabWordState = {
 
 export const useVocabWordsStore = create<VocabWordsState>((set, get) => ({
   words: [],
-  setWords: (words) => set({ words }),
+  setWords: (words) => set({ words: words }),
 
   getOrderedWords: (sort, order) => {
     const words = get().words;
