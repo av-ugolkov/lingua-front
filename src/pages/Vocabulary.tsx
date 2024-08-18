@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import Words from '@/components/vocabulary/Words';
+import List from '@/components/vocabulary/List';
 import { RequestMethod, AuthStore, useFetch } from '@/hooks/fetch/useFetch';
 import SearchInput from '@/components/elements/SearchPanel/SearchInput';
 import SortedPanel from '@/components/elements/SortAndOrder/SortedPanel';
@@ -40,7 +40,7 @@ export default function Vocabulary() {
         <SortedPanel sortedTypes={SortWordTypes} />
       </div>
       <div className='py-5'>
-        <Words />
+        <List />
       </div>
     </>
   );

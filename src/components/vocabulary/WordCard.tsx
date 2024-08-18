@@ -1,5 +1,6 @@
 import { useParams } from 'react-router-dom';
 import {
+  ArrowDownCircleIcon,
   CheckCircleIcon,
   DocumentDuplicateIcon,
   PlusCircleIcon,
@@ -19,6 +20,7 @@ import Tags from '../elements/Tags/Tags';
 import DropdownMenu from '../elements/Dropdown/DropdownMenu';
 import DropdownItem from '../elements/Dropdown/Item';
 import InputField from './InputField';
+import { useNotificationStore } from '../notification/useNotificationStore';
 
 export default function WordCard({
   word,
@@ -31,6 +33,7 @@ export default function WordCard({
 }) {
   const { id: vocabID } = useParams();
   const vocabWordsStore = useVocabWordsStore();
+  const { notificationWarning } = useNotificationStore();
   const { fetchFunc: fetchAddWord } = useFetchFunc(
     '/vocabulary/word',
     RequestMethod.POST,
@@ -48,6 +51,11 @@ export default function WordCard({
   );
   const { fetchFunc: fetchWord } = useFetchFunc(
     '/vocabulary/word',
+    RequestMethod.GET,
+    AuthStore.USE
+  );
+  const { fetchFunc: fetchPronunciation } = useFetchFunc(
+    '/vocabulary/word/pronunciation',
     RequestMethod.GET,
     AuthStore.USE
   );
@@ -144,6 +152,22 @@ export default function WordCard({
     asyncCancelChanges();
   }
 
+  function getPronunciation() {
+    async function asyncGetPronunciation() {
+      const response = await fetchPronunciation({
+        query: `id=${word.vocabID}&text=${word.wordValue}`,
+      });
+      if (response.ok) {
+        word.wordPronunciation = response.data['native']['pronunciation'];
+        updateWord(word);
+      } else {
+        notificationWarning(response.data);
+      }
+    }
+
+    asyncGetPronunciation();
+  }
+
   return (
     <>
       <div className='flex flex-row min-w-[540px] bg-blue-100 mb-8 border-solid border-[1px] border-gray-300 shadow-md shadow-blue-300'>
@@ -163,8 +187,17 @@ export default function WordCard({
               onChange={(v) => {
                 word.wordPronunciation = v;
                 updateWord(word);
-              }}
-            />
+              }}>
+              {word.wordValue !== '' && (
+                <ArrowDownCircleIcon
+                  title='Download pronunciation'
+                  onClick={() => {
+                    getPronunciation();
+                  }}
+                  className='size-6 py-0.5 mx-1 px-0.5'
+                />
+              )}
+            </InputField>
           </div>
           <div className='pt-3'>
             <div className='pb-[2px]'>Translates</div>

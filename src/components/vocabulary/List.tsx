@@ -22,7 +22,7 @@ const tempWordState: VocabWordState = {
   updated: new Date(),
 };
 
-export default function Words() {
+export default function List() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [tempWord, setTempWord] = useState(tempWordState);
