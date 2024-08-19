@@ -3,9 +3,17 @@ import { useEffect, useState } from 'react';
 import { IUser } from '@/pages/Users';
 import Avatar from '../header/Avatar';
 import Button from '../elements/Button';
-import { AuthStore, RequestMethod, useFetch } from '@/hooks/fetch/useFetch';
+import {
+  AuthStore,
+  RequestMethod,
+  useFetch,
+  useFetchFunc,
+} from '@/hooks/fetch/useFetch';
 import VocabTag from './VocabTag';
 import { AccessID } from '@/models/Access';
+import { useNotificationStore } from '../notification/useNotificationStore';
+import { getUserID, isActiveToken } from '@/scripts/AuthToken';
+import clsx from 'clsx';
 
 export interface IVocab {
   id: string;
@@ -17,17 +25,64 @@ export interface IVocab {
 }
 
 export default function Card(user: IUser) {
+  const uid = getUserID();
   const [vocabularies, setVocabularies] = useState<IVocab[]>([]);
-  const { isLoading, response } = useFetch(
+  const [isSubscribe, setIsSubscribe] = useState(false);
+  const { notificationSuccess, notificationError } = useNotificationStore();
+  const { isLoading: isLoadingUser, response: responseUser } = useFetch(
     '/vocabularies/user',
     RequestMethod.GET,
     AuthStore.OPTIONAL,
     { query: `user_id=${user.id}` }
   );
+  const { fetchFunc: fetchCheck } = useFetchFunc(
+    '/subscriber/check',
+    RequestMethod.GET,
+    AuthStore.USE
+  );
+
+  const { fetchFunc: fetchSubscribe } = useFetchFunc(
+    '/user/subscribe',
+    RequestMethod.POST,
+    AuthStore.USE
+  );
+  const { fetchFunc: fetchUnsubscribe } = useFetchFunc(
+    '/user/unsubscribe',
+    RequestMethod.POST,
+    AuthStore.USE
+  );
+
+  function userSubscribe(subUserID: string) {
+    async function asyncSubscribe() {
+      const response = await fetchSubscribe({
+        body: JSON.stringify({ id: subUserID }),
+      });
+      if (response.ok) {
+        notificationSuccess(`You subscribed to ${user.name}`);
+      } else {
+        notificationError(response.data);
+      }
+    }
+    asyncSubscribe();
+  }
+
+  function userUnsubscribe(subUserID: string) {
+    async function asyncUnsubscribe() {
+      const response = await fetchUnsubscribe({
+        body: JSON.stringify({ id: subUserID }),
+      });
+      if (response.ok) {
+        notificationSuccess(`You unsubscribed from ${user.name}`);
+      } else {
+        notificationError(response.data);
+      }
+    }
+    asyncUnsubscribe();
+  }
 
   useEffect(() => {
-    if (response.ok) {
-      response.data.forEach((item: any) => {
+    if (responseUser.ok) {
+      responseUser.data.forEach((item: any) => {
         setVocabularies((prev) => [
           ...prev,
           {
@@ -45,9 +100,23 @@ export default function Card(user: IUser) {
     return () => {
       setVocabularies([]);
     };
-  }, [response]);
+  }, [responseUser]);
 
-  if (isLoading) {
+  useEffect(() => {
+    async function asyncCheck() {
+      const response = await fetchCheck({
+        query: `subscriber_id=${user.id}`,
+      });
+      if (response.ok) {
+        setIsSubscribe(response.data['is_subscriber']);
+      }
+    }
+    if (isActiveToken()) {
+      asyncCheck();
+    }
+  }, [fetchCheck, user.id]);
+
+  if (isLoadingUser) {
     return <></>;
   }
 
@@ -79,11 +148,36 @@ export default function Card(user: IUser) {
           </div>
           <div>
             <Button
-              bgColor='bg-indigo-600'
-              hoverBgColor='hover:bg-indigo-500'
-              focusOutlineColor='focus-visible:outline-indigo-600'
-              callback={() => {}}>
-              Subscribe
+              bgColor={clsx(
+                uid === '' || uid === user.id
+                  ? 'bg-gray-400'
+                  : isSubscribe
+                  ? 'bg-violet-600'
+                  : 'bg-indigo-600'
+              )}
+              hoverBgColor={clsx(
+                uid === '' || uid === user.id
+                  ? 'hover:bg-gray-400'
+                  : isSubscribe
+                  ? 'hover:bg-violet-500'
+                  : 'hover:bg-indigo-500'
+              )}
+              focusOutlineColor={clsx(
+                uid === '' || uid === user.id
+                  ? 'focus-visible:outline-gray-600'
+                  : isSubscribe
+                  ? 'focus-visible:outline-violet-600'
+                  : 'focus-visible:outline-indigo-600'
+              )}
+              callback={() => {
+                if (isSubscribe) {
+                  userUnsubscribe(user.id);
+                } else {
+                  userSubscribe(user.id);
+                }
+              }}
+              disabled={uid === '' || uid === user.id}>
+              {isSubscribe ? 'Unsubscribe' : 'Subscribe'}
             </Button>
           </div>
         </div>

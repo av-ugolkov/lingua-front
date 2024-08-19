@@ -10,7 +10,7 @@ import { SortUserTypes } from '@/models/Sorted';
 import { useSortedStore } from '@/components/elements/SortAndOrder/useSortedStore';
 
 export interface IUser {
-  id: number;
+  id: string;
   name: string;
   role: string;
   lastVisited: Date;
@@ -48,6 +48,10 @@ export default function Users() {
       });
       setCountItems(response.data['count_users']);
     }
+
+    return () => {
+      setUsers([]);
+    };
   }, [response]);
 
   if (isLoading) {
