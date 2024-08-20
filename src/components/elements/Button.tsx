@@ -6,18 +6,21 @@ function Button({
   hoverBgColor,
   focusOutlineColor,
   callback,
+  disabled,
   children,
 }: {
   bgColor: string;
   hoverBgColor: string;
   focusOutlineColor: string;
   callback: () => void;
+  disabled?: boolean;
   children?: React.ReactNode;
 }) {
   return (
     <button
       type='button'
       onClick={callback}
+      disabled={disabled}
       className={clsx(
         bgColor,
         hoverBgColor,

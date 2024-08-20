@@ -97,7 +97,7 @@ export function useFetch(
 export function useFetchFunc(
   url: string,
   method: RequestMethod,
-  authStore: AuthStore = AuthStore.NO
+  useAuth: AuthStore = AuthStore.NO
 ) {
   const fetchFunc = async function asyncFetchData(
     data?: IRequestData
@@ -112,7 +112,7 @@ export function useFetchFunc(
       body: data?.body,
     };
 
-    if (authStore !== AuthStore.NO) {
+    if (useAuth !== AuthStore.NO) {
       let token = getAccessToken();
       if (token === '' || !isActiveToken()) {
         const respToken = await refreshToken();
@@ -121,7 +121,7 @@ export function useFetchFunc(
           token = respToken.data;
         } else {
           deleteAccessToken();
-          if (authStore == AuthStore.USE) {
+          if (useAuth == AuthStore.USE) {
             return respToken;
           }
         }
