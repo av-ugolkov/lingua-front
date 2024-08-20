@@ -1,27 +1,19 @@
 import { useEffect, useState } from 'react';
 
 import Card, { Vocab } from '@/components/elements/Vocabulary/Card';
-import { Order, Sorted } from '@/models/Sorted';
 import Pagination from './Pagination';
 import { AuthStore, RequestMethod, useFetch } from '@/hooks/fetch/useFetch';
 import { useSearchStore } from '../elements/SearchPanel/useSearchStore';
-
-const vocabsEmpty: Vocab[] = [];
+import { useSortedStore } from '../elements/SortAndOrder/useSortedStore';
 
 interface SortedInputProps {
-  sortType: Sorted;
-  orderType: Order;
   nativeLang: string;
   translateLang: string;
 }
 
-export default function List({
-  sortType,
-  orderType,
-  nativeLang,
-  translateLang,
-}: SortedInputProps) {
+export default function List({ nativeLang, translateLang }: SortedInputProps) {
   const [pageNum, setPageNum] = useState(1);
+  const { sort, order, setDefaultOrderType } = useSortedStore();
   const [countItemsPerPage, setCountItemsPerPage] = useState(5);
   const [countItems, setCountItems] = useState(0);
   const { searchValue } = useSearchStore();
@@ -29,13 +21,13 @@ export default function List({
   const { response } = useFetch(
     '/vocabularies',
     RequestMethod.GET,
-    AuthStore.OPTIONAL,
+    AuthStore.NO,
     {
-      query: `page=${pageNum}&per_page=${countItemsPerPage}&order=${orderType}&sort=${sortType}&search=${searchValue}&native_lang=${nativeLang}&translate_lang=${translateLang}`,
+      query: `page=${pageNum}&per_page=${countItemsPerPage}&order=${order}&sort=${sort}&search=${searchValue}&native_lang=${nativeLang}&translate_lang=${translateLang}`,
     }
   );
 
-  const [vocabs, setVocabs] = useState(vocabsEmpty);
+  const [vocabs, setVocabs] = useState<Vocab[]>([]);
 
   useEffect(() => {
     if (response.ok) {
@@ -60,13 +52,13 @@ export default function List({
       setCountItems(response.data['total_count']);
     }
     return () => {
-      setVocabs(vocabsEmpty);
-      setCountItems(0);
+      setVocabs([]);
+      setDefaultOrderType();
     };
-  }, [response]);
+  }, [response, setDefaultOrderType]);
 
   return (
-    <div className='grid min-w-[540px] w-full gap-5 grid-cols-1'>
+    <>
       {vocabs.map((item) => (
         <Card
           key={item.id}
@@ -78,10 +70,8 @@ export default function List({
         currentPage={pageNum}
         countItems={countItems}
         setPageNum={setPageNum}
-        countItemsPerPage={(value) => {
-          setCountItemsPerPage(value);
-        }}
+        countItemsPerPage={setCountItemsPerPage}
       />
-    </div>
+    </>
   );
 }

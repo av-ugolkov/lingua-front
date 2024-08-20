@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
+import clsx from 'clsx';
 
-import { IUser } from '@/pages/Users';
 import Avatar from '../header/Avatar';
 import Button from '../elements/Button';
 import {
@@ -13,7 +13,7 @@ import VocabTag from './VocabTag';
 import { AccessID } from '@/models/Access';
 import { useNotificationStore } from '../notification/useNotificationStore';
 import { getUserID, isActiveToken } from '@/scripts/AuthToken';
-import clsx from 'clsx';
+import { IUser } from './List';
 
 export interface IVocab {
   id: string;
@@ -122,7 +122,7 @@ export default function Card(user: IUser) {
 
   return (
     <>
-      <div className='flex flex-row h-fit p-5 my-7 bg-blue-100 shadow-md shadow-blue-300'>
+      <div className='flex flex-row h-fit p-5 bg-blue-100 shadow-md shadow-blue-300'>
         <div className='flex flex-col justify-between pr-5 border-r border-black'>
           <div>
             <div className='flex items-center mb-5 gap-x-5'>

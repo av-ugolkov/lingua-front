@@ -21,7 +21,7 @@ export default function VocabTag({
   return (
     <button
       key={id}
-      className='flex flex-col px-3 py-1 bg-gray-300 duration-300 hover:shadow hover:shadow-blue-500 hover:duration-300'
+      className='flex flex-col px-3 py-1 bg-gray-300 border border-gray-400 duration-300 hover:shadow hover:shadow-blue-500 hover:duration-300'
       onClick={() => {
         navigate(`/vocabulary/${id}`);
       }}>
