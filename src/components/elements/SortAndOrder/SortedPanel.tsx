@@ -39,7 +39,6 @@ export default function SortedPanel({
       <select
         id='sort_panel'
         className='bg-transparent outline-none'
-        defaultValue={sort}
         onChange={(e) => {
           const typeSort =
             sortedTypes.find((tp) => tp.type.toString() === e.target.value) ||

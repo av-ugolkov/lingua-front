@@ -6,12 +6,10 @@ import { RequestMethod, AuthStore, useFetch } from '@/hooks/fetch/useFetch';
 import SearchInput from '@/components/elements/SearchPanel/SearchInput';
 import SortedPanel from '@/components/elements/SortAndOrder/SortedPanel';
 import { SortWordTypes } from '@/models/Sorted';
-import { useSortedStore } from '@/components/elements/SortAndOrder/useSortedStore';
 
 export default function Vocabulary() {
   const { id } = useParams();
   const [name, setName] = useState('');
-  const { setDefaultOrderType } = useSortedStore();
   const { isLoading, response } = useFetch(
     `/vocabulary`,
     RequestMethod.GET,
@@ -23,10 +21,7 @@ export default function Vocabulary() {
     if (response.ok) {
       setName(response.data['name']);
     }
-    return () => {
-      setDefaultOrderType();
-    };
-  }, [response, setDefaultOrderType]);
+  }, [response]);
 
   if (isLoading) {
     return <div></div>;

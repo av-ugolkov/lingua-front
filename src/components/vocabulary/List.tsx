@@ -30,7 +30,7 @@ export default function List() {
   const { getOrderedWords, setWords, updateWord, clearWords } =
     useVocabWordsStore();
   const searchStore = useSearchStore();
-  const { sort, order, setDefaultOrderType } = useSortedStore();
+  const { sort, order } = useSortedStore();
 
   const { isLoading, response } = useFetch(
     '/vocabulary/words',
@@ -63,17 +63,8 @@ export default function List() {
 
     return () => {
       clearWords();
-      setDefaultOrderType();
     };
-  }, [
-    isLoading,
-    response,
-    id,
-    setDefaultOrderType,
-    setWords,
-    clearWords,
-    navigate,
-  ]);
+  }, [isLoading, response, id, setWords, clearWords, navigate]);
 
   if (isLoading) {
     return <div></div>;

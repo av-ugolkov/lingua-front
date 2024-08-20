@@ -13,7 +13,7 @@ interface SortedInputProps {
 
 export default function List({ nativeLang, translateLang }: SortedInputProps) {
   const [pageNum, setPageNum] = useState(1);
-  const { sort, order, setDefaultOrderType } = useSortedStore();
+  const { sort, order } = useSortedStore();
   const [countItemsPerPage, setCountItemsPerPage] = useState(5);
   const [countItems, setCountItems] = useState(0);
   const { searchValue } = useSearchStore();
@@ -53,9 +53,8 @@ export default function List({ nativeLang, translateLang }: SortedInputProps) {
     }
     return () => {
       setVocabs([]);
-      setDefaultOrderType();
     };
-  }, [response, setDefaultOrderType]);
+  }, [response]);
 
   return (
     <>
