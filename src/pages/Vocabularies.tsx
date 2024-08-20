@@ -3,7 +3,7 @@ import SortedPanel from '@/components/elements/SortAndOrder/SortedPanel';
 import List from '@/components/vocabularies/List';
 import ListBox, { IListBoxItem } from '@/components/elements/ListBox';
 import { useLanguagesStore } from '@/hooks/stores/useLanguagesStore';
-import { Order, Sorted, SortWordTypes } from '@/models/Sorted';
+import { SortWordTypes } from '@/models/Sorted';
 import { LanguageIcon } from '@heroicons/react/24/outline';
 import { useEffect, useState } from 'react';
 import ArrowBothSide from '@/assets/ArrowBothSide';
@@ -11,8 +11,6 @@ import ArrowBothSide from '@/assets/ArrowBothSide';
 export default function Vocabularies() {
   const { languages: languagesStore } = useLanguagesStore();
   const [languages, setLanguages] = useState([{ lang: 'Any', code: 'any' }]);
-  const [sortedType, setSortedType] = useState(SortWordTypes[1].type);
-  const [orderType, setOrterType] = useState(Order.DESC);
   const [nativeLang, setNativeLang] = useState('any');
   const [translateLang, setTranslateLang] = useState('any');
 
@@ -71,20 +69,10 @@ export default function Vocabularies() {
           </div>
         </div>
         <div className='flex justify-end items-center'>
-          <SortedPanel
-            sortedType={sortedType}
-            sortedTypes={SortWordTypes}
-            order={orderType}
-            setSorted={(value: Sorted, type: Order) => {
-              setSortedType(value);
-              setOrterType(type);
-            }}
-          />
+          <SortedPanel sortedTypes={SortWordTypes} />
         </div>
       </div>
       <List
-        sortType={sortedType}
-        orderType={orderType}
         nativeLang={nativeLang}
         translateLang={translateLang}
       />

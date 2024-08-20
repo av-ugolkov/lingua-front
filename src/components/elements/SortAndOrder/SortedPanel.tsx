@@ -1,7 +1,7 @@
 import { ISortType, Order } from '@/models/Sorted';
 import { ChartBarIcon } from '@heroicons/react/24/outline';
 import clsx from 'clsx';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSortedStore } from './useSortedStore';
 
 export default function SortedPanel({
@@ -11,6 +11,10 @@ export default function SortedPanel({
 }) {
   const { sort, order, setOrderType } = useSortedStore();
   const [scaleX, setScaleX] = useState(-1);
+
+  useEffect(() => {
+    setOrderType(sortedTypes[0].type, Order.DESC);
+  }, [setOrderType, sortedTypes]);
 
   return (
     <div className='flex h-full items-center'>
