@@ -18,7 +18,7 @@ export default function List() {
   const [countItemsPerPage, setCountItemsPerPage] = useState(5);
   const [countItems, setCountItems] = useState(0);
   const { searchValue } = useSearchStore();
-  const { sort, order, setDefaultOrderType } = useSortedStore();
+  const { sort, order } = useSortedStore();
   const [users, setUsers] = useState<IUser[]>([]);
 
   const { response } = useFetch('/users', RequestMethod.GET, AuthStore.NO, {
@@ -42,9 +42,8 @@ export default function List() {
 
     return () => {
       setUsers([]);
-      setDefaultOrderType();
     };
-  }, [response, setDefaultOrderType]);
+  }, [response]);
 
   return (
     <>
