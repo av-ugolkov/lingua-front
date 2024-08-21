@@ -19,7 +19,7 @@ import Edit, { IEditData } from './Edit';
 import { useLanguagesStore } from '@/hooks/stores/useLanguagesStore';
 import LockItem from '../elements/LockItem';
 
-const CountRequestWords = '10';
+const CountRequestWords = '8';
 
 interface IWord {
   value: string;
