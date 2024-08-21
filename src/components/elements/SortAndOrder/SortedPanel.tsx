@@ -1,7 +1,9 @@
+import { useEffect, useState } from 'react';
+
+import clsx from 'clsx';
+
 import { ISortType, Order } from '@/models/Sorted';
 import { ChartBarIcon } from '@heroicons/react/24/outline';
-import clsx from 'clsx';
-import { useEffect, useState } from 'react';
 import { useSortedStore } from './useSortedStore';
 
 export default function SortedPanel({

@@ -12,8 +12,9 @@ import {
 import { useLanguagesStore } from '@/hooks/stores/useLanguagesStore';
 import Tag from '../Tags/Tag';
 import ArrowBothSide from '@/assets/ArrowBothSide';
-import { AccessID } from '@/models/Access';
+import { AccessID, AccessStatus } from '@/models/Access';
 import { getAccessToken } from '@/scripts/AuthToken';
+import { useNotificationStore } from '@/components/notification/useNotificationStore';
 
 const CountRequestWords = '12';
 
@@ -48,6 +49,7 @@ export default function Card({
   const [vocab, setVocab] = useState<Vocab>({} as Vocab);
   const [isShowSignInUpPopup, setIsShowSignInUpPopup] = useState(false);
   const { languages } = useLanguagesStore();
+  const { notificationWarning } = useNotificationStore();
   const [words, setWords] = useState<IWord[]>([]);
   const { response: respVocabInfo } = useFetch(
     '/vocabulary/info',
@@ -119,9 +121,17 @@ export default function Card({
   async function asyncVocabAccess() {
     const response = await fetchVocabAccess({ query: `id=${id}` });
     if (response.ok) {
+      const access = response.data['access'];
+      switch (access) {
+        case AccessStatus.Forbidden:
+          notificationWarning('Forbidden');
+          break;
+        case AccessStatus.Read:
+        case AccessStatus.Edit:
+          navigate(`/vocabulary/${id}`);
+          break;
+      }
       console.warn(response.data);
-    } else {
-      console.error(response.data);
     }
   }
 
