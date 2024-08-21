@@ -4,9 +4,15 @@ export interface Config {
   port: number;
 }
 
+// const config: Config = {
+//   type: 'http',
+//   host: 'localhost',
+//   port: 5000,
+// };
+
 const config: Config = {
-  type: 'http',
-  host: 'localhost',
+  type: 'https',
+  host: 'linguaevo.twc1.net',
   port: 5000,
 };
 
