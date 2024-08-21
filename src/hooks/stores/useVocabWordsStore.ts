@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-import { Sorted } from './useSortedWordsStore';
+import { Order, Sorted } from '@/models/Sorted';
 
 export const InvalidateDate = new Date(1970, 1, 1, 0, 0, 0, 0);
 
@@ -19,8 +19,7 @@ export interface VocabWordState {
 interface VocabWordsState {
   words: VocabWordState[];
   setWords: (words: VocabWordState[]) => void;
-  getOrderedWords: (typesSort: Sorted) => VocabWordState[];
-  getWord: (id: string) => VocabWordState;
+  getOrderedWords: (sort: Sorted, order: Order) => VocabWordState[];
   addWord: (word: VocabWordState) => void;
   updateWord: (word: VocabWordState) => void;
   removeWord: (id: string) => void;
@@ -41,37 +40,34 @@ export const EmptyWord: VocabWordState = {
 
 export const useVocabWordsStore = create<VocabWordsState>((set, get) => ({
   words: [],
-  setWords: (words) => set({ words }),
-  getOrderedWords: (typesSort) => {
-    let words = get().words;
-    switch (typesSort) {
-      case Sorted.Newest:
-        words.sort((a, b) => b.created.valueOf() - a.created.valueOf());
+  setWords: (words) => set({ words: words }),
+
+  getOrderedWords: (sort, order) => {
+    const words = get().words;
+    switch (sort) {
+      case Sorted.Created:
+        if (order === Order.DESC) {
+          words.sort((a, b) => b.created.valueOf() - a.created.valueOf());
+        } else {
+          words.sort((a, b) => a.created.valueOf() - b.created.valueOf());
+        }
         break;
-      case Sorted.Oldest:
-        words.sort((a, b) => a.created.valueOf() - b.created.valueOf());
+      case Sorted.Updated:
+        if (order === Order.DESC) {
+          words.sort((a, b) => b.updated.valueOf() - a.updated.valueOf());
+        } else {
+          words.sort((a, b) => a.updated.valueOf() - b.updated.valueOf());
+        }
         break;
-      case Sorted.UpdateAsc:
-        words.sort((a, b) => a.updated.valueOf() - b.updated.valueOf());
-        break;
-      case Sorted.UpdateDesc:
-        words.sort((a, b) => b.updated.valueOf() - a.updated.valueOf());
-        break;
-      case Sorted.AtoZ:
-        words.sort((a, b) => a.wordValue.localeCompare(b.wordValue));
-        break;
-      case Sorted.ZtoA:
-        words.sort((a, b) => b.wordValue.localeCompare(a.wordValue));
+      case Sorted.ABC:
+        if (order === Order.DESC) {
+          words.sort((a, b) => b.wordValue.localeCompare(a.wordValue));
+        } else {
+          words.sort((a, b) => a.wordValue.localeCompare(b.wordValue));
+        }
         break;
     }
     return words;
-  },
-  getWord: (id) => {
-    const word = get().words.find((word) => word.id === id);
-    if (!word) {
-      throw new Error(`Word with id ${id} not found`);
-    }
-    return word;
   },
   addWord: (vocabWord) => {
     set((state) => {
@@ -94,6 +90,6 @@ export const useVocabWordsStore = create<VocabWordsState>((set, get) => ({
   removeWord: (id) =>
     set((state) => ({ words: state.words.filter((word) => word.id !== id) })),
   clearWords: () => {
-    set(() => ({ words: [] }));
+    set({ words: [] });
   },
 }));

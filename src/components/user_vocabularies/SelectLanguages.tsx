@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { ILanguage } from './Create';
+import { ILanguage } from '@/hooks/stores/useLanguagesStore';
 
 export default function SelectLanguages({
   title,
@@ -20,19 +20,19 @@ export default function SelectLanguages({
     <div className='col-span-2 sm:col-span-1'>
       <label
         htmlFor={title}
-        className='block mb-2 text-sm font-medium text-gray-900'>
+        className='block mb-2 text-sm text-black font-medium'>
         {title}
       </label>
       <select
         id={title}
-        defaultValue={title}
+        typeof='text'
         onChange={(e) => {
           onSelect(languages.find((l) => l.lang === e.target.value)!.code);
         }}
-        className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5'>
+        className='block w-full p-2 text-sm input-form'>
         <option
           disabled
-          value={title}>
+          selected>
           {title}
         </option>
         {languages.map((lang) => (

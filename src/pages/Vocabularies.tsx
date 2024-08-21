@@ -1,79 +1,81 @@
-import { useState } from 'react';
-
+import SearchInput from '@/components/elements/SearchPanel/SearchInput';
+import SortedPanel from '@/components/elements/SortAndOrder/SortedPanel';
 import List from '@/components/vocabularies/List';
-import Button from '@/components/elements/Button';
-import Create from '@/components/vocabularies/Create';
-import {
-  RequestMethod,
-  useFetchWithToken,
-} from '@/hooks/fetch/useFetchWithToken';
-import {
-  useVocabulariesStore,
-  VocabularyState,
-} from '@/hooks/stores/useVocabulariesStore';
+import ListBox, { IListBoxItem } from '@/components/elements/ListBox';
+import { useLanguagesStore } from '@/hooks/stores/useLanguagesStore';
+import { SortWordTypes } from '@/models/Sorted';
+import { LanguageIcon } from '@heroicons/react/24/outline';
+import { useEffect, useState } from 'react';
+import ArrowBothSide from '@/assets/ArrowBothSide';
 
 export default function Vocabularies() {
-  const [isShowCreatePopup, setIsShowCreatePopup] = useState(false);
-  const vocabulariesStore = useVocabulariesStore();
-  const { funcFetch: fetchCreateVocabulary } = useFetchWithToken(
-    `/account/vocabulary`,
-    RequestMethod.POST
-  );
+  const { languages: languagesStore } = useLanguagesStore();
+  const [languages, setLanguages] = useState([{ lang: 'Any', code: 'any' }]);
+  const [nativeLang, setNativeLang] = useState('any');
+  const [translateLang, setTranslateLang] = useState('any');
 
-  function createVocabulary(vocab: VocabularyState) {
-    async function asyncFetchCreateVocabulary() {
-      const body = JSON.stringify({
-        name: vocab.name,
-        native_lang: vocab.nativeLang,
-        translate_lang: vocab.translateLang,
-        tags: [],
+  useEffect(() => {
+    if (languagesStore.size > 0) {
+      languagesStore.forEach((v, k) => {
+        setLanguages((prev) => [
+          ...prev,
+          {
+            lang: v,
+            code: k,
+          },
+        ]);
       });
-      const response = await fetchCreateVocabulary({
-        body: body,
-      });
-      if (response.ok) {
-        const newVocab = {
-          id: response.data['id'],
-          name: response.data['name'],
-          nativeLang: response.data['native_lang'],
-          translateLang: response.data['translate_lang'],
-          tags: response.data['tags'] || [],
-          userId: response.data['user_id'],
-        };
-        vocabulariesStore.addVocabulary(newVocab);
-        setIsShowCreatePopup(false);
-      } else {
-        console.error(response);
-      }
     }
+  }, [languagesStore]);
 
-    asyncFetchCreateVocabulary();
+  function mapToLanguages(): IListBoxItem[] {
+    const items: IListBoxItem[] = [];
+    languages.forEach((item) => {
+      items.push({ key: item.code, value: item.lang });
+    });
+    return items;
   }
 
   return (
-    <>
-      <div className='p-5'>
-        <div className='flex justify-center items-center w-48 h-8 mb-5'>
-          <Button
-            bgColor='bg-indigo-600'
-            hoverBgColor='hover:bg-indigo-500'
-            focusOutlineColor='focus-visible:outline-indigo-600'
-            callback={() => {
-              setIsShowCreatePopup((prev) => !prev);
-            }}>
-            Create vocabularies
-          </Button>
+    <div className='grid p-4 min-w-[540px] w-full gap-5 grid-cols-1'>
+      <div className='flex justify-between'>
+        <div className='flex justify-start'>
+          <SearchInput />
+          <div className='flex items-center ml-3'>
+            <LanguageIcon className='size-6 mr-1' />
+            <ListBox
+              id='native_language'
+              items={mapToLanguages()}
+              defaultIndexValue={0}
+              onChange={(value) => {
+                const lang =
+                  languages.find((tp) => tp.lang === value) || languages[0];
+                setNativeLang(lang.code);
+              }}
+              classSelect='block w-fit p-1 bg-transparent border border-black text-black text-sm focus:ring-primary-500 focus:border-primary-500'
+            />
+            <ArrowBothSide className='size-6 mx-1' />
+            <ListBox
+              id='translate_language'
+              items={mapToLanguages()}
+              defaultIndexValue={0}
+              onChange={(value) => {
+                const lang =
+                  languages.find((tp) => tp.lang === value) || languages[0];
+                setTranslateLang(lang.code);
+              }}
+              classSelect='block w-fit p-1 bg-transparent border border-black text-black text-sm focus:ring-primary-500 focus:border-primary-500'
+            />
+          </div>
         </div>
-        <List />
+        <div className='flex justify-end items-center'>
+          <SortedPanel sortedTypes={SortWordTypes} />
+        </div>
       </div>
-      {isShowCreatePopup && (
-        <Create
-          addCallback={(newVocab) => {
-            createVocabulary(newVocab);
-          }}
-          closeCallback={() => setIsShowCreatePopup(false)}
-        />
-      )}
-    </>
+      <List
+        nativeLang={nativeLang}
+        translateLang={translateLang}
+      />
+    </div>
   );
 }

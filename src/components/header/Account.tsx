@@ -1,39 +1,20 @@
-import HeaderBtn from './HeaderBtn';
 import Avatar from './Avatar';
+import { useState } from 'react';
+import Menu from './Menu';
 
-export default function Account({
-  isAuth,
-  accountName,
-}: {
-  isAuth: boolean;
-  accountName: string;
-}) {
+export default function Account({ accountName }: { accountName: string }) {
+  const [isShowMenu, setIsShowMenu] = useState(false);
+
   return (
     <>
-      {isAuth ? (
-        <div className='flex items-center'>
-          <HeaderBtn
-            name='My vocabularies'
-            url='/vocabularies'
-          />
-          <Avatar
-            name={accountName}
-            className='ml-2'
-            callback={() => {}}
-          />
-        </div>
-      ) : (
-        <div className='flex'>
-          <HeaderBtn
-            name='Sign Up'
-            url='/sign_up'
-          />
-          <HeaderBtn
-            name='Sign In'
-            url='/sign_in'
-          />
-        </div>
-      )}
+      <div className='flex items-center'>
+        <Avatar
+          name={accountName}
+          className='size-8 ml-2'
+          callback={() => setIsShowMenu(!isShowMenu)}
+        />
+      </div>
+      {isShowMenu && <Menu />}
     </>
   );
 }

@@ -3,46 +3,35 @@ import { useNavigate } from 'react-router-dom';
 
 import HeaderBtn from './HeaderBtn';
 import Account from './Account';
-import {
-  RequestMethod,
-  useFetchWithToken,
-} from '@/hooks/fetch/useFetchWithToken';
-import { useAuthStore } from '@/hooks/stores/useAuthStore';
+import { RequestMethod, AuthStore, useFetch } from '@/hooks/fetch/useFetch';
 
 export default function Header() {
   const navigate = useNavigate();
-  const authStore = useAuthStore();
-  const { funcFetch: fetchUser } = useFetchWithToken(
+  const { isLoading, response } = useFetch(
     '/user/id',
-    RequestMethod.GET
+    RequestMethod.GET,
+    AuthStore.USE
   );
 
   const [isAuth, setIsAuth] = useState(false);
-  const [loading, setLoading] = useState(true);
   const [accountName, setAccountName] = useState('');
 
   useEffect(() => {
-    async function asyncFetchUser() {
-      const response = await fetchUser({});
-      if (response.ok) {
-        setIsAuth(true);
-        setAccountName(response.data['name']);
-      } else {
-        setIsAuth(false);
-        setAccountName('');
-      }
-      setLoading(false);
+    if (response.ok) {
+      setIsAuth(true);
+      setAccountName(response.data['name']);
+    } else {
+      setIsAuth(false);
+      setAccountName('');
     }
+  }, [response]);
 
-    asyncFetchUser();
-  }, [authStore.accessToken]);
-
-  if (loading) {
+  if (isLoading) {
     return <div></div>;
   }
 
   return (
-    <header className='flex justify-between align-text-center bg-white shadow shadow-blue-300 min-w-max px-3 py-1 sticky top-0 z-50'>
+    <header className='flex justify-between align-text-center bg-white shadow shadow-blue-300 min-w-max px-3 py-1'>
       <div
         className='flex items-center'
         onClick={() => {
@@ -66,10 +55,28 @@ export default function Header() {
           name='Contact'
           url='/contact'
         />
-        <Account
-          isAuth={isAuth}
-          accountName={accountName}
+        <HeaderBtn
+          name='Users'
+          url='/users'
         />
+        <HeaderBtn
+          name='Vocabularies'
+          url='/vocabularies'
+        />
+        {isAuth ? (
+          <Account accountName={accountName} />
+        ) : (
+          <div className='flex'>
+            <HeaderBtn
+              name='Sign Up'
+              url='/sign_up'
+            />
+            <HeaderBtn
+              name='Sign In'
+              url='/sign_in'
+            />
+          </div>
+        )}
       </div>
     </header>
   );

@@ -3,11 +3,11 @@ import { Link, useNavigate } from 'react-router-dom';
 
 import { fetchData } from '@/scripts/fetch/fetchData';
 import Button from '@/components/elements/Button';
-import { useAuthStore } from '@/hooks/stores/useAuthStore';
+import AuthInput from '@/components/elements/Auth/AuthInput';
+import { setAccessToken } from '@/scripts/AuthToken';
 
 export default function SignIn() {
   const navigate = useNavigate();
-  const authStore = useAuthStore();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
@@ -22,7 +22,7 @@ export default function SignIn() {
       },
     });
     if (respData.ok) {
-      authStore.setAccessToken(respData.data.access_token);
+      setAccessToken(respData.data.access_token);
       navigate('/');
     } else {
       console.error(respData);
@@ -51,19 +51,17 @@ export default function SignIn() {
             <div>
               <label
                 htmlFor='email'
-                className='block text-sm font-medium leading-6 text-gray-900'>
+                className='block text-sm font-medium leading-6 text-black'>
                 Email address / User name
               </label>
               <div className='mt-2'>
-                <input
+                <AuthInput
                   id='email'
-                  name='email'
+                  value={username}
                   type='email'
                   autoComplete='email'
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  required
-                  className='block w-full rounded-md border-0 py-1.5 pl-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
+                  placeholder='Enter your email address / user name'
+                  onChange={(value) => setUsername(value)}
                 />
               </div>
             </div>
@@ -72,7 +70,7 @@ export default function SignIn() {
               <div className='flex items-center justify-between'>
                 <label
                   htmlFor='password'
-                  className='block text-sm font-medium leading-6 text-gray-900'>
+                  className='block text-sm font-medium leading-6 text-black'>
                   Password
                 </label>
                 <div className='text-sm'>
@@ -84,15 +82,13 @@ export default function SignIn() {
                 </div>
               </div>
               <div className='mt-2'>
-                <input
+                <AuthInput
                   id='password'
-                  name='password'
+                  value={password}
                   type='password'
                   autoComplete='current-password'
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  className='block w-full rounded-md border-0 py-1.5 pl-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
+                  placeholder='Enter your password'
+                  onChange={(value) => setPassword(value)}
                 />
               </div>
             </div>

@@ -1,48 +1,41 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import SearchAndOrder from '@/components/vocabulary/SearchAndOrder';
-import Words from '@/components/vocabulary/Words';
-import {
-  RequestMethod,
-  useFetchWithToken,
-} from '@/hooks/fetch/useFetchWithToken';
+import List from '@/components/vocabulary/List';
+import { RequestMethod, AuthStore, useFetch } from '@/hooks/fetch/useFetch';
+import SearchInput from '@/components/elements/SearchPanel/SearchInput';
+import SortedPanel from '@/components/elements/SortAndOrder/SortedPanel';
+import { SortWordTypes } from '@/models/Sorted';
 
 export default function Vocabulary() {
   const { id } = useParams();
-  const [name, setName] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const { funcFetch: fetchGetVocabulary } = useFetchWithToken(
-    `/account/vocabulary`,
-    RequestMethod.GET
+  const [name, setName] = useState('');
+  const { isLoading, response } = useFetch(
+    `/vocabulary`,
+    RequestMethod.GET,
+    AuthStore.USE,
+    { query: `id=${id}` }
   );
 
   useEffect(() => {
-    async function asyncFetchVocabulary() {
-      const response = await fetchGetVocabulary({
-        queries: new Map([['id', id || '']]),
-      });
-      if (response.ok) {
-        setName(response.data['name']);
-      }
-      setLoading(false);
+    if (response.ok) {
+      setName(response.data['name']);
     }
+  }, [response]);
 
-    asyncFetchVocabulary();
-  }, [id]);
-
-  if (loading) {
+  if (isLoading) {
     return <div></div>;
   }
 
   return (
     <>
-      <h2 className='pt-5 px-5 text-2xl font-bold'>{name}</h2>
-      <div className='pt-5 px-5'>
-        <SearchAndOrder />
+      <h2 className='pt-5 pb-2 text-2xl font-bold'>{name}</h2>
+      <div className='flex justify-between'>
+        <SearchInput />
+        <SortedPanel sortedTypes={SortWordTypes} />
       </div>
-      <div className='px-2 py-5'>
-        <Words />
+      <div className='py-5'>
+        <List />
       </div>
     </>
   );

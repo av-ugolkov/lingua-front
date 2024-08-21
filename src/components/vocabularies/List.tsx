@@ -1,67 +1,76 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
-import Card from './Card';
-import {
-  VocabularyState,
-  useVocabulariesStore,
-} from '@/hooks/stores/useVocabulariesStore';
-import {
-  RequestMethod,
-  useFetchWithToken,
-} from '@/hooks/fetch/useFetchWithToken';
+import Card, { Vocab } from '@/components/elements/Vocabulary/Card';
+import Pagination from './Pagination';
+import { AuthStore, RequestMethod, useFetch } from '@/hooks/fetch/useFetch';
+import { useSearchStore } from '../elements/SearchPanel/useSearchStore';
+import { useSortedStore } from '../elements/SortAndOrder/useSortedStore';
 
-export default function List() {
-  const navigate = useNavigate();
-  const [loading, setLoading] = useState(true);
-  const vocabulariesStore = useVocabulariesStore();
-  const { funcFetch: fetchVocabularies } = useFetchWithToken(
-    '/account/vocabularies',
-    RequestMethod.GET
+interface SortedInputProps {
+  nativeLang: string;
+  translateLang: string;
+}
+
+export default function List({ nativeLang, translateLang }: SortedInputProps) {
+  const [pageNum, setPageNum] = useState(1);
+  const { sort, order } = useSortedStore();
+  const [countItemsPerPage, setCountItemsPerPage] = useState(5);
+  const [countItems, setCountItems] = useState(0);
+  const { searchValue } = useSearchStore();
+
+  const { response } = useFetch(
+    '/vocabularies',
+    RequestMethod.GET,
+    AuthStore.NO,
+    {
+      query: `page=${pageNum}&per_page=${countItemsPerPage}&order=${order}&sort=${sort}&search=${searchValue}&native_lang=${nativeLang}&translate_lang=${translateLang}`,
+    }
   );
 
-  useEffect(() => {
-    async function asyncFetchVocabularies() {
-      const response = await fetchVocabularies({});
-      if (response.ok) {
-        let vocabularies: VocabularyState[] = [];
-        response.data.forEach((item: any) => {
-          vocabularies.push({
-            id: item['id'],
-            name: item['name'],
-            nativeLang: item['native_lang'],
-            translateLang: item['translate_lang'],
-            tags: item['tags'],
-            userId: item['user_id'],
-          });
-        });
-        vocabulariesStore.setVocabularies(vocabularies);
-      } else {
-        navigate('/');
-      }
-      setLoading(false);
-    }
-    asyncFetchVocabularies();
-  }, []);
+  const [vocabs, setVocabs] = useState<Vocab[]>([]);
 
-  if (loading) {
-    return <div></div>;
-  }
+  useEffect(() => {
+    if (response.ok) {
+      const vocabs: Vocab[] = [];
+      response.data['vocabularies'].forEach((item: any) => {
+        vocabs.push({
+          id: item['id'],
+          name: item['name'],
+          userID: item['user_id'],
+          userName: item['user_name'],
+          accessID: item['access_id'],
+          nativeLang: item['native_lang'],
+          translateLang: item['translate_lang'],
+          description: item['description'],
+          wordsCount: item['words_count'],
+          tags: item['tags'],
+          createdAt: new Date(item['created_at']),
+          updatedAt: new Date(item['updated_at']),
+        });
+      });
+      setVocabs(vocabs);
+      setCountItems(response.data['total_count']);
+    }
+    return () => {
+      setVocabs([]);
+    };
+  }, [response]);
 
   return (
-    <div className='grid gap-10 grid-cols-[repeat(auto-fill,_384px)]'>
-      {vocabulariesStore.vocabularies.map((item) => (
+    <>
+      {vocabs.map((item) => (
         <Card
           key={item.id}
           id={item.id}
-          title={item.name}
-          nativeLang={item.nativeLang}
-          translateLang={item.translateLang}
-          onClick={() => {
-            navigate(`/vocabulary/${item.id}`);
-          }}
+          authStore={AuthStore.OPTIONAL}
         />
       ))}
-    </div>
+      <Pagination
+        currentPage={pageNum}
+        countItems={countItems}
+        setPageNum={setPageNum}
+        countItemsPerPage={setCountItemsPerPage}
+      />
+    </>
   );
 }

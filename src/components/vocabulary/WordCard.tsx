@@ -1,5 +1,6 @@
 import { useParams } from 'react-router-dom';
 import {
+  ArrowDownCircleIcon,
   CheckCircleIcon,
   DocumentDuplicateIcon,
   PlusCircleIcon,
@@ -7,10 +8,7 @@ import {
   XCircleIcon,
 } from '@heroicons/react/24/outline';
 
-import {
-  RequestMethod,
-  useFetchWithToken,
-} from '@/hooks/fetch/useFetchWithToken';
+import { RequestMethod, AuthStore, useFetchFunc } from '@/hooks/fetch/useFetch';
 import {
   EmptyWord,
   InvalidateDate,
@@ -22,31 +20,44 @@ import Tags from '../elements/Tags/Tags';
 import DropdownMenu from '../elements/Dropdown/DropdownMenu';
 import DropdownItem from '../elements/Dropdown/Item';
 import InputField from './InputField';
+import { useNotificationStore } from '../notification/useNotificationStore';
 
 export default function WordCard({
   word,
   updateWord,
+  editable = true,
 }: {
   word: VocabWordState;
   updateWord: (state: VocabWordState) => void;
+  editable?: boolean;
 }) {
   const { id: vocabID } = useParams();
   const vocabWordsStore = useVocabWordsStore();
-  const { funcFetch: fetchAddWord } = useFetchWithToken(
+  const { notificationWarning } = useNotificationStore();
+  const { fetchFunc: fetchAddWord } = useFetchFunc(
     '/vocabulary/word',
-    RequestMethod.POST
+    RequestMethod.POST,
+    AuthStore.USE
   );
-  const { funcFetch: fetchUpdateWord } = useFetchWithToken(
+  const { fetchFunc: fetchUpdateWord } = useFetchFunc(
     '/vocabulary/word/update',
-    RequestMethod.POST
+    RequestMethod.POST,
+    AuthStore.USE
   );
-  const { funcFetch: fetchDeleteWord } = useFetchWithToken(
+  const { fetchFunc: fetchDeleteWord } = useFetchFunc(
     '/vocabulary/word',
-    RequestMethod.DELETE
+    RequestMethod.DELETE,
+    AuthStore.USE
   );
-  const { funcFetch: fetchGetWord } = useFetchWithToken(
+  const { fetchFunc: fetchWord } = useFetchFunc(
     '/vocabulary/word',
-    RequestMethod.GET
+    RequestMethod.GET,
+    AuthStore.USE
+  );
+  const { fetchFunc: fetchPronunciation } = useFetchFunc(
+    '/vocabulary/word/pronunciation',
+    RequestMethod.GET,
+    AuthStore.USE
   );
 
   function addVocabWord() {
@@ -126,9 +137,7 @@ export default function WordCard({
 
   function cancelChanges() {
     async function asyncCancelChanges() {
-      const response = await fetchGetWord({
-        queries: new Map([['id', word.id]]),
-      });
+      const response = await fetchWord({ query: `id=${word.id}` });
       if (response.ok) {
         word.wordValue = response.data['native']['text'];
         word.wordPronunciation = response.data['native']['pronunciation'] || '';
@@ -143,9 +152,25 @@ export default function WordCard({
     asyncCancelChanges();
   }
 
+  function getPronunciation() {
+    async function asyncGetPronunciation() {
+      const response = await fetchPronunciation({
+        query: `id=${vocabID}&text=${word.wordValue}`,
+      });
+      if (response.ok) {
+        word.wordPronunciation = response.data['native']['pronunciation'];
+        updateWord(word);
+      } else {
+        notificationWarning(response.data);
+      }
+    }
+
+    asyncGetPronunciation();
+  }
+
   return (
     <>
-      <div className='flex flex-row min-w-[540px] mb-8 border-solid border-[1px] border-gray-300 shadow-md shadow-blue-300'>
+      <div className='flex flex-row min-w-[540px] bg-blue-100 mb-8 border-solid border-[1px] border-gray-300 shadow-md shadow-blue-300'>
         <div className='p-2 m-2 w-[96%]'>
           <div className='flex gap-x-3'>
             <InputField
@@ -162,8 +187,17 @@ export default function WordCard({
               onChange={(v) => {
                 word.wordPronunciation = v;
                 updateWord(word);
-              }}
-            />
+              }}>
+              {word.wordValue !== '' && (
+                <ArrowDownCircleIcon
+                  title='Download pronunciation'
+                  onClick={() => {
+                    getPronunciation();
+                  }}
+                  className='size-6 py-0.5 mx-1 px-0.5'
+                />
+              )}
+            </InputField>
           </div>
           <div className='pt-3'>
             <div className='pb-[2px]'>Translates</div>
@@ -205,10 +239,7 @@ export default function WordCard({
         </div>
         <div className='flex flex-col justify-around align-middle mx-2'>
           {word.id === '' ? (
-            <BtnCard
-              onClick={() => {
-                addVocabWord();
-              }}>
+            <BtnCard onClick={addVocabWord}>
               <PlusCircleIcon
                 className='w-6'
                 color='blue'
@@ -216,36 +247,40 @@ export default function WordCard({
               />
             </BtnCard>
           ) : (
-            <>
-              <DropdownMenu title='Menu'>
-                <DropdownItem disable>
-                  <span className='block text-nowrap'>Copy to</span>
-                  <DocumentDuplicateIcon className='size-5' />
-                </DropdownItem>
-                <DropdownItem disable>
-                  <span className='block text-nowrap'>Move to</span>
-                  <DocumentDuplicateIcon className='size-5 ' />
-                </DropdownItem>
-                <DropdownItem onClick={deleteVocabWord}>
-                  Delete
-                  <TrashIcon className='size-5' />
-                </DropdownItem>
-              </DropdownMenu>
-              <BtnCard onClick={updateVocabWord}>
-                <CheckCircleIcon
-                  className='w-6'
-                  color='green'
-                  title='Save changes'
-                />
-              </BtnCard>
-              <BtnCard onClick={cancelChanges}>
-                <XCircleIcon
-                  className='w-6'
-                  color='red'
-                  title='Cancel changes'
-                />
-              </BtnCard>
-            </>
+            editable && (
+              <>
+                <DropdownMenu
+                  title='Menu'
+                  baseSize='w-7 h-7'>
+                  <DropdownItem disable>
+                    <span className='block text-nowrap'>Copy to</span>
+                    <DocumentDuplicateIcon className='size-5' />
+                  </DropdownItem>
+                  <DropdownItem disable>
+                    <span className='block text-nowrap'>Move to</span>
+                    <DocumentDuplicateIcon className='size-5 ' />
+                  </DropdownItem>
+                  <DropdownItem onClick={deleteVocabWord}>
+                    Delete
+                    <TrashIcon className='size-5' />
+                  </DropdownItem>
+                </DropdownMenu>
+                <BtnCard onClick={updateVocabWord}>
+                  <CheckCircleIcon
+                    className='w-6'
+                    color='green'
+                    title='Save changes'
+                  />
+                </BtnCard>
+                <BtnCard onClick={cancelChanges}>
+                  <XCircleIcon
+                    className='w-6'
+                    color='red'
+                    title='Cancel changes'
+                  />
+                </BtnCard>
+              </>
+            )
           )}
         </div>
       </div>

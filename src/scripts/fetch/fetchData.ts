@@ -13,28 +13,34 @@ export const emptyResponse: IResponseData = {
   ok: false,
 };
 
-export function fetchData(
+export async function fetchData(
   url: string,
   init: RequestInit,
-  queries?: Map<string, string>
+  query?: string
 ): Promise<IResponseData> {
   const fullUrl = new URL(getAddr() + url);
-  if (queries) {
-    queries.forEach((value, key) => {
-      fullUrl.searchParams.append(key, value);
-    });
+  if (query && query !== '') {
+    fullUrl.search += query;
   }
   const finger = getBrowserFingerprint() || '';
   init.headers = {
     ...init.headers,
     Fingerprint: finger,
   };
-  return fetch(fullUrl, init).then(async (resp) => {
-    const dataJson = await resp.json();
-    return {
-      status: resp.status,
-      data: dataJson,
-      ok: resp.ok,
-    };
-  });
+  return fetch(fullUrl, init)
+    .then(async (resp) => {
+      const dataJson = await resp.json();
+      return {
+        status: resp.status,
+        data: dataJson,
+        ok: resp.ok,
+      };
+    })
+    .catch((error) => {
+      return {
+        status: 0,
+        data: error,
+        ok: false,
+      };
+    });
 }

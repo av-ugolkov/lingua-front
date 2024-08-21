@@ -2,35 +2,35 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import Button from '@/components/elements/Button';
-import { fetchData } from '@/scripts/fetch/fetchData';
-import { setLocalStorage } from '@/scripts/localStorage';
+import { AuthStore, RequestMethod, useFetchFunc } from '@/hooks/fetch/useFetch';
+import { useNotificationStore } from '@/components/notification/useNotificationStore';
+import { setAccessToken } from '@/scripts/AuthToken';
 
 export default function ForgotPsw() {
+  const { notificationError } = useNotificationStore();
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
 
+  const { fetchFunc: fetchRecoveryPsw } = useFetchFunc(
+    '/auth/recovery_password',
+    RequestMethod.POST,
+    AuthStore.NO
+  );
+
   function recoveryPsw() {
-    fetchData('/auth/recovery_password', {
-      method: 'post',
-      credentials: 'include',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ email: email }),
-    })
-      .then((resp) => {
-        if (resp.ok) {
-          setLocalStorage('access_token', resp.data.access_token);
-          navigate('/');
-        } else {
-          console.error(resp.data);
-          //notification.value.ErrorNotification(data);
-        }
-      })
-      .catch((error) => {
-        console.error(error.message);
+    async function asyncRecoveryPsw() {
+      const response = await fetchRecoveryPsw({
+        body: JSON.stringify({ email: email }),
       });
+      if (response.ok) {
+        setAccessToken(response.data['access_token']);
+        navigate('/');
+      } else {
+        notificationError(response.data);
+      }
+    }
+
+    asyncRecoveryPsw();
   }
 
   return (
@@ -55,7 +55,7 @@ export default function ForgotPsw() {
             <div>
               <label
                 htmlFor='email'
-                className='block text-sm font-medium leading-6 text-gray-900'>
+                className='block text-sm font-medium leading-6 text-black'>
                 Email address
               </label>
               <div className='mt-2'>
@@ -67,7 +67,7 @@ export default function ForgotPsw() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className='block w-full rounded-md border-0 py-1.5 pl-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
+                  className='block w-full border-0 py-1.5 pl-2 text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
                 />
               </div>
             </div>

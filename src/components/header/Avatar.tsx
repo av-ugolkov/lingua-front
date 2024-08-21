@@ -7,16 +7,17 @@ export default function Avatar({
 }: {
   name: string;
   className?: string;
-  callback: () => void;
+  callback?: () => void;
 }) {
   return (
-    <div
+    <button
+      onBlur={() => setTimeout(() => callback?.(), 150)}
       onClick={callback}
       className={clsx(
-        className,
-        'inline-block cursor-pointer text-center content-center bg-gray-300 h-8 w-8 rounded-full hover:shadow-md hover:duration-200 hover:shadow-blue-400 duration-1000'
+        'inline-block cursor-pointer text-center content-center select-none bg-gray-300 rounded-full hover:shadow-md hover:duration-200 hover:shadow-blue-500 duration-1000',
+        className
       )}>
       {name.charAt(0).toUpperCase()}
-    </div>
+    </button>
   );
 }

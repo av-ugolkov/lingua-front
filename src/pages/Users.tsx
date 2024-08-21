@@ -1,0 +1,16 @@
+import SearchInput from '@/components/elements/SearchPanel/SearchInput';
+import SortedPanel from '@/components/elements/SortAndOrder/SortedPanel';
+import { SortUserTypes } from '@/models/Sorted';
+import List from '@/components/users/List';
+
+export default function Users() {
+  return (
+    <div className='grid p-4 min-w-[540px] w-full gap-5 grid-cols-1'>
+      <div className='flex justify-between'>
+        <SearchInput />
+        <SortedPanel sortedTypes={SortUserTypes} />
+      </div>
+      <List />
+    </div>
+  );
+}
