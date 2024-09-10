@@ -4,17 +4,20 @@ export interface Config {
   port: number;
 }
 
-// const config: Config = {
-//   type: 'http',
-//   host: 'localhost',
-//   port: 5000,
-// };
-
-const config: Config = {
-  type: 'https',
-  host: 'linguaevo.twc1.net',
-  port: 5000,
-};
+let config: Config;
+if (import.meta.env.DEV) {
+  config = {
+    type: 'http',
+    host: 'localhost',
+    port: 5000,
+  };
+} else {
+  config = {
+    type: 'https',
+    host: 'linguaevo.twc1.net',
+    port: 5000,
+  };
+}
 
 export function getAddr(): string {
   return `${config.type}://${config.host}:${config.port}`;
