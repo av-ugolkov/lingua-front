@@ -108,7 +108,7 @@ export default function Card({
   }, [respRandomWords]);
 
   function openVocabulary() {
-    if (getAccessToken() === '') {
+    if (vocab.accessID !== AccessID.Public && getAccessToken() === '') {
       setIsShowSignInUpPopup(true);
       return;
     } else if (vocab.accessID === AccessID.Subscribers) {
