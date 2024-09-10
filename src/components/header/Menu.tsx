@@ -60,6 +60,7 @@ export default function Menu() {
               if (response.ok) {
                 deleteAccessToken();
                 navigate('/');
+                window.location.reload();
               } else {
                 notificationWarning(response.data);
               }
