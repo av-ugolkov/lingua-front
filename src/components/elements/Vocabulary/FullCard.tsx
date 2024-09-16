@@ -38,7 +38,7 @@ interface IWord {
   pronunciation: string;
 }
 
-export default function Card({
+export default function FullCard({
   id,
   authStore,
 }: {

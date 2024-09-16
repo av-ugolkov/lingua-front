@@ -9,7 +9,7 @@ import {
   useFetch,
   useFetchFunc,
 } from '@/hooks/fetch/useFetch';
-import VocabTag from './VocabTag';
+import ShortCard from '../elements/Vocabulary/ShortCard';
 import { AccessID } from '@/models/Access';
 import { useNotificationStore } from '../notification/useNotificationStore';
 import { getUserID, isActiveToken } from '@/scripts/AuthToken';
@@ -184,7 +184,7 @@ export default function Card(user: IUser) {
         <div className='flex-1 pl-5'>
           <ul className='flex flex-col gap-y-3'>
             {vocabularies.map((vocab) => (
-              <VocabTag
+              <ShortCard
                 key={vocab.id}
                 {...vocab}
               />
