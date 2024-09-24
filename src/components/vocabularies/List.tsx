@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import Card, { Vocab } from '@/components/elements/Vocabulary/Card';
+import FullCard, { Vocab } from '@/components/elements/Vocabulary/FullCard';
 import Pagination from './Pagination';
 import { AuthStore, RequestMethod, useFetch } from '@/hooks/fetch/useFetch';
 import { useSearchStore } from '../elements/SearchPanel/useSearchStore';
@@ -59,7 +59,7 @@ export default function List({ nativeLang, translateLang }: SortedInputProps) {
   return (
     <>
       {vocabs.map((item) => (
-        <Card
+        <FullCard
           key={item.id}
           id={item.id}
           authStore={AuthStore.OPTIONAL}

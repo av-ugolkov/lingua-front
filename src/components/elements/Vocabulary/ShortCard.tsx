@@ -1,15 +1,15 @@
-import { IVocab } from './Card';
+import { IVocab } from '../../users/Card';
 import { useLanguagesStore } from '@/hooks/stores/useLanguagesStore';
 import { useNavigate } from 'react-router-dom';
-import LockItem from '../elements/LockItem';
+import LockItem from '../LockItem';
 import { AccessID, AccessStatus } from '@/models/Access';
 import { AuthStore, RequestMethod, useFetchFunc } from '@/hooks/fetch/useFetch';
 import { getAccessToken } from '@/scripts/AuthToken';
-import { useNotificationStore } from '../notification/useNotificationStore';
+import { useNotificationStore } from '../../notification/useNotificationStore';
 import { useState } from 'react';
-import AuthPopup from '../elements/Auth/AuthPopup';
+import AuthPopup from '../Auth/AuthPopup';
 
-export default function VocabTag({
+export default function ShortCard({
   id,
   name,
   accessID,
@@ -74,7 +74,7 @@ export default function VocabTag({
         </div>
         <div
           id='sub'
-          className='flex w-full justify-between text-gray-600'>
+          className='flex w-full min-w-60 justify-between gap-x-4 text-gray-600'>
           <div className='flex'>{`${languages.get(
             nativeLang
           )} ↔ ${languages.get(translateLang)}`}</div>
