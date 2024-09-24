@@ -74,7 +74,7 @@ export default function ShortCard({
         </div>
         <div
           id='sub'
-          className='flex w-full justify-between gap-x-4 text-gray-600'>
+          className='flex w-full min-w-60 justify-between gap-x-4 text-gray-600'>
           <div className='flex'>{`${languages.get(
             nativeLang
           )} ↔ ${languages.get(translateLang)}`}</div>

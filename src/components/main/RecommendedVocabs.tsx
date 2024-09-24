@@ -49,12 +49,16 @@ export default function RecommendedVocabs() {
       <p>Expand your vocabulary easily and effectively!</p>
       <div className='flex w-full justify-center mt-5'>
         <div className='flex gap-x-3 font-bold'>
-          {vocabs.map((vocab) => (
-            <ShortCard
-              key={vocab.id}
-              {...vocab}
-            />
-          ))}
+          {vocabs.length === 0 ? (
+            <p>No recommended vocabularies</p>
+          ) : (
+            vocabs.map((vocab) => (
+              <ShortCard
+                key={vocab.id}
+                {...vocab}
+              />
+            ))
+          )}
         </div>
       </div>
     </section>
