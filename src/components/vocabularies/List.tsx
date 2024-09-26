@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 
-import FullCard, { Vocab } from '@/components/elements/Vocabulary/FullCard';
+import FullCard from '@/components/elements/Vocabulary/FullCard';
 import Pagination from './Pagination';
 import { AuthStore, RequestMethod, useFetch } from '@/hooks/fetch/useFetch';
 import { useSearchStore } from '../elements/SearchPanel/useSearchStore';
 import { useSortedStore } from '../elements/SortAndOrder/useSortedStore';
+import { useVocabulariesStore } from "@/hooks/stores/useVocabulariesStore.ts";
 
 interface SortedInputProps {
   nativeLang: string;
@@ -17,8 +18,9 @@ export default function List({ nativeLang, translateLang }: SortedInputProps) {
   const [countItemsPerPage, setCountItemsPerPage] = useState(5);
   const [countItems, setCountItems] = useState(0);
   const { searchValue } = useSearchStore();
+  const {vocabularies, addVocabulary, setVocabularies}= useVocabulariesStore()
 
-  const { response } = useFetch(
+  const { response: respVocabs } = useFetch(
     '/vocabularies',
     RequestMethod.GET,
     AuthStore.NO,
@@ -27,13 +29,10 @@ export default function List({ nativeLang, translateLang }: SortedInputProps) {
     }
   );
 
-  const [vocabs, setVocabs] = useState<Vocab[]>([]);
-
   useEffect(() => {
-    if (response.ok) {
-      const vocabs: Vocab[] = [];
-      response.data['vocabularies'].forEach((item: any) => {
-        vocabs.push({
+    if (respVocabs.ok) {
+      respVocabs.data['vocabularies'].forEach((item: any) => {
+        addVocabulary({
           id: item['id'],
           name: item['name'],
           userID: item['user_id'],
@@ -48,17 +47,16 @@ export default function List({ nativeLang, translateLang }: SortedInputProps) {
           updatedAt: new Date(item['updated_at']),
         });
       });
-      setVocabs(vocabs);
-      setCountItems(response.data['total_count']);
+      setCountItems(respVocabs.data['total_count']);
     }
     return () => {
-      setVocabs([]);
+      setVocabularies([]);
     };
-  }, [response]);
+  }, [respVocabs]);
 
   return (
     <>
-      {vocabs.map((item) => (
+      {vocabularies.map((item) => (
         <FullCard
           key={item.id}
           id={item.id}

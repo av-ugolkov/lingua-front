@@ -1,36 +1,14 @@
-import { AccessID } from '@/models/Access';
 import { create } from 'zustand';
 
-export interface VocabularyState {
-  id: string;
-  name: string;
-  accessID: number;
-  nativeLang: string;
-  translateLang: string;
-  description: string;
-  tags: string[];
-  userID: string;
-}
+import { EmptyVocabulary, VocabularyData } from "@/models/Vocabulary.ts";
 
 interface VocabulariesState {
-  vocabularies: VocabularyState[];
-  getVocabulary: (id: string) => VocabularyState;
-  getVocabularyByName: (name: string) => VocabularyState;
-  setVocabularies: (vocabularies: VocabularyState[]) => void;
-  addVocabulary: (vocabulary: VocabularyState) => void;
+  vocabularies: VocabularyData[];
+  getVocabulary: (id: string | undefined) => VocabularyData;
+  setVocabularies: (vocabularies: VocabularyData[]) => void;
+  addVocabulary: (vocabulary: VocabularyData) => void;
   removeVocabulary: (id: string) => void;
 }
-
-export const EmptyVocabulary: VocabularyState = {
-  id: '',
-  name: '',
-  accessID: AccessID.Public,
-  nativeLang: '',
-  translateLang: '',
-  description: '',
-  tags: [],
-  userID: '',
-};
 
 export const useVocabulariesStore = create<VocabulariesState>((set, get) => ({
   vocabularies: [],
@@ -40,15 +18,6 @@ export const useVocabulariesStore = create<VocabulariesState>((set, get) => ({
       (vocabulary) => vocabulary.id === id
     );
 
-    if (!vocabulary) {
-      return EmptyVocabulary;
-    }
-    return vocabulary;
-  },
-  getVocabularyByName: (name) => {
-    const vocabulary = get().vocabularies.find(
-      (vocabulary) => vocabulary.name === name
-    );
     if (!vocabulary) {
       return EmptyVocabulary;
     }

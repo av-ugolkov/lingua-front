@@ -7,18 +7,18 @@ import {
 } from '@heroicons/react/24/outline';
 import DropdownMenu from '../Dropdown/DropdownMenu';
 import DropdownItem from '../Dropdown/Item';
-import { Vocab } from './FullCard';
 import { AuthStore, RequestMethod, useFetchFunc } from '@/hooks/fetch/useFetch';
 import Edit, { IEditData } from '@/components/user_vocabularies/Edit';
 import { getUserID } from '@/scripts/AuthToken';
+import { VocabularyData } from "@/models/Vocabulary.ts";
 
 export default function Menu({
   vocab,
   changeVocab,
   deleteVocab,
 }: {
-  vocab: Vocab;
-  changeVocab: (vocab: Vocab) => void;
+  vocab: VocabularyData;
+  changeVocab: (vocab: VocabularyData) => void;
   deleteVocab: (id: string) => void;
 }) {
   const [isShowEditPopup, setIsShowEditPopup] = useState(false);

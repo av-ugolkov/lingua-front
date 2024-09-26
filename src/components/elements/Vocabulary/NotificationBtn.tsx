@@ -5,23 +5,23 @@ import { BellAlertIcon } from "@heroicons/react/24/solid";
 import { AuthStore, RequestMethod, useFetch, useFetchFunc } from "@/hooks/fetch/useFetch.ts";
 import { getUserID, isActiveToken } from "@/scripts/AuthToken.ts";
 
-export default function NotificationBtn({vocabID}:{vocabID:string}) {
+export default function NotificationBtn({id}:{id:string}) {
     const [isAlarm, setAlarm] = useState(false)
     const {
         isLoading,
         response: respGetNotification
-    } = useFetch('/notifications/vocabulary', RequestMethod.GET, AuthStore.USE, {query: `user_id=${getUserID()}&vocab_id=${vocabID}`});
+    } = useFetch('/notifications/vocabulary', RequestMethod.GET, AuthStore.USE, {query: `user_id=${getUserID()}&vocab_id=${id}`});
     const {fetchFunc: setFetchFunc} = useFetchFunc('/notifications/vocabulary', RequestMethod.POST, AuthStore.USE);
 
     useEffect(() => {
         if (respGetNotification.ok) {
             setAlarm(respGetNotification.data['notification'])
         }
-    }, [respGetNotification.ok])
+    }, [respGetNotification])
 
     function setNotificationVocab() {
         async function asyncSetNotificationVocab() {
-            const resp = await setFetchFunc({query: `user_id=${getUserID()}&vocab_id=${vocabID}`})
+            const resp = await setFetchFunc({query: `user_id=${getUserID()}&vocab_id=${id}`})
             if (resp.ok) {
                 setAlarm(resp.data['notification'])
             }
@@ -38,12 +38,12 @@ export default function NotificationBtn({vocabID}:{vocabID:string}) {
         </div>
     }
 
-    return <button className='w-full duration-300 hover:scale-150 hover:duration-300'
+    return <div className='w-full duration-300 hover:scale-150 hover:duration-300'
                    onClick={(event) => {
                        setNotificationVocab();
                        event.stopPropagation();
                    }}>
         {isAlarm ? (<BellAlertIcon className='text-green-500' title='ON'/>) : (
             <BellIcon className='text-red-500' title='OFF'/>)}
-    </button>
+    </div>
 }
