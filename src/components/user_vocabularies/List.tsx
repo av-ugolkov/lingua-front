@@ -2,11 +2,9 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import Card from './Card';
-import {
-  VocabularyState,
-  useVocabulariesStore,
-} from '@/hooks/stores/useVocabulariesStore';
+import { useVocabulariesStore } from '@/hooks/stores/useVocabulariesStore';
 import { RequestMethod, AuthStore, useFetch } from '@/hooks/fetch/useFetch';
+import { VocabularyData } from "@/models/Vocabulary.ts";
 
 export default function List() {
   const navigate = useNavigate();
@@ -19,7 +17,7 @@ export default function List() {
 
   useEffect(() => {
     if (response.ok) {
-      const vocabularies: VocabularyState[] = [];
+      const vocabularies: VocabularyData[] = [];
       response.data.forEach((item: any) => {
         vocabularies.push({
           id: item['id'],

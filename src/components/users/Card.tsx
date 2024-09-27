@@ -80,6 +80,55 @@ export default function Card(user: IUser) {
     asyncUnsubscribe();
   }
 
+  function subscribeBtn(uid: string, userID: string, isSubscribe: boolean) {
+    if (isSubscribe) {
+      return (
+        <Button
+          bgColor={clsx(
+            uid === '' || uid === userID ? 'bg-gray-400' : 'bg-violet-600'
+          )}
+          hoverBgColor={clsx(
+            uid === '' || uid === userID
+              ? 'hover:bg-gray-400'
+              : 'hover:bg-violet-500'
+          )}
+          focusOutlineColor={clsx(
+            uid === '' || uid === userID
+              ? 'focus-visible:outline-gray-600'
+              : 'focus-visible:outline-violet-600'
+          )}
+          callback={() => {
+            userUnsubscribe(userID);
+          }}
+          disabled={uid === '' || uid === userID}>
+          Unsubscribe
+        </Button>
+      );
+    }
+    return (
+      <Button
+        bgColor={clsx(
+          uid === '' || uid === userID ? 'bg-gray-400' : 'bg-indigo-600'
+        )}
+        hoverBgColor={clsx(
+          uid === '' || uid === userID
+            ? 'hover:bg-gray-400'
+            : 'hover:bg-indigo-500'
+        )}
+        focusOutlineColor={clsx(
+          uid === '' || uid === userID
+            ? 'focus-visible:outline-gray-600'
+            : 'focus-visible:outline-indigo-600'
+        )}
+        callback={() => {
+          userSubscribe(userID);
+        }}
+        disabled={uid === '' || uid === userID}>
+        Subscribe
+      </Button>
+    );
+  }
+
   useEffect(() => {
     if (responseUser.ok) {
       responseUser.data.forEach((item: any) => {
@@ -146,40 +195,7 @@ export default function Card(user: IUser) {
               </div>
             </div>
           </div>
-          <div>
-            <Button
-              bgColor={clsx(
-                uid === '' || uid === user.id
-                  ? 'bg-gray-400'
-                  : isSubscribe
-                  ? 'bg-violet-600'
-                  : 'bg-indigo-600'
-              )}
-              hoverBgColor={clsx(
-                uid === '' || uid === user.id
-                  ? 'hover:bg-gray-400'
-                  : isSubscribe
-                  ? 'hover:bg-violet-500'
-                  : 'hover:bg-indigo-500'
-              )}
-              focusOutlineColor={clsx(
-                uid === '' || uid === user.id
-                  ? 'focus-visible:outline-gray-600'
-                  : isSubscribe
-                  ? 'focus-visible:outline-violet-600'
-                  : 'focus-visible:outline-indigo-600'
-              )}
-              callback={() => {
-                if (isSubscribe) {
-                  userUnsubscribe(user.id);
-                } else {
-                  userSubscribe(user.id);
-                }
-              }}
-              disabled={uid === '' || uid === user.id}>
-              {isSubscribe ? 'Unsubscribe' : 'Subscribe'}
-            </Button>
-          </div>
+          <div>{subscribeBtn(uid, user.id, isSubscribe)}</div>
         </div>
         <div className='flex-1 pl-5'>
           <ul className='flex flex-col gap-y-3'>

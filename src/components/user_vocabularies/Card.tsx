@@ -3,10 +3,7 @@ import { useEffect, useState } from 'react';
 import { TrashIcon, PencilIcon } from '@heroicons/react/24/outline';
 import ArrowBothSide from '@/assets/ArrowBothSide';
 
-import {
-  useVocabulariesStore,
-  VocabularyState,
-} from '@/hooks/stores/useVocabulariesStore';
+import { useVocabulariesStore } from '@/hooks/stores/useVocabulariesStore';
 import DropdownMenu from '../elements/Dropdown/DropdownMenu';
 import DropdownItem from '../elements/Dropdown/Item';
 import {
@@ -18,6 +15,7 @@ import {
 import Edit, { IEditData } from './Edit';
 import { useLanguagesStore } from '@/hooks/stores/useLanguagesStore';
 import LockItem from '../elements/LockItem';
+import { VocabularyData } from "@/models/Vocabulary.ts";
 
 const CountRequestWords = '8';
 
@@ -31,7 +29,7 @@ export default function Card({
   vocab,
   onClick,
 }: {
-  vocab: VocabularyState;
+  vocab: VocabularyData;
   onClick: () => void;
 }) {
   const [vocabData, setVocabData] = useState(vocab);

@@ -4,21 +4,19 @@ import List from '@/components/user_vocabularies/List';
 import Button from '@/components/elements/Button';
 import Create from '@/components/user_vocabularies/Create';
 import { RequestMethod, AuthStore, useFetchFunc } from '@/hooks/fetch/useFetch';
-import {
-  useVocabulariesStore,
-  VocabularyState,
-} from '@/hooks/stores/useVocabulariesStore';
+import { useVocabulariesStore } from '@/hooks/stores/useVocabulariesStore';
+import { VocabularyData } from '@/models/Vocabulary.ts';
 
 export default function Vocabularies() {
   const [isShowCreatePopup, setIsShowCreatePopup] = useState(false);
   const vocabulariesStore = useVocabulariesStore();
   const { fetchFunc: fetchCreateVocabulary } = useFetchFunc(
-    `/account/vocabulary`,
+    `/vocabulary`,
     RequestMethod.POST,
     AuthStore.USE
   );
 
-  function createVocabulary(vocab: VocabularyState) {
+  function createVocabulary(vocab: VocabularyData) {
     async function asyncFetchCreateVocabulary() {
       const body = JSON.stringify({
         name: vocab.name,
@@ -32,7 +30,7 @@ export default function Vocabularies() {
         body: body,
       });
       if (response.ok) {
-        const newVocab: VocabularyState = {
+        const newVocab: VocabularyData = {
           id: response.data['id'],
           name: vocab.name,
           accessID: vocab.accessID,
