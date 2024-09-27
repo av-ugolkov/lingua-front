@@ -10,7 +10,7 @@ import DropdownItem from '../Dropdown/Item';
 import { AuthStore, RequestMethod, useFetchFunc } from '@/hooks/fetch/useFetch';
 import Edit, { IEditData } from '@/components/user_vocabularies/Edit';
 import { getUserID } from '@/scripts/AuthToken';
-import { VocabularyData } from "@/models/Vocabulary.ts";
+import { VocabularyData } from '@/models/Vocabulary.ts';
 
 export default function Menu({
   vocab,
@@ -24,12 +24,12 @@ export default function Menu({
   const [isShowEditPopup, setIsShowEditPopup] = useState(false);
 
   const { fetchFunc: fetchEditVocabulary } = useFetchFunc(
-    `/account/vocabulary`,
+    `/vocabulary`,
     RequestMethod.PUT,
     AuthStore.USE
   );
   const { fetchFunc: fetchDeleteVocabulary } = useFetchFunc(
-    `/account/vocabulary`,
+    `/vocabulary`,
     RequestMethod.DELETE,
     AuthStore.USE
   );

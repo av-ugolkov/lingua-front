@@ -5,13 +5,13 @@ import Button from '@/components/elements/Button';
 import Create from '@/components/user_vocabularies/Create';
 import { RequestMethod, AuthStore, useFetchFunc } from '@/hooks/fetch/useFetch';
 import { useVocabulariesStore } from '@/hooks/stores/useVocabulariesStore';
-import { VocabularyData } from "@/models/Vocabulary.ts";
+import { VocabularyData } from '@/models/Vocabulary.ts';
 
 export default function Vocabularies() {
   const [isShowCreatePopup, setIsShowCreatePopup] = useState(false);
   const vocabulariesStore = useVocabulariesStore();
   const { fetchFunc: fetchCreateVocabulary } = useFetchFunc(
-    `/account/vocabulary`,
+    `/vocabulary`,
     RequestMethod.POST,
     AuthStore.USE
   );

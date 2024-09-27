@@ -5,7 +5,7 @@ import Pagination from './Pagination';
 import { AuthStore, RequestMethod, useFetch } from '@/hooks/fetch/useFetch';
 import { useSearchStore } from '../elements/SearchPanel/useSearchStore';
 import { useSortedStore } from '../elements/SortAndOrder/useSortedStore';
-import { useVocabulariesStore } from "@/hooks/stores/useVocabulariesStore.ts";
+import { useVocabulariesStore } from '@/hooks/stores/useVocabulariesStore.ts';
 
 interface SortedInputProps {
   nativeLang: string;
@@ -18,7 +18,8 @@ export default function List({ nativeLang, translateLang }: SortedInputProps) {
   const [countItemsPerPage, setCountItemsPerPage] = useState(5);
   const [countItems, setCountItems] = useState(0);
   const { searchValue } = useSearchStore();
-  const {vocabularies, addVocabulary, setVocabularies}= useVocabulariesStore()
+  const { vocabularies, addVocabulary, setVocabularies } =
+    useVocabulariesStore();
 
   const { response: respVocabs } = useFetch(
     '/vocabularies',
@@ -52,7 +53,7 @@ export default function List({ nativeLang, translateLang }: SortedInputProps) {
     return () => {
       setVocabularies([]);
     };
-  }, [respVocabs]);
+  }, [respVocabs, addVocabulary, setVocabularies]);
 
   return (
     <>

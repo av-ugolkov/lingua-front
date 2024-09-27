@@ -15,8 +15,7 @@ import ArrowBothSide from '@/assets/ArrowBothSide';
 import { AccessID, AccessStatus } from '@/models/Access';
 import { getAccessToken } from '@/scripts/AuthToken';
 import { useNotificationStore } from '@/components/notification/useNotificationStore';
-import NotificationBtn from "@/components/elements/Vocabulary/NotificationBtn.tsx";
-import { useVocabulariesStore } from "@/hooks/stores/useVocabulariesStore.ts";
+import { useVocabulariesStore } from '@/hooks/stores/useVocabulariesStore.ts';
 
 const CountRequestWords = '12';
 
@@ -25,24 +24,32 @@ interface IWord {
   pronunciation: string;
 }
 
-export default function FullCard({id, authStore}: {id:string, authStore: AuthStore}) {
+export default function FullCard({
+  id,
+  authStore,
+  rightCornerItem,
+}: {
+  id: string;
+  authStore: AuthStore;
+  rightCornerItem?: JSX.Element;
+}) {
   const navigate = useNavigate();
   const [isShowSignInUpPopup, setIsShowSignInUpPopup] = useState(false);
-  const {languages} = useLanguagesStore();
-  const {notificationWarning} = useNotificationStore();
-  const {getVocabulary} = useVocabulariesStore()
+  const { languages } = useLanguagesStore();
+  const { notificationWarning } = useNotificationStore();
+  const { getVocabulary } = useVocabulariesStore();
   const [words, setWords] = useState<IWord[]>([]);
 
-  const {response: respRandomWords} = useFetch(
-      '/vocabulary/words/random',
-      RequestMethod.GET,
-      authStore,
-      {query: `id=${id}&limit=${CountRequestWords}`}
+  const { response: respRandomWords } = useFetch(
+    '/vocabulary/words/random',
+    RequestMethod.GET,
+    authStore,
+    { query: `id=${id}&limit=${CountRequestWords}` }
   );
-  const {fetchFunc: fetchVocabAccess} = useFetchFunc(
-      '/vocabulary/access/user',
-      RequestMethod.GET,
-      authStore
+  const { fetchFunc: fetchVocabAccess } = useFetchFunc(
+    '/vocabulary/access/user',
+    RequestMethod.GET,
+    authStore
   );
 
   useEffect(() => {
@@ -63,7 +70,10 @@ export default function FullCard({id, authStore}: {id:string, authStore: AuthSto
   }, [respRandomWords]);
 
   function openVocabulary() {
-    if (getVocabulary(id).accessID !== AccessID.Public && getAccessToken() === '') {
+    if (
+      getVocabulary(id).accessID !== AccessID.Public &&
+      getAccessToken() === ''
+    ) {
       setIsShowSignInUpPopup(true);
       return;
     } else if (getVocabulary(id).accessID === AccessID.Subscribers) {
@@ -74,7 +84,7 @@ export default function FullCard({id, authStore}: {id:string, authStore: AuthSto
   }
 
   async function asyncVocabAccess() {
-    const response = await fetchVocabAccess({query: `id=${id}`});
+    const response = await fetchVocabAccess({ query: `id=${id}` });
     if (response.ok) {
       const access = response.data['access'];
       switch (access) {
@@ -91,53 +101,61 @@ export default function FullCard({id, authStore}: {id:string, authStore: AuthSto
   }
 
   return (
-      <div
-          className='relative bg-blue-100 shadow-md shadow-blue-300 duration-300 hover:shadow-lg hover:shadow-blue-400 hover:duration-300'>
-        <button
-            className='flex flex-col justify-between items-start w-full px-5 py-4'
-            onClick={openVocabulary}>
-          <div className='flex w-full justify-between'>
-            <div className='flex gap-x-1 items-center'>
-              <h2 className='flex items-center mr-1 text-xl'>{getVocabulary(id).name}</h2>
-              <LockItem accessID={getVocabulary(id).accessID}/>
-            </div>
-            <div className='flex w-6 items-center'>
-              <NotificationBtn id={id}/>
-            </div>
+    <div className='relative bg-blue-100 shadow-md shadow-blue-300 duration-300 hover:shadow-lg hover:shadow-blue-400 hover:duration-300'>
+      <button
+        className='flex flex-col justify-between items-start w-full px-5 py-4'
+        onClick={openVocabulary}>
+        <div className='flex w-full justify-between'>
+          <div className='flex gap-x-1 items-center'>
+            <h2 className='flex items-center mr-1 text-xl'>
+              {getVocabulary(id).name}
+            </h2>
+            <LockItem accessID={getVocabulary(id).accessID} />
           </div>
-          <div className='flex w-full text-gray-500'>{getVocabulary(id).description}</div>
-          <div className='flex flex-wrap w-full gap-1 mt-2'>
-            {words.map((word) => (
-                <Tag
-                    key={word.value}
-                    value={word.value}
-                />
-            ))}
-          </div>
-          <div className='flex flex-col w-full border-t border-black mt-2 pt-2'>
-            <div className='flex justify-between items-center text-gray-500'>
-              <div className='flex'>
-                <p className='m-0'>{languages.get(getVocabulary(id).nativeLang)}</p>
-                <ArrowBothSide className='w-5 mx-1'/>
-                <p className='m-0'>{languages.get(getVocabulary(id).translateLang)}</p>
-              </div>
+          {rightCornerItem}
+        </div>
+        <div className='flex w-full text-gray-500'>
+          {getVocabulary(id).description}
+        </div>
+        <div className='flex flex-wrap w-full gap-1 mt-2'>
+          {words.map((word) => (
+            <Tag
+              key={word.value}
+              value={word.value}
+            />
+          ))}
+        </div>
+        <div className='flex flex-col w-full border-t border-black mt-2 pt-2'>
+          <div className='flex justify-between items-center text-gray-500'>
+            <div className='flex'>
               <p className='m-0'>
-                {getVocabulary(id).wordsCount} word{getVocabulary(id).wordsCount != 1 && 's'}
+                {languages.get(getVocabulary(id).nativeLang)}
+              </p>
+              <ArrowBothSide className='w-5 mx-1' />
+              <p className='m-0'>
+                {languages.get(getVocabulary(id).translateLang)}
               </p>
             </div>
-            <div className='flex justify-between items-center text-gray-500'>
-              <p className='m-0 font-bold'>{getVocabulary(id).userName}</p>
-              <p className='m-0'>{getVocabulary(id).createdAt?.toLocaleString('en-GB')}</p>
-            </div>
+            <p className='m-0'>
+              {getVocabulary(id).wordsCount} word
+              {getVocabulary(id).wordsCount != 1 && 's'}
+            </p>
           </div>
-        </button>
-        {isShowSignInUpPopup && (
-            <AuthPopup
-                close={() => {
-                  setIsShowSignInUpPopup(false);
-                }}
-            />
-        )}
-      </div>
+          <div className='flex justify-between items-center text-gray-500'>
+            <p className='m-0 font-bold'>{getVocabulary(id).userName}</p>
+            <p className='m-0'>
+              {getVocabulary(id).createdAt?.toLocaleString('en-GB')}
+            </p>
+          </div>
+        </div>
+      </button>
+      {isShowSignInUpPopup && (
+        <AuthPopup
+          close={() => {
+            setIsShowSignInUpPopup(false);
+          }}
+        />
+      )}
+    </div>
   );
 }
