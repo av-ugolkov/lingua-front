@@ -21,7 +21,7 @@ export default function List({ nativeLang, translateLang }: SortedInputProps) {
   const { vocabularies, addVocabulary, setVocabularies } =
     useVocabulariesStore();
 
-  const { response: respVocabs } = useFetch(
+  const { isLoading, response: respVocabs } = useFetch(
     '/vocabularies',
     RequestMethod.GET,
     AuthStore.NO,
@@ -55,8 +55,12 @@ export default function List({ nativeLang, translateLang }: SortedInputProps) {
     };
   }, [respVocabs, addVocabulary, setVocabularies]);
 
+  if (isLoading) {
+    return <div></div>;
+  }
+
   return (
-    <>
+    <div className='grid w-full gap-5 grid-cols-1'>
       {vocabularies.map((item) => (
         <FullCard
           key={item.id}
@@ -70,6 +74,6 @@ export default function List({ nativeLang, translateLang }: SortedInputProps) {
         setPageNum={setPageNum}
         countItemsPerPage={setCountItemsPerPage}
       />
-    </>
+    </div>
   );
 }

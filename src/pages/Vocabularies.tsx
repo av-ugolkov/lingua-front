@@ -37,8 +37,8 @@ export default function Vocabularies() {
   }
 
   return (
-    <div className='grid p-4 min-w-[540px] w-full gap-5 grid-cols-1'>
-      <div className='flex justify-between'>
+    <>
+      <div className='flex justify-between py-5'>
         <div className='flex justify-start'>
           <SearchInput />
           <div className='flex items-center ml-3'>
@@ -76,6 +76,6 @@ export default function Vocabularies() {
         nativeLang={nativeLang}
         translateLang={translateLang}
       />
-    </div>
+    </>
   );
 }

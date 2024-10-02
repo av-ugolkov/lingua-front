@@ -16,6 +16,7 @@ import { AccessID, AccessStatus } from '@/models/Access';
 import { getAccessToken } from '@/scripts/AuthToken';
 import { useNotificationStore } from '@/components/notification/useNotificationStore';
 import { useVocabulariesStore } from '@/hooks/stores/useVocabulariesStore.ts';
+import Menu from './Menu';
 
 const CountRequestWords = '12';
 
@@ -27,11 +28,9 @@ interface IWord {
 export default function FullCard({
   id,
   authStore,
-  rightCornerItem,
 }: {
   id: string;
   authStore: AuthStore;
-  rightCornerItem?: JSX.Element;
 }) {
   const navigate = useNavigate();
   const [isShowSignInUpPopup, setIsShowSignInUpPopup] = useState(false);
@@ -102,8 +101,14 @@ export default function FullCard({
 
   return (
     <div className='relative bg-blue-100 shadow-md shadow-blue-300 duration-300 hover:shadow-lg hover:shadow-blue-400 hover:duration-300'>
+      <div className='absolute top-2 right-1'>
+        <Menu
+          key={id}
+          vocabID={id}
+        />
+      </div>
       <button
-        className='flex flex-col justify-between items-start w-full px-5 py-4'
+        className='flex flex-col justify-between items-start w-full px-6 py-5'
         onClick={openVocabulary}>
         <div className='flex w-full justify-between'>
           <div className='flex gap-x-1 items-center'>
@@ -112,7 +117,6 @@ export default function FullCard({
             </h2>
             <LockItem accessID={getVocabulary(id).accessID} />
           </div>
-          {rightCornerItem}
         </div>
         <div className='flex w-full text-gray-500'>
           {getVocabulary(id).description}

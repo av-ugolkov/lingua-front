@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import List from '@/components/user_vocabularies/List';
 import Button from '@/components/elements/Button';
@@ -6,15 +6,41 @@ import Create from '@/components/user_vocabularies/Create';
 import { RequestMethod, AuthStore, useFetchFunc } from '@/hooks/fetch/useFetch';
 import { useVocabulariesStore } from '@/hooks/stores/useVocabulariesStore';
 import { VocabularyData } from '@/models/Vocabulary.ts';
+import { useLanguagesStore } from '@/hooks/stores/useLanguagesStore';
+import SortedPanel from '@/components/elements/SortAndOrder/SortedPanel';
+import ListBox, { IListBoxItem } from '@/components/elements/ListBox';
+import ArrowBothSide from '@/assets/ArrowBothSide';
+import SearchInput from '@/components/elements/SearchPanel/SearchInput';
+import { LanguageIcon } from '@heroicons/react/24/outline';
+import { SortWordTypes } from '@/models/Sorted';
 
 export default function Vocabularies() {
   const [isShowCreatePopup, setIsShowCreatePopup] = useState(false);
+  const { languages: languagesStore } = useLanguagesStore();
+  const [languages, setLanguages] = useState([{ lang: 'Any', code: 'any' }]);
+  const [nativeLang, setNativeLang] = useState('any');
+  const [translateLang, setTranslateLang] = useState('any');
+
   const vocabulariesStore = useVocabulariesStore();
   const { fetchFunc: fetchCreateVocabulary } = useFetchFunc(
     `/vocabulary`,
     RequestMethod.POST,
     AuthStore.USE
   );
+
+  useEffect(() => {
+    if (languagesStore.size > 0) {
+      languagesStore.forEach((v, k) => {
+        setLanguages((prev) => [
+          ...prev,
+          {
+            lang: v,
+            code: k,
+          },
+        ]);
+      });
+    }
+  }, [languagesStore]);
 
   function createVocabulary(vocab: VocabularyData) {
     async function asyncFetchCreateVocabulary() {
@@ -50,22 +76,65 @@ export default function Vocabularies() {
     asyncFetchCreateVocabulary();
   }
 
+  function mapToLanguages(): IListBoxItem[] {
+    const items: IListBoxItem[] = [];
+    languages.forEach((item) => {
+      items.push({ key: item.code, value: item.lang });
+    });
+    return items;
+  }
+
   return (
     <>
-      <div className='p-5'>
-        <div className='flex justify-center items-center w-48 h-8 mb-5'>
-          <Button
-            bgColor='bg-indigo-600'
-            hoverBgColor='hover:bg-indigo-500'
-            focusOutlineColor='focus-visible:outline-indigo-600'
-            callback={() => {
-              setIsShowCreatePopup((prev) => !prev);
-            }}>
-            Create vocabularies
-          </Button>
-        </div>
-        <List />
+      <div className='flex justify-center items-center w-48 h-8 my-5'>
+        <Button
+          bgColor='bg-indigo-600'
+          hoverBgColor='hover:bg-indigo-500'
+          focusOutlineColor='focus-visible:outline-indigo-600'
+          callback={() => {
+            setIsShowCreatePopup((prev) => !prev);
+          }}>
+          Create vocabularies
+        </Button>
       </div>
+      <div className='flex justify-between pb-5'>
+        <div className='flex justify-start'>
+          <SearchInput />
+          <div className='flex items-center ml-3'>
+            <LanguageIcon className='size-6 mr-1' />
+            <ListBox
+              id='native_language'
+              items={mapToLanguages()}
+              defaultIndexValue={0}
+              onChange={(value) => {
+                const lang =
+                  languages.find((tp) => tp.lang === value) || languages[0];
+                setNativeLang(lang.code);
+              }}
+              classSelect='block w-fit p-1 bg-transparent border border-black text-black text-sm focus:ring-primary-500 focus:border-primary-500'
+            />
+            <ArrowBothSide className='size-6 mx-1' />
+            <ListBox
+              id='translate_language'
+              items={mapToLanguages()}
+              defaultIndexValue={0}
+              onChange={(value) => {
+                const lang =
+                  languages.find((tp) => tp.lang === value) || languages[0];
+                setTranslateLang(lang.code);
+              }}
+              classSelect='block w-fit p-1 bg-transparent border border-black text-black text-sm focus:ring-primary-500 focus:border-primary-500'
+            />
+          </div>
+        </div>
+        <div className='flex justify-end items-center'>
+          <SortedPanel sortedTypes={SortWordTypes} />
+        </div>
+      </div>
+      <List
+        nativeLang={nativeLang}
+        translateLang={translateLang}
+      />
       {isShowCreatePopup && (
         <Create
           addCallback={(newVocab) => {

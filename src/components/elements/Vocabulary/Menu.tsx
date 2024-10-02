@@ -10,18 +10,11 @@ import DropdownItem from '../Dropdown/Item';
 import { AuthStore, RequestMethod, useFetchFunc } from '@/hooks/fetch/useFetch';
 import Edit, { IEditData } from '@/components/user_vocabularies/Edit';
 import { getUserID } from '@/scripts/AuthToken';
-import { VocabularyData } from '@/models/Vocabulary.ts';
+import { useVocabulariesStore } from '@/hooks/stores/useVocabulariesStore';
 
-export default function Menu({
-  vocab,
-  changeVocab,
-  deleteVocab,
-}: {
-  vocab: VocabularyData;
-  changeVocab: (vocab: VocabularyData) => void;
-  deleteVocab: (id: string) => void;
-}) {
+export default function Menu({ vocabID }: { vocabID: string }) {
   const [isShowEditPopup, setIsShowEditPopup] = useState(false);
+  const { getVocabulary, removeVocabulary } = useVocabulariesStore();
 
   const { fetchFunc: fetchEditVocabulary } = useFetchFunc(
     `/vocabulary`,
@@ -38,17 +31,16 @@ export default function Menu({
     async function asyncEditVocabulary() {
       const response = await fetchEditVocabulary({
         body: JSON.stringify({
-          id: vocab.id,
+          id: vocabID,
           name: editData.name,
           description: editData.description,
           access_id: editData.accessID,
         }),
       });
       if (response.ok) {
-        vocab.name = editData.name;
-        vocab.description = editData.description;
-        vocab.accessID = editData.accessID;
-        changeVocab(vocab);
+        getVocabulary(vocabID).name = editData.name;
+        getVocabulary(vocabID).description = editData.description;
+        getVocabulary(vocabID).accessID = editData.accessID;
       } else {
         console.error(response);
       }
@@ -60,10 +52,10 @@ export default function Menu({
   function deleteVocabulary() {
     async function asyncDeleteVocabulary() {
       const response = await fetchDeleteVocabulary({
-        query: `name=${vocab.name}`,
+        query: `name=${getVocabulary(vocabID).name}`,
       });
       if (response.ok) {
-        deleteVocab(vocab.id);
+        removeVocabulary(vocabID);
       } else {
         console.error(response);
       }
@@ -75,7 +67,7 @@ export default function Menu({
   return (
     <>
       <DropdownMenu baseSize='w-7 h-7'>
-        {getUserID() == vocab.userID ? (
+        {getUserID() == getVocabulary(vocabID).userID ? (
           <>
             <DropdownItem onClick={() => setIsShowEditPopup(true)}>
               Edit
@@ -96,9 +88,9 @@ export default function Menu({
       {isShowEditPopup && (
         <Edit
           editData={{
-            name: vocab.name,
-            description: vocab.description,
-            accessID: vocab.accessID,
+            name: getVocabulary(vocabID).name,
+            description: getVocabulary(vocabID).description,
+            accessID: getVocabulary(vocabID).accessID,
           }}
           saveCallback={(editData) => {
             editVocabulary(editData);
