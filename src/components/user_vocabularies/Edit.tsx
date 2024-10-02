@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import Button from '../elements/Button';
-import { fetchData } from '@/scripts/fetch/fetchData';
+import { fetchData } from '@/scripts/api';
 import { IAccess } from './Create';
 import CloseBtn from './CloseBtn';
 import BgLock from '../elements/BgLock';

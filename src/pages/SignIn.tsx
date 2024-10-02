@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
-import { fetchData } from '@/scripts/fetch/fetchData';
+import { fetchData } from '@/scripts/api';
 import Button from '@/components/elements/Button';
 import AuthInput from '@/components/elements/Auth/AuthInput';
 import { setAccessToken } from '@/scripts/AuthToken';

@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
 
 import { useVocabulariesStore } from '@/hooks/stores/useVocabulariesStore';
-import { RequestMethod, AuthStore, useFetch } from '@/hooks/fetch/useFetch';
+import useFetch from '@/hooks/fetch/useFetch';
 import { useSearchStore } from '../elements/SearchPanel/useSearchStore';
 import { useSortedStore } from '../elements/SortAndOrder/useSortedStore';
 import FullCard from '../elements/Vocabulary/FullCard';
 import Pagination from '../vocabularies/Pagination';
+import { AuthStore, RequestMethod } from '@/scripts/api';
 
 interface SortedInputProps {
   nativeLang: string;
@@ -49,10 +50,11 @@ export default function List({ nativeLang, translateLang }: SortedInputProps) {
       });
       setCountItems(respVocabs.data['total_count']);
     }
+
     return () => {
       setVocabularies([]);
     };
-  }, [respVocabs, addVocabulary, setVocabularies]);
+  }, [addVocabulary, setVocabularies, respVocabs]);
 
   if (isLoading) {
     return <div></div>;

@@ -1,4 +1,4 @@
-import { IResponseData, fetchData } from '@/scripts/fetch/fetchData';
+import { IResponseData, fetchData } from '@/scripts/api';
 
 export const refreshToken = async (): Promise<IResponseData> => {
   const response = await fetchToken();

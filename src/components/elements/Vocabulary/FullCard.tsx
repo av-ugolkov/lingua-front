@@ -3,20 +3,16 @@ import { useNavigate } from 'react-router-dom';
 
 import AuthPopup from '../Auth/AuthPopup';
 import LockItem from '../LockItem';
-import {
-  AuthStore,
-  RequestMethod,
-  useFetch,
-  useFetchFunc,
-} from '@/hooks/fetch/useFetch';
-import { useLanguagesStore } from '@/hooks/stores/useLanguagesStore';
+import useFetch from '@/hooks/fetch/useFetch';
 import Tag from '../Tags/Tag';
 import ArrowBothSide from '@/assets/ArrowBothSide';
+import { useLanguagesStore } from '@/hooks/stores/useLanguagesStore';
 import { AccessID, AccessStatus } from '@/models/Access';
 import { getAccessToken } from '@/scripts/AuthToken';
 import { useNotificationStore } from '@/components/notification/useNotificationStore';
 import { useVocabulariesStore } from '@/hooks/stores/useVocabulariesStore.ts';
 import Menu from './Menu';
+import api, { AuthStore, RequestMethod } from '@/scripts/api';
 
 const CountRequestWords = '12';
 
@@ -45,9 +41,8 @@ export default function FullCard({
     authStore,
     { query: `id=${id}&limit=${CountRequestWords}` }
   );
-  const { fetchFunc: fetchVocabAccess } = useFetchFunc(
+  const { fetchFunc: fetchVocabAccess } = api.get(
     '/vocabulary/access/user',
-    RequestMethod.GET,
     authStore
   );
 

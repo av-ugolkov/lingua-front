@@ -5,16 +5,18 @@ import WordCard from './WordCard';
 import { useVocabWordsStore } from '@/hooks/stores/useVocabWordsStore';
 import { useSearchStore } from '@/components/elements/SearchPanel/useSearchStore';
 import { useSortedStore } from '@/components/elements/SortAndOrder/useSortedStore';
-import { RequestMethod, AuthStore, useFetch } from '@/hooks/fetch/useFetch';
-import { useVocabulariesStore } from "@/hooks/stores/useVocabulariesStore.ts";
-import { EmptyVocabWord, VocabWord } from "@/models/Word.ts";
+import useFetch from '@/hooks/fetch/useFetch';
+import { useVocabulariesStore } from '@/hooks/stores/useVocabulariesStore.ts';
+import { EmptyVocabWord, VocabWord } from '@/models/Word.ts';
+import { AuthStore, RequestMethod } from '@/scripts/api';
 
 export default function List() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [tempWord, setTempWord] = useState(EmptyVocabWord);
-  const { getOrderedWords, setWords, updateWord, clearWords } = useVocabWordsStore();
-  const {getVocabulary}=useVocabulariesStore()
+  const { getOrderedWords, setWords, updateWord, clearWords } =
+    useVocabWordsStore();
+  const { getVocabulary } = useVocabulariesStore();
   const searchStore = useSearchStore();
   const { sort, order } = useSortedStore();
 

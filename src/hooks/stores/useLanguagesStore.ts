@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { fetchData } from '@/scripts/fetch/fetchData';
+import { fetchData } from '@/scripts/api';
 
 export interface ILanguage {
   lang: string;

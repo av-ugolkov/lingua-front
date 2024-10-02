@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react';
 import List from '@/components/user_vocabularies/List';
 import Button from '@/components/elements/Button';
 import Create from '@/components/user_vocabularies/Create';
-import { RequestMethod, AuthStore, useFetchFunc } from '@/hooks/fetch/useFetch';
 import { useVocabulariesStore } from '@/hooks/stores/useVocabulariesStore';
 import { VocabularyData } from '@/models/Vocabulary.ts';
 import { useLanguagesStore } from '@/hooks/stores/useLanguagesStore';
@@ -13,6 +12,7 @@ import ArrowBothSide from '@/assets/ArrowBothSide';
 import SearchInput from '@/components/elements/SearchPanel/SearchInput';
 import { LanguageIcon } from '@heroicons/react/24/outline';
 import { SortWordTypes } from '@/models/Sorted';
+import api, { AuthStore } from '@/scripts/api';
 
 export default function Vocabularies() {
   const [isShowCreatePopup, setIsShowCreatePopup] = useState(false);
@@ -22,9 +22,8 @@ export default function Vocabularies() {
   const [translateLang, setTranslateLang] = useState('any');
 
   const vocabulariesStore = useVocabulariesStore();
-  const { fetchFunc: fetchCreateVocabulary } = useFetchFunc(
+  const { fetchFunc: fetchCreateVocabulary } = api.post(
     `/vocabulary`,
-    RequestMethod.POST,
     AuthStore.USE
   );
 

@@ -7,23 +7,21 @@ import {
 } from '@heroicons/react/24/outline';
 import DropdownMenu from '../Dropdown/DropdownMenu';
 import DropdownItem from '../Dropdown/Item';
-import { AuthStore, RequestMethod, useFetchFunc } from '@/hooks/fetch/useFetch';
 import Edit, { IEditData } from '@/components/user_vocabularies/Edit';
 import { getUserID } from '@/scripts/AuthToken';
 import { useVocabulariesStore } from '@/hooks/stores/useVocabulariesStore';
+import api, { AuthStore } from '@/scripts/api';
 
 export default function Menu({ vocabID }: { vocabID: string }) {
   const [isShowEditPopup, setIsShowEditPopup] = useState(false);
   const { getVocabulary, removeVocabulary } = useVocabulariesStore();
 
-  const { fetchFunc: fetchEditVocabulary } = useFetchFunc(
+  const { fetchFunc: fetchEditVocabulary } = api.put(
     `/vocabulary`,
-    RequestMethod.PUT,
     AuthStore.USE
   );
-  const { fetchFunc: fetchDeleteVocabulary } = useFetchFunc(
+  const { fetchFunc: fetchDeleteVocabulary } = api.delete(
     `/vocabulary`,
-    RequestMethod.DELETE,
     AuthStore.USE
   );
 

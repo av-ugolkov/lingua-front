@@ -6,16 +6,12 @@ import ArrowBothSide from '@/assets/ArrowBothSide';
 import { useVocabulariesStore } from '@/hooks/stores/useVocabulariesStore';
 import DropdownMenu from '../elements/Dropdown/DropdownMenu';
 import DropdownItem from '../elements/Dropdown/Item';
-import {
-  RequestMethod,
-  AuthStore,
-  useFetch,
-  useFetchFunc,
-} from '@/hooks/fetch/useFetch';
+import useFetch from '@/hooks/fetch/useFetch';
 import Edit, { IEditData } from './Edit';
 import { useLanguagesStore } from '@/hooks/stores/useLanguagesStore';
 import LockItem from '../elements/LockItem';
-import { VocabularyData } from "@/models/Vocabulary.ts";
+import { VocabularyData } from '@/models/Vocabulary.ts';
+import api, { AuthStore, RequestMethod } from '@/scripts/api';
 
 const CountRequestWords = '8';
 
@@ -44,14 +40,12 @@ export default function Card({
     AuthStore.USE,
     { query: `id=${vocab.id}&limit=${CountRequestWords}` }
   );
-  const { fetchFunc: fetchEditVocabulary } = useFetchFunc(
+  const { fetchFunc: fetchEditVocabulary } = api.put(
     `/account/vocabulary`,
-    RequestMethod.PUT,
     AuthStore.USE
   );
-  const { fetchFunc: fetchDeleteVocabulary } = useFetchFunc(
+  const { fetchFunc: fetchDeleteVocabulary } = api.delete(
     `/account/vocabulary`,
-    RequestMethod.DELETE,
     AuthStore.USE
   );
 

@@ -4,11 +4,11 @@ import { PlusIcon } from '@heroicons/react/24/outline';
 
 import Button from '../elements/Button';
 import SelectLanguages from './SelectLanguages';
-import { fetchData } from '@/scripts/fetch/fetchData';
+import { fetchData } from '@/scripts/api';
 import { ILanguage, useLanguagesStore } from '@/hooks/stores/useLanguagesStore';
 import CloseBtn from './CloseBtn';
 import BgLock from '../elements/BgLock';
-import { EmptyVocabulary, VocabularyData } from "@/models/Vocabulary.ts";
+import { EmptyVocabulary, VocabularyData } from '@/models/Vocabulary.ts';
 
 export interface IAccess {
   id: number;

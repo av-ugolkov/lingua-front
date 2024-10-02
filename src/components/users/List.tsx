@@ -2,9 +2,10 @@ import { useEffect, useState } from 'react';
 
 import { useSearchStore } from '../elements/SearchPanel/useSearchStore';
 import { useSortedStore } from '../elements/SortAndOrder/useSortedStore';
-import { AuthStore, RequestMethod, useFetch } from '@/hooks/fetch/useFetch';
+import useFetch from '@/hooks/fetch/useFetch';
 import Card from './Card';
 import Pagination from '../vocabularies/Pagination';
+import { AuthStore, RequestMethod } from '@/scripts/api';
 
 export interface IUser {
   id: string;

@@ -1,6 +1,7 @@
 import RecomendedVocabs from '@/components/main/RecommendedVocabs';
 import { useNotificationStore } from '@/components/notification/useNotificationStore';
-import { AuthStore, RequestMethod, useFetch } from '@/hooks/fetch/useFetch';
+import useFetch from '@/hooks/fetch/useFetch';
+import { AuthStore, RequestMethod } from '@/scripts/api';
 import { useEffect, useState } from 'react';
 
 export default function HomePage() {

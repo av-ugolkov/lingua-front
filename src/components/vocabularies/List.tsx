@@ -2,10 +2,11 @@ import { useEffect, useState } from 'react';
 
 import FullCard from '@/components/elements/Vocabulary/FullCard';
 import Pagination from './Pagination';
-import { AuthStore, RequestMethod, useFetch } from '@/hooks/fetch/useFetch';
+import useFetch from '@/hooks/fetch/useFetch';
 import { useSearchStore } from '../elements/SearchPanel/useSearchStore';
 import { useSortedStore } from '../elements/SortAndOrder/useSortedStore';
 import { useVocabulariesStore } from '@/hooks/stores/useVocabulariesStore.ts';
+import { AuthStore, RequestMethod } from '@/scripts/api';
 
 interface SortedInputProps {
   nativeLang: string;

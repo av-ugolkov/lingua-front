@@ -3,17 +3,13 @@ import clsx from 'clsx';
 
 import Avatar from '../header/Avatar';
 import Button from '../elements/Button';
-import {
-  AuthStore,
-  RequestMethod,
-  useFetch,
-  useFetchFunc,
-} from '@/hooks/fetch/useFetch';
+import useFetch from '@/hooks/fetch/useFetch';
 import ShortCard from '../elements/Vocabulary/ShortCard';
 import { AccessID } from '@/models/Access';
 import { useNotificationStore } from '../notification/useNotificationStore';
 import { getUserID, isActiveToken } from '@/scripts/AuthToken';
 import { IUser } from './List';
+import api, { AuthStore, RequestMethod } from '@/scripts/api';
 
 export interface IVocab {
   id: string;
@@ -35,20 +31,14 @@ export default function Card(user: IUser) {
     AuthStore.OPTIONAL,
     { query: `user_id=${user.id}` }
   );
-  const { fetchFunc: fetchCheck } = useFetchFunc(
-    '/subscriber/check',
-    RequestMethod.GET,
-    AuthStore.USE
-  );
+  const { fetchFunc: fetchCheck } = api.get('/subscriber/check', AuthStore.USE);
 
-  const { fetchFunc: fetchSubscribe } = useFetchFunc(
+  const { fetchFunc: fetchSubscribe } = api.post(
     '/user/subscribe',
-    RequestMethod.POST,
     AuthStore.USE
   );
-  const { fetchFunc: fetchUnsubscribe } = useFetchFunc(
+  const { fetchFunc: fetchUnsubscribe } = api.post(
     '/user/unsubscribe',
-    RequestMethod.POST,
     AuthStore.USE
   );
 

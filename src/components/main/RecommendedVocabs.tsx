@@ -1,6 +1,7 @@
-import { AuthStore, RequestMethod, useFetch } from '@/hooks/fetch/useFetch';
+import useFetch from '@/hooks/fetch/useFetch';
 import { useEffect, useState } from 'react';
 import ShortCard from '../elements/Vocabulary/ShortCard';
+import { AuthStore, RequestMethod } from '@/scripts/api';
 
 export interface Vocab {
   id: string;
