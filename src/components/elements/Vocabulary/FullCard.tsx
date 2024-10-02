@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 
 import AuthPopup from '../Auth/AuthPopup';
 import LockItem from '../LockItem';
-import useFetch from '@/hooks/fetch/useFetch';
 import Tag from '../Tags/Tag';
 import ArrowBothSide from '@/assets/ArrowBothSide';
 import { useLanguagesStore } from '@/hooks/stores/useLanguagesStore';
@@ -35,7 +34,7 @@ export default function FullCard({
   const { getVocabulary } = useVocabulariesStore();
   const [words, setWords] = useState<IWord[]>([]);
 
-  const { response: respRandomWords } = useFetch(
+  const { response: respRandomWords } = api.useFetch(
     '/vocabulary/words/random',
     RequestMethod.GET,
     authStore,

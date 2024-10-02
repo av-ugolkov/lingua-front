@@ -3,12 +3,11 @@ import { useNavigate } from 'react-router-dom';
 
 import HeaderBtn from './HeaderBtn';
 import Account from './Account';
-import useFetch from '@/hooks/fetch/useFetch';
-import { AuthStore, RequestMethod } from '@/scripts/api';
+import api, { AuthStore, RequestMethod } from '@/scripts/api';
 
 export default function Header() {
   const navigate = useNavigate();
-  const { isLoading, response } = useFetch(
+  const { isLoading, response } = api.useFetch(
     '/user/id',
     RequestMethod.GET,
     AuthStore.USE

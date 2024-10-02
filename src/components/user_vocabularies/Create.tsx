@@ -4,7 +4,7 @@ import { PlusIcon } from '@heroicons/react/24/outline';
 
 import Button from '../elements/Button';
 import SelectLanguages from './SelectLanguages';
-import { fetchData } from '@/scripts/api';
+import api, { AuthStore } from '@/scripts/api';
 import { ILanguage, useLanguagesStore } from '@/hooks/stores/useLanguagesStore';
 import CloseBtn from './CloseBtn';
 import BgLock from '../elements/BgLock';
@@ -48,13 +48,7 @@ export default function Create({
 
   useEffect(() => {
     async function asyncFetchAccesses() {
-      const respData = await fetchData('/accesses', {
-        method: 'get',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-      });
+      const respData = await api.get('/accesses', AuthStore.NO).fetchFunc();
       if (respData.ok) {
         const accessesData: IAccess[] = [];
         respData.data.forEach((item: any) => {

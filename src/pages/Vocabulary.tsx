@@ -6,14 +6,13 @@ import SearchInput from '@/components/elements/SearchPanel/SearchInput';
 import SortedPanel from '@/components/elements/SortAndOrder/SortedPanel';
 import { SortWordTypes } from '@/models/Sorted';
 import Header from '@/components/vocabulary/Header.tsx';
-import useFetch from '@/hooks/fetch/useFetch.ts';
 import { VocabularyData } from '@/models/Vocabulary.ts';
 import { useVocabulariesStore } from '@/hooks/stores/useVocabulariesStore.ts';
-import { AuthStore, RequestMethod } from '@/scripts/api';
+import api, { AuthStore, RequestMethod } from '@/scripts/api';
 
 export default function Vocabulary() {
   const { id } = useParams();
-  const { isLoading, response: respVocabInfo } = useFetch(
+  const { isLoading, response: respVocabInfo } = api.useFetch(
     '/vocabulary/info',
     RequestMethod.GET,
     AuthStore.OPTIONAL,

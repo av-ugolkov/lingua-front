@@ -1,4 +1,4 @@
-import { IResponseData, fetchData } from '@/scripts/api';
+import api, { AuthStore, IResponseData } from '@/scripts/api';
 
 export const refreshToken = async (): Promise<IResponseData> => {
   const response = await fetchToken();
@@ -7,14 +7,7 @@ export const refreshToken = async (): Promise<IResponseData> => {
 
 async function fetchToken(): Promise<IResponseData> {
   try {
-    const response = await fetchData('/auth/refresh', {
-      method: 'get',
-      credentials: 'include',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-    });
+    const response = await api.get('/auth/refresh', AuthStore.USE).fetchFunc();
     if (response.ok) {
       return { ...response, data: response.data['access_token'] };
     }

@@ -1,12 +1,11 @@
 import { useEffect, useState } from 'react';
 
 import { useVocabulariesStore } from '@/hooks/stores/useVocabulariesStore';
-import useFetch from '@/hooks/fetch/useFetch';
 import { useSearchStore } from '../elements/SearchPanel/useSearchStore';
 import { useSortedStore } from '../elements/SortAndOrder/useSortedStore';
 import FullCard from '../elements/Vocabulary/FullCard';
 import Pagination from '../vocabularies/Pagination';
-import { AuthStore, RequestMethod } from '@/scripts/api';
+import api, { AuthStore, RequestMethod } from '@/scripts/api';
 
 interface SortedInputProps {
   nativeLang: string;
@@ -21,7 +20,7 @@ export default function List({ nativeLang, translateLang }: SortedInputProps) {
   const { searchValue } = useSearchStore();
   const { vocabularies, addVocabulary, setVocabularies } =
     useVocabulariesStore();
-  const { isLoading, response: respVocabs } = useFetch(
+  const { isLoading, response: respVocabs } = api.useFetch(
     '/account/vocabularies',
     RequestMethod.GET,
     AuthStore.USE,

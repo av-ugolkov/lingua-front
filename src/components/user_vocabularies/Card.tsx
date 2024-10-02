@@ -6,7 +6,6 @@ import ArrowBothSide from '@/assets/ArrowBothSide';
 import { useVocabulariesStore } from '@/hooks/stores/useVocabulariesStore';
 import DropdownMenu from '../elements/Dropdown/DropdownMenu';
 import DropdownItem from '../elements/Dropdown/Item';
-import useFetch from '@/hooks/fetch/useFetch';
 import Edit, { IEditData } from './Edit';
 import { useLanguagesStore } from '@/hooks/stores/useLanguagesStore';
 import LockItem from '../elements/LockItem';
@@ -34,7 +33,7 @@ export default function Card({
   const vocabulariesStore = useVocabulariesStore();
   const { languages } = useLanguagesStore();
 
-  const { isLoading, response } = useFetch(
+  const { isLoading, response } = api.useFetch(
     '/vocabulary/words/random',
     RequestMethod.GET,
     AuthStore.USE,

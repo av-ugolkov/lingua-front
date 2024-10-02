@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
-import { fetchData } from '@/scripts/api';
 import Button from '@/components/elements/Button';
 import AuthInput from '@/components/elements/Auth/AuthInput';
 import { setAccessToken } from '@/scripts/AuthToken';
+import api from '@/scripts/api';
 
 export default function SignIn() {
   const navigate = useNavigate();
@@ -12,7 +12,7 @@ export default function SignIn() {
   const [password, setPassword] = useState('');
 
   async function signIn() {
-    const respData = await fetchData('/auth/sign_in', {
+    const respData = await api.fetchData('/auth/sign_in', {
       method: 'post',
       credentials: 'include',
       headers: {

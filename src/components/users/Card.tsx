@@ -3,7 +3,6 @@ import clsx from 'clsx';
 
 import Avatar from '../header/Avatar';
 import Button from '../elements/Button';
-import useFetch from '@/hooks/fetch/useFetch';
 import ShortCard from '../elements/Vocabulary/ShortCard';
 import { AccessID } from '@/models/Access';
 import { useNotificationStore } from '../notification/useNotificationStore';
@@ -25,7 +24,7 @@ export default function Card(user: IUser) {
   const [vocabularies, setVocabularies] = useState<IVocab[]>([]);
   const [isSubscribe, setIsSubscribe] = useState(false);
   const { notificationSuccess, notificationError } = useNotificationStore();
-  const { isLoading: isLoadingUser, response: responseUser } = useFetch(
+  const { isLoading: isLoadingUser, response: responseUser } = api.useFetch(
     '/vocabularies/user',
     RequestMethod.GET,
     AuthStore.OPTIONAL,

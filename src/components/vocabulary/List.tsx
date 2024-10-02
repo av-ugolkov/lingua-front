@@ -5,10 +5,9 @@ import WordCard from './WordCard';
 import { useVocabWordsStore } from '@/hooks/stores/useVocabWordsStore';
 import { useSearchStore } from '@/components/elements/SearchPanel/useSearchStore';
 import { useSortedStore } from '@/components/elements/SortAndOrder/useSortedStore';
-import useFetch from '@/hooks/fetch/useFetch';
 import { useVocabulariesStore } from '@/hooks/stores/useVocabulariesStore.ts';
 import { EmptyVocabWord, VocabWord } from '@/models/Word.ts';
-import { AuthStore, RequestMethod } from '@/scripts/api';
+import api, { AuthStore, RequestMethod } from '@/scripts/api';
 
 export default function List() {
   const { id } = useParams();
@@ -20,7 +19,7 @@ export default function List() {
   const searchStore = useSearchStore();
   const { sort, order } = useSortedStore();
 
-  const { isLoading, response } = useFetch(
+  const { isLoading, response } = api.useFetch(
     '/vocabulary/words',
     RequestMethod.GET,
     AuthStore.OPTIONAL,

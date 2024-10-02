@@ -2,13 +2,12 @@ import { useEffect, useState } from 'react';
 import { BellIcon } from '@heroicons/react/24/outline';
 import { BellAlertIcon } from '@heroicons/react/24/solid';
 
-import useFetch from '@/hooks/fetch/useFetch.ts';
 import { getUserID, isActiveToken } from '@/scripts/AuthToken.ts';
 import api, { AuthStore, RequestMethod } from '@/scripts/api';
 
 export default function NotificationBtn({ id }: { id: string }) {
   const [isAlarm, setAlarm] = useState(false);
-  const { isLoading, response: respGetNotification } = useFetch(
+  const { isLoading, response: respGetNotification } = api.useFetch(
     '/notifications/vocabulary',
     RequestMethod.GET,
     AuthStore.USE,

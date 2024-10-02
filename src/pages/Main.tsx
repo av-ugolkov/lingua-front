@@ -1,13 +1,13 @@
+import { useEffect, useState } from 'react';
+
 import RecomendedVocabs from '@/components/main/RecommendedVocabs';
 import { useNotificationStore } from '@/components/notification/useNotificationStore';
-import useFetch from '@/hooks/fetch/useFetch';
-import { AuthStore, RequestMethod } from '@/scripts/api';
-import { useEffect, useState } from 'react';
+import api, { AuthStore, RequestMethod } from '@/scripts/api';
 
 export default function HomePage() {
   const { clearNotifications } = useNotificationStore();
   const [word, setWord] = useState('');
-  const { response: respRandomWord } = useFetch(
+  const { response: respRandomWord } = api.useFetch(
     '/dictionary/word/random',
     RequestMethod.GET,
     AuthStore.NO,

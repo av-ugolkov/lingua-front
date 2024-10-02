@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import Button from '@/components/elements/Button';
-import { fetchData } from '@/scripts/api';
+import api, { AuthStore } from '@/scripts/api';
 import AuthInput from '@/components/elements/Auth/AuthInput';
 
 export default function SignUp() {
@@ -13,19 +13,16 @@ export default function SignUp() {
   const [isSendCode, setIsSendCode] = useState(false);
 
   function signUp() {
-    fetchData('/user/sign_up', {
-      method: 'post',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        email: email,
-        username: email.substring(0, email.indexOf('@')),
-        code: code,
-        password: password,
-      }),
-    })
+    api
+      .post('/user/sign_up', AuthStore.NO)
+      .fetchFunc({
+        body: JSON.stringify({
+          email: email,
+          username: email.substring(0, email.indexOf('@')),
+          code: code,
+          password: password,
+        }),
+      })
       .then(() => {
         navigate('/');
       })
@@ -36,14 +33,11 @@ export default function SignUp() {
   }
 
   function sendCode() {
-    fetchData('/auth/send_code', {
-      method: 'post',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ email: email }),
-    })
+    api
+      .post('/auth/send_code', AuthStore.NO)
+      .fetchFunc({
+        body: JSON.stringify({ email: email }),
+      })
       .then(() => {
         setIsSendCode(true);
       })
