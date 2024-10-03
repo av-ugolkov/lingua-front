@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { useVocabulariesStore } from '@/hooks/stores/useVocabulariesStore';
 import { useSearchStore } from '../elements/SearchPanel/useSearchStore';
@@ -14,6 +15,7 @@ interface SortedInputProps {
 }
 
 export default function List({ nativeLang, translateLang }: SortedInputProps) {
+  const navigate = useNavigate();
   const [pageNum, setPageNum] = useState(1);
   const { sort, order } = useSortedStore();
   const [countItemsPerPage, setCountItemsPerPage] = useState(5);
@@ -49,12 +51,14 @@ export default function List({ nativeLang, translateLang }: SortedInputProps) {
         });
       });
       setCountItems(respVocabs.data['total_count']);
+    } else if (respVocabs.status === 401) {
+      navigate('/');
     }
 
     return () => {
       setVocabularies([]);
     };
-  }, [addVocabulary, setVocabularies, respVocabs]);
+  }, [addVocabulary, setVocabularies, navigate, respVocabs]);
 
   if (isLoading) {
     return <div></div>;

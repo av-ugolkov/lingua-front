@@ -3,29 +3,38 @@ import { useNavigate } from 'react-router-dom';
 
 import HeaderBtn from './HeaderBtn';
 import Account from './Account';
-import { AuthStore, RequestMethod } from '@/scripts/api';
-import useFetch from '@/hooks/useFetch';
+import api, { AuthStore } from '@/scripts/api';
+import { isActiveToken } from '@/scripts/AuthToken';
 
 export default function Header() {
   const navigate = useNavigate();
-  const { isLoading, response } = useFetch(
-    '/user/id',
-    RequestMethod.GET,
-    AuthStore.USE
-  );
+  const [isLoading, setIsLoading] = useState(true);
+  const { fetchFunc: fetchGetUser } = api.get('/user/id', AuthStore.USE);
 
   const [isAuth, setIsAuth] = useState(false);
   const [accountName, setAccountName] = useState('');
 
   useEffect(() => {
-    if (response.ok) {
-      setIsAuth(true);
-      setAccountName(response.data['name']);
+    async function asyncGetUser() {
+      const response = await fetchGetUser();
+      if (response.ok) {
+        setIsAuth(true);
+        setAccountName(response.data['name']);
+      } else if (response.status === 401) {
+        setIsAuth(false);
+        setAccountName('');
+      }
+      setIsLoading(false);
+    }
+
+    if (isActiveToken()) {
+      asyncGetUser();
     } else {
       setIsAuth(false);
       setAccountName('');
+      setIsLoading(false);
     }
-  }, [response]);
+  }, [fetchGetUser]);
 
   if (isLoading) {
     return <div></div>;
