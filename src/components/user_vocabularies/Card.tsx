@@ -11,6 +11,7 @@ import { useLanguagesStore } from '@/hooks/stores/useLanguagesStore';
 import LockItem from '../elements/LockItem';
 import { VocabularyData } from '@/models/Vocabulary.ts';
 import api, { AuthStore, RequestMethod } from '@/scripts/api';
+import useFetch from '@/hooks/useFetch';
 
 const CountRequestWords = '8';
 
@@ -33,7 +34,7 @@ export default function Card({
   const vocabulariesStore = useVocabulariesStore();
   const { languages } = useLanguagesStore();
 
-  const { isLoading, response } = api.useFetch(
+  const { isLoading, response } = useFetch(
     '/vocabulary/words/random',
     RequestMethod.GET,
     AuthStore.USE,

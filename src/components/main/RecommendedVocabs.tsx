@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import ShortCard from '../elements/Vocabulary/ShortCard';
-import api, { AuthStore, RequestMethod } from '@/scripts/api';
+import { AuthStore, RequestMethod } from '@/scripts/api';
+import useFetch from '@/hooks/useFetch';
 
 export interface Vocab {
   id: string;
@@ -15,7 +16,7 @@ export interface Vocab {
 }
 
 export default function RecommendedVocabs() {
-  const { response: respRecomendVocabs } = api.useFetch(
+  const { response: respRecomendVocabs } = useFetch(
     '/vocabularies/recommended',
     RequestMethod.GET,
     AuthStore.OPTIONAL

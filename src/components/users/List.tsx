@@ -4,7 +4,8 @@ import { useSearchStore } from '../elements/SearchPanel/useSearchStore';
 import { useSortedStore } from '../elements/SortAndOrder/useSortedStore';
 import Card from './Card';
 import Pagination from '../vocabularies/Pagination';
-import api, { AuthStore, RequestMethod } from '@/scripts/api';
+import { AuthStore, RequestMethod } from '@/scripts/api';
+import useFetch from '@/hooks/useFetch';
 
 export interface IUser {
   id: string;
@@ -21,7 +22,7 @@ export default function List() {
   const { sort, order } = useSortedStore();
   const [users, setUsers] = useState<IUser[]>([]);
 
-  const { response } = api.useFetch('/users', RequestMethod.GET, AuthStore.NO, {
+  const { response } = useFetch('/users', RequestMethod.GET, AuthStore.NO, {
     query: `page=${pageNum}&per_page=${countItemsPerPage}&order=${order}&sort=${sort}&search=${searchValue}`,
   });
 

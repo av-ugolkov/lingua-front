@@ -9,6 +9,7 @@ import { useNotificationStore } from '../notification/useNotificationStore';
 import { getUserID, isActiveToken } from '@/scripts/AuthToken';
 import { IUser } from './List';
 import api, { AuthStore, RequestMethod } from '@/scripts/api';
+import useFetch from '@/hooks/useFetch';
 
 export interface IVocab {
   id: string;
@@ -24,7 +25,7 @@ export default function Card(user: IUser) {
   const [vocabularies, setVocabularies] = useState<IVocab[]>([]);
   const [isSubscribe, setIsSubscribe] = useState(false);
   const { notificationSuccess, notificationError } = useNotificationStore();
-  const { isLoading: isLoadingUser, response: responseUser } = api.useFetch(
+  const { isLoading: isLoadingUser, response: responseUser } = useFetch(
     '/vocabularies/user',
     RequestMethod.GET,
     AuthStore.OPTIONAL,

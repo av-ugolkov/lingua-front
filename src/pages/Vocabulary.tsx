@@ -8,11 +8,12 @@ import { SortWordTypes } from '@/models/Sorted';
 import Header from '@/components/vocabulary/Header.tsx';
 import { VocabularyData } from '@/models/Vocabulary.ts';
 import { useVocabulariesStore } from '@/hooks/stores/useVocabulariesStore.ts';
-import api, { AuthStore, RequestMethod } from '@/scripts/api';
+import { AuthStore, RequestMethod } from '@/scripts/api';
+import useFetch from '@/hooks/useFetch';
 
 export default function Vocabulary() {
   const { id } = useParams();
-  const { isLoading, response: respVocabInfo } = api.useFetch(
+  const { isLoading, response: respVocabInfo } = useFetch(
     '/vocabulary/info',
     RequestMethod.GET,
     AuthStore.OPTIONAL,

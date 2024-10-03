@@ -12,6 +12,7 @@ import { useNotificationStore } from '@/components/notification/useNotificationS
 import { useVocabulariesStore } from '@/hooks/stores/useVocabulariesStore.ts';
 import Menu from './Menu';
 import api, { AuthStore, RequestMethod } from '@/scripts/api';
+import useFetch from '@/hooks/useFetch';
 
 const CountRequestWords = '12';
 
@@ -34,7 +35,7 @@ export default function FullCard({
   const { getVocabulary } = useVocabulariesStore();
   const [words, setWords] = useState<IWord[]>([]);
 
-  const { response: respRandomWords } = api.useFetch(
+  const { response: respRandomWords } = useFetch(
     '/vocabulary/words/random',
     RequestMethod.GET,
     authStore,

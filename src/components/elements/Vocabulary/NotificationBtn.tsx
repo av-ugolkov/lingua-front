@@ -3,15 +3,14 @@ import { BellIcon } from '@heroicons/react/24/outline';
 import { BellAlertIcon } from '@heroicons/react/24/solid';
 
 import { getUserID, isActiveToken } from '@/scripts/AuthToken.ts';
-import api, { AuthStore, RequestMethod } from '@/scripts/api';
+import api, { AuthStore } from '@/scripts/api';
 
 export default function NotificationBtn({ id }: { id: string }) {
   const [isAlarm, setAlarm] = useState(false);
-  const { isLoading, response: respGetNotification } = api.useFetch(
+  const [isLoading, setIsLoading] = useState(true);
+  const { fetchFunc: getFetchFunc } = api.get(
     '/notifications/vocabulary',
-    RequestMethod.GET,
-    AuthStore.USE,
-    { query: `user_id=${getUserID()}&vocab_id=${id}` }
+    AuthStore.USE
   );
   const { fetchFunc: setFetchFunc } = api.post(
     '/notifications/vocabulary',
@@ -19,10 +18,21 @@ export default function NotificationBtn({ id }: { id: string }) {
   );
 
   useEffect(() => {
-    if (respGetNotification.ok) {
-      setAlarm(respGetNotification.data['notification']);
+    async function asyncGetNotification() {
+      const respGetNotification = await getFetchFunc({
+        query: `user_id=${getUserID()}&vocab_id=${id}`,
+      });
+      if (respGetNotification.ok) {
+        setAlarm(respGetNotification.data['notification']);
+      }
+      setIsLoading(false);
     }
-  }, [respGetNotification]);
+    if (isActiveToken()) {
+      asyncGetNotification();
+    } else {
+      setIsLoading(false);
+    }
+  }, [getFetchFunc, id]);
 
   function setNotificationVocab() {
     async function asyncSetNotificationVocab() {

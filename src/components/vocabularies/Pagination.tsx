@@ -34,6 +34,10 @@ export default function Pagination({
     return items;
   }
 
+  if (countItems == 0) {
+    return <div></div>;
+  }
+
   return (
     <div className='flex min-w-[540px] items-center justify-between border border-gray-300 bg-white px-4 py-3 sm:px-6'>
       <div className='flex flex-1 items-center justify-between'>
