@@ -10,6 +10,7 @@ import AccountVocabularies from '@/pages/AccountVocabularies';
 import Vocabulary from '@/pages/Vocabulary';
 import Vocabularies from '@/pages/Vocabularies';
 import Users from './pages/Users';
+import Test from './pages/Test';
 
 export const router = createBrowserRouter([
   {
@@ -61,5 +62,9 @@ export const router = createBrowserRouter([
   {
     path: '/sign_in',
     element: <SignIn />,
+  },
+  {
+    path: '/test',
+    element: <Test />,
   },
 ]);
