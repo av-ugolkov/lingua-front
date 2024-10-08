@@ -8,12 +8,13 @@ export interface VocabularyData {
   translateLang: string;
   description: string;
   wordsCount?: number;
-  tags?: string[];
+  tags: string[];
   userID?: string;
   userName?: string;
   editable?: boolean;
   createdAt?: Date;
   updatedAt?: Date;
+  words: string[];
 }
 
 export const EmptyVocabulary: VocabularyData = {
@@ -27,6 +28,7 @@ export const EmptyVocabulary: VocabularyData = {
   tags: [],
   userID: '',
   userName: '',
+  words: [],
   editable: false,
   createdAt: new Date(),
   updatedAt: new Date(),

@@ -27,7 +27,7 @@ export default function List({ nativeLang, translateLang }: SortedInputProps) {
     RequestMethod.GET,
     AuthStore.NO,
     {
-      query: `page=${pageNum}&per_page=${countItemsPerPage}&order=${order}&sort=${sort}&search=${searchValue}&native_lang=${nativeLang}&translate_lang=${translateLang}`,
+      query: `page=${pageNum}&per_page=${countItemsPerPage}&order=${order}&sort=${sort}&search=${searchValue}&native_lang=${nativeLang}&translate_lang=${translateLang}&limit_words=12`,
     }
   );
 
@@ -44,7 +44,8 @@ export default function List({ nativeLang, translateLang }: SortedInputProps) {
           translateLang: item['translate_lang'],
           description: item['description'],
           wordsCount: item['words_count'],
-          tags: item['tags'],
+          tags: item['tags'] || [],
+          words: item['words'] || [],
           createdAt: new Date(item['created_at']),
           updatedAt: new Date(item['updated_at']),
         });

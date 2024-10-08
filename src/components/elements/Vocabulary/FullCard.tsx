@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import AuthPopup from '../Auth/AuthPopup';
@@ -11,15 +11,7 @@ import { getAccessToken } from '@/scripts/AuthToken';
 import { useNotificationStore } from '@/components/notification/useNotificationStore';
 import { useVocabulariesStore } from '@/hooks/stores/useVocabulariesStore.ts';
 import Menu from './Menu';
-import api, { AuthStore, RequestMethod } from '@/scripts/api';
-import useFetch from '@/hooks/useFetch';
-
-const CountRequestWords = '12';
-
-interface IWord {
-  value: string;
-  pronunciation: string;
-}
+import api, { AuthStore } from '@/scripts/api';
 
 export default function FullCard({
   id,
@@ -32,36 +24,12 @@ export default function FullCard({
   const [isShowSignInUpPopup, setIsShowSignInUpPopup] = useState(false);
   const { languages } = useLanguagesStore();
   const { notificationWarning } = useNotificationStore();
-  const { getVocabulary } = useVocabulariesStore();
-  const [words, setWords] = useState<IWord[]>([]);
+  const { getVocabulary, getWords } = useVocabulariesStore();
 
-  const { response: respRandomWords } = useFetch(
-    '/vocabulary/words/random',
-    RequestMethod.GET,
-    authStore,
-    { query: `id=${id}&limit=${CountRequestWords}` }
-  );
   const { fetchFunc: fetchVocabAccess } = api.get(
     '/vocabulary/access/user',
     authStore
   );
-
-  useEffect(() => {
-    if (respRandomWords.ok) {
-      respRandomWords.data.forEach((item: any) => {
-        setWords((words) => [
-          ...words,
-          {
-            value: item['native']['text'],
-            pronunciation: item['native']['pronunciation'],
-          },
-        ]);
-      });
-    }
-    return () => {
-      setWords([]);
-    };
-  }, [respRandomWords]);
 
   function openVocabulary() {
     if (
@@ -117,10 +85,10 @@ export default function FullCard({
           {getVocabulary(id).description}
         </div>
         <div className='flex flex-wrap w-full gap-1 mt-2'>
-          {words.map((word) => (
+          {getWords(id).map((word) => (
             <Tag
-              key={word.value}
-              value={word.value}
+              key={word}
+              value={word}
             />
           ))}
         </div>

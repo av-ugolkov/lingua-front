@@ -5,12 +5,12 @@ import List from '@/components/users/List';
 
 export default function Users() {
   return (
-    <div className='grid w-full gap-5 grid-cols-1'>
-      <div className='flex justify-between'>
+    <>
+      <div className='flex w-full justify-between py-5'>
         <SearchInput />
         <SortedPanel sortedTypes={SortUserTypes} />
       </div>
       <List />
-    </div>
+    </>
   );
 }
