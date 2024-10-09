@@ -46,7 +46,7 @@ export default function Vocabularies() {
             <ListBox
               id='native_language'
               items={mapToLanguages()}
-              defaultIndexValue={0}
+              indexValue={0}
               onChange={(value) => {
                 const lang =
                   languages.find((tp) => tp.lang === value) || languages[0];
@@ -58,7 +58,7 @@ export default function Vocabularies() {
             <ListBox
               id='translate_language'
               items={mapToLanguages()}
-              defaultIndexValue={0}
+              indexValue={0}
               onChange={(value) => {
                 const lang =
                   languages.find((tp) => tp.lang === value) || languages[0];

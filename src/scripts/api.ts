@@ -24,8 +24,10 @@ export enum AuthStore {
 
 export interface IRequestData {
   body?: string | undefined;
-  query?: string | undefined;
+  query?: Map<string, any> | undefined;
 }
+
+export type IQueryType = { [key: string]: any };
 
 export interface IResponseData {
   status: number;
@@ -42,11 +44,13 @@ const emptyResponse: IResponseData = {
 const fetchData = async (
   url: string,
   init: RequestInit,
-  query?: string
+  query?: Map<string, any>
 ): Promise<IResponseData> => {
   const fullUrl = new URL(getAddr() + url);
-  if (query && query !== '') {
-    fullUrl.search += query;
+  if (query && query.size > 0) {
+    query.forEach((v, k) => {
+      fullUrl.searchParams.append(k, v);
+    });
   }
   const finger = getBrowserFingerprint() || '';
   init.headers = {

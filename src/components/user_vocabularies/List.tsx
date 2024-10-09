@@ -5,7 +5,7 @@ import { useVocabulariesStore } from '@/hooks/stores/useVocabulariesStore';
 import { useSearchStore } from '../elements/SearchPanel/useSearchStore';
 import { useSortedStore } from '../elements/SortAndOrder/useSortedStore';
 import FullCard from '../elements/Vocabulary/FullCard';
-import Pagination from '../vocabularies/Pagination';
+import Pagination from '../elements/Pagination/Pagination';
 import { AuthStore, RequestMethod } from '@/scripts/api';
 import useFetch from '@/hooks/useFetch';
 
@@ -28,7 +28,15 @@ export default function List({ nativeLang, translateLang }: SortedInputProps) {
     RequestMethod.GET,
     AuthStore.USE,
     {
-      query: `page=${pageNum}&per_page=${countItemsPerPage}&order=${order}&sort=${sort}&search=${searchValue}&native_lang=${nativeLang}&translate_lang=${translateLang}`,
+      query: new Map([
+        ['page', `${pageNum}`],
+        ['per_page', `${countItemsPerPage}`],
+        ['order', `${order}`],
+        ['sort', `${sort}`],
+        ['search', searchValue],
+        ['native_lang', nativeLang],
+        ['translate_lang', translateLang],
+      ]),
     }
   );
 
@@ -46,6 +54,7 @@ export default function List({ nativeLang, translateLang }: SortedInputProps) {
           description: item['description'],
           wordsCount: item['words_count'],
           tags: item['tags'],
+          words: item['words'],
           createdAt: new Date(item['created_at']),
           updatedAt: new Date(item['updated_at']),
         });
@@ -66,7 +75,7 @@ export default function List({ nativeLang, translateLang }: SortedInputProps) {
 
   return (
     <>
-      <div className='grid w-full gap-5 grid-cols-1'>
+      <div className='grid w-full gap-y-5 grid-cols-1'>
         {vocabularies.map((item) => (
           <FullCard
             key={item.id}

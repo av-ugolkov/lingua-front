@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
 
+import useFetch from '@/hooks/useFetch';
+import { usePaginationStore } from '../elements/Pagination/usePaginationStore';
 import { useSearchStore } from '../elements/SearchPanel/useSearchStore';
 import { useSortedStore } from '../elements/SortAndOrder/useSortedStore';
 import Card from './Card';
-import Pagination from '../vocabularies/Pagination';
+import Pagination from '../elements/Pagination/Pagination';
 import { AuthStore, RequestMethod } from '@/scripts/api';
-import useFetch from '@/hooks/useFetch';
 
 export interface IUser {
   id: string;
@@ -15,15 +16,19 @@ export interface IUser {
 }
 
 export default function List() {
-  const [pageNum, setPageNum] = useState(1);
-  const [countItemsPerPage, setCountItemsPerPage] = useState(5);
-  const [countItems, setCountItems] = useState(0);
+  const { page, itemsPerPage, setCountItems } = usePaginationStore();
   const { searchValue } = useSearchStore();
   const { sort, order } = useSortedStore();
   const [users, setUsers] = useState<IUser[]>([]);
 
   const { response } = useFetch('/users', RequestMethod.GET, AuthStore.NO, {
-    query: `page=${pageNum}&per_page=${countItemsPerPage}&order=${order}&sort=${sort}&search=${searchValue}`,
+    query: new Map([
+      ['page', `${page}`],
+      ['per_page', `${itemsPerPage}`],
+      ['order', `${order}`],
+      ['sort', `${sort}`],
+      ['search', searchValue],
+    ]),
   });
 
   useEffect(() => {
@@ -44,22 +49,19 @@ export default function List() {
     return () => {
       setUsers([]);
     };
-  }, [response]);
+  }, [response, setCountItems]);
 
   return (
     <>
-      {users.map((item) => (
-        <Card
-          key={item.id}
-          {...item}
-        />
-      ))}
-      <Pagination
-        currentPage={pageNum}
-        countItems={countItems}
-        setPageNum={setPageNum}
-        countItemsPerPage={setCountItemsPerPage}
-      />
+      <div className='grid w-full gap-y-5 grid-cols-1'>
+        {users.map((item) => (
+          <Card
+            key={item.id}
+            {...item}
+          />
+        ))}
+        <Pagination />
+      </div>
     </>
   );
 }

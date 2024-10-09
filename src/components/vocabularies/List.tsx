@@ -1,33 +1,48 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 
 import FullCard from '@/components/elements/Vocabulary/FullCard';
-import Pagination from './Pagination';
+import Pagination from '../elements/Pagination/Pagination';
 import { useSearchStore } from '../elements/SearchPanel/useSearchStore';
 import { useSortedStore } from '../elements/SortAndOrder/useSortedStore';
 import { useVocabulariesStore } from '@/hooks/stores/useVocabulariesStore.ts';
 import { AuthStore, RequestMethod } from '@/scripts/api';
 import useFetch from '@/hooks/useFetch';
+import { usePaginationStore } from '../elements/Pagination/usePaginationStore';
 
 interface SortedInputProps {
   nativeLang: string;
   translateLang: string;
 }
 
+const LIMIT_WORDS = 12;
+
 export default function List({ nativeLang, translateLang }: SortedInputProps) {
-  const [pageNum, setPageNum] = useState(1);
+  const { page, itemsPerPage, setCountItems } = usePaginationStore();
   const { sort, order } = useSortedStore();
-  const [countItemsPerPage, setCountItemsPerPage] = useState(5);
-  const [countItems, setCountItems] = useState(0);
   const { searchValue } = useSearchStore();
   const { vocabularies, addVocabulary, setVocabularies } =
     useVocabulariesStore();
 
+  const query = useMemo(
+    () =>
+      new Map<string, any>([
+        ['page', page],
+        ['per_page', itemsPerPage],
+        ['order', order],
+        ['sort', sort],
+        ['search', searchValue],
+        ['native_lang', nativeLang],
+        ['translate_lang', translateLang],
+        ['limit_words', LIMIT_WORDS],
+      ]),
+    [page, itemsPerPage, order, sort, searchValue, nativeLang, translateLang]
+  );
   const { isLoading, response: respVocabs } = useFetch(
     '/vocabularies',
     RequestMethod.GET,
     AuthStore.NO,
     {
-      query: `page=${pageNum}&per_page=${countItemsPerPage}&order=${order}&sort=${sort}&search=${searchValue}&native_lang=${nativeLang}&translate_lang=${translateLang}&limit_words=12`,
+      query: query,
     }
   );
 
@@ -55,14 +70,14 @@ export default function List({ nativeLang, translateLang }: SortedInputProps) {
     return () => {
       setVocabularies([]);
     };
-  }, [respVocabs, addVocabulary, setVocabularies]);
+  }, [respVocabs, addVocabulary, setVocabularies, setCountItems]);
 
   if (isLoading) {
     return <div></div>;
   }
 
   return (
-    <div className='grid w-full gap-5 grid-cols-1'>
+    <div className='grid w-full gap-y-5 grid-cols-1'>
       {vocabularies.map((item) => (
         <FullCard
           key={item.id}
@@ -70,12 +85,7 @@ export default function List({ nativeLang, translateLang }: SortedInputProps) {
           authStore={AuthStore.OPTIONAL}
         />
       ))}
-      <Pagination
-        currentPage={pageNum}
-        countItems={countItems}
-        setPageNum={setPageNum}
-        countItemsPerPage={setCountItemsPerPage}
-      />
+      <Pagination />
     </div>
   );
 }

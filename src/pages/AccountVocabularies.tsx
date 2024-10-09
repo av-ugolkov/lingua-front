@@ -64,6 +64,7 @@ export default function Vocabularies() {
           description: vocab.description,
           tags: vocab.tags,
           userID: vocab.userID,
+          words: [],
         };
         vocabulariesStore.addVocabulary(newVocab);
         setIsShowCreatePopup(false);
@@ -104,7 +105,7 @@ export default function Vocabularies() {
             <ListBox
               id='native_language'
               items={mapToLanguages()}
-              defaultIndexValue={0}
+              indexValue={0}
               onChange={(value) => {
                 const lang =
                   languages.find((tp) => tp.lang === value) || languages[0];
@@ -116,7 +117,7 @@ export default function Vocabularies() {
             <ListBox
               id='translate_language'
               items={mapToLanguages()}
-              defaultIndexValue={0}
+              indexValue={0}
               onChange={(value) => {
                 const lang =
                   languages.find((tp) => tp.lang === value) || languages[0];

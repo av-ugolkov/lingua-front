@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react';
+
 import api, {
   AuthStore,
   IRequestData,
@@ -11,7 +13,6 @@ import {
   setAccessToken,
 } from '@/scripts/AuthToken';
 import { refreshToken } from '@/scripts/middleware/refreshToken';
-import { useEffect, useState } from 'react';
 
 const useFetch = (
   url: string,

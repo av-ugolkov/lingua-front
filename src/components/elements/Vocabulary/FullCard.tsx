@@ -46,7 +46,7 @@ export default function FullCard({
   }
 
   async function asyncVocabAccess() {
-    const response = await fetchVocabAccess({ query: `id=${id}` });
+    const response = await fetchVocabAccess({ query: new Map([['id', id]]) });
     if (response.ok) {
       const access = response.data['access'];
       switch (access) {
