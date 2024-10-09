@@ -10,7 +10,6 @@ export default function HomePage() {
   const [word, setWord] = useState('');
 
   const query = useMemo(() => new Map([['lang_code', 'en']]), []);
-
   const { response: respRandomWord } = useFetch(
     '/dictionary/word/random',
     RequestMethod.GET,

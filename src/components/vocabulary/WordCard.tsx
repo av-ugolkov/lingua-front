@@ -129,7 +129,7 @@ export default function WordCard({
 
   function cancelChanges() {
     async function asyncCancelChanges() {
-      const response = await fetchWord({ query: `id=${word.id}` });
+      const response = await fetchWord({ query: new Map([['id', word.id]]) });
       if (response.ok) {
         word.native.text = response.data['native']['text'];
         word.native.pronunciation =
@@ -148,7 +148,10 @@ export default function WordCard({
   function getPronunciation() {
     async function asyncGetPronunciation() {
       const response = await fetchPronunciation({
-        query: `id=${vocabID}&text=${word.native.text}`,
+        query: new Map([
+          ['id', vocabID],
+          ['text', word.native.text],
+        ]),
       });
       if (response.ok) {
         word.native.pronunciation = response.data['native']['pronunciation'];

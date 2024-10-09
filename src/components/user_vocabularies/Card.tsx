@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { TrashIcon, PencilIcon } from '@heroicons/react/24/outline';
 import ArrowBothSide from '@/assets/ArrowBothSide';
@@ -34,15 +34,21 @@ export default function Card({
   const vocabulariesStore = useVocabulariesStore();
   const { languages } = useLanguagesStore();
 
+  const query = useMemo(
+    () =>
+      new Map([
+        ['id', vocab.id],
+        ['limit', `${CountRequestWords}`],
+      ]),
+    [vocab.id]
+  );
+
   const { isLoading, response } = useFetch(
     '/vocabulary/words/random',
     RequestMethod.GET,
     AuthStore.USE,
     {
-      query: new Map([
-        ['id', vocab.id],
-        ['limit', `${CountRequestWords}`],
-      ]),
+      query: query,
     }
   );
   const { fetchFunc: fetchEditVocabulary } = api.put(

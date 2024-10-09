@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
 import List from '@/components/vocabulary/List';
@@ -13,12 +13,14 @@ import useFetch from '@/hooks/useFetch';
 
 export default function Vocabulary() {
   const { id } = useParams();
+
+  const query = useMemo(() => new Map<string, any>([['id', id]]), [id]);
   const { isLoading, response: respVocabInfo } = useFetch(
     '/vocabulary/info',
     RequestMethod.GET,
     AuthStore.OPTIONAL,
     {
-      query: `id=${id}`,
+      query: query,
     }
   );
 
@@ -37,6 +39,7 @@ export default function Vocabulary() {
         wordsCount: respVocabInfo.data['words_count'],
         editable: respVocabInfo.data['editable'],
         tags: respVocabInfo.data['tags'],
+        words: respVocabInfo.data['words'],
         createdAt: new Date(respVocabInfo.data['created_at']),
         updatedAt: new Date(respVocabInfo.data['updated_at']),
       };

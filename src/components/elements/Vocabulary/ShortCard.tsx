@@ -1,14 +1,15 @@
-import { IVocab } from '../../users/Card';
-import { useLanguagesStore } from '@/hooks/stores/useLanguagesStore';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import LockItem from '../LockItem';
+
+import { useLanguagesStore } from '@/hooks/stores/useLanguagesStore';
+import { useNotificationStore } from '../../notification/useNotificationStore';
 import { AccessID, AccessStatus } from '@/models/Access';
 import { getAccessToken } from '@/scripts/AuthToken';
-import { useNotificationStore } from '../../notification/useNotificationStore';
-import { useState } from 'react';
+import LockItem from '../LockItem';
 import AuthPopup from '../Auth/AuthPopup';
 import NotificationBtn from '@/components/elements/Vocabulary/NotificationBtn.tsx';
 import api, { AuthStore } from '@/scripts/api';
+import { IVocab } from '@/pages/users/component/Card';
 
 export default function ShortCard({
   id,
@@ -43,7 +44,7 @@ export default function ShortCard({
   }
 
   async function asyncVocabAccess() {
-    const response = await fetchVocabAccess({ query: `id=${id}` });
+    const response = await fetchVocabAccess({ query: new Map([['id', id]]) });
     if (response.ok) {
       const access = response.data['access'];
       switch (access) {

@@ -1,7 +1,7 @@
 import SearchInput from '@/components/elements/SearchPanel/SearchInput';
 import SortedPanel from '@/components/elements/SortAndOrder/SortedPanel';
 import { SortUserTypes } from '@/models/Sorted';
-import List from '@/components/users/List';
+import List from './component/List';
 
 export default function Users() {
   return (

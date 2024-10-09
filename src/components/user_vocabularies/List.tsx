@@ -1,13 +1,14 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { useVocabulariesStore } from '@/hooks/stores/useVocabulariesStore';
 import { useSearchStore } from '../elements/SearchPanel/useSearchStore';
 import { useSortedStore } from '../elements/SortAndOrder/useSortedStore';
+import { AuthStore, RequestMethod } from '@/scripts/api';
 import FullCard from '../elements/Vocabulary/FullCard';
 import Pagination from '../elements/Pagination/Pagination';
-import { AuthStore, RequestMethod } from '@/scripts/api';
 import useFetch from '@/hooks/useFetch';
+import { usePaginationStore } from '../elements/Pagination/usePaginationStore';
 
 interface SortedInputProps {
   nativeLang: string;
@@ -16,27 +17,31 @@ interface SortedInputProps {
 
 export default function List({ nativeLang, translateLang }: SortedInputProps) {
   const navigate = useNavigate();
-  const [pageNum, setPageNum] = useState(1);
   const { sort, order } = useSortedStore();
-  const [countItemsPerPage, setCountItemsPerPage] = useState(5);
-  const [countItems, setCountItems] = useState(0);
   const { searchValue } = useSearchStore();
+  const { page, itemsPerPage, setCountItems } = usePaginationStore();
   const { vocabularies, addVocabulary, setVocabularies } =
     useVocabulariesStore();
+
+  const query = useMemo(
+    () =>
+      new Map<string, any>([
+        ['page', page],
+        ['per_page', itemsPerPage],
+        ['order', order],
+        ['sort', sort],
+        ['search', searchValue],
+        ['native_lang', nativeLang],
+        ['translate_lang', translateLang],
+      ]),
+    [page, itemsPerPage, order, sort, searchValue, nativeLang, translateLang]
+  );
   const { isLoading, response: respVocabs } = useFetch(
     '/account/vocabularies',
     RequestMethod.GET,
     AuthStore.USE,
     {
-      query: new Map([
-        ['page', `${pageNum}`],
-        ['per_page', `${countItemsPerPage}`],
-        ['order', `${order}`],
-        ['sort', `${sort}`],
-        ['search', searchValue],
-        ['native_lang', nativeLang],
-        ['translate_lang', translateLang],
-      ]),
+      query: query,
     }
   );
 
@@ -67,7 +72,7 @@ export default function List({ nativeLang, translateLang }: SortedInputProps) {
     return () => {
       setVocabularies([]);
     };
-  }, [addVocabulary, setVocabularies, navigate, respVocabs]);
+  }, [addVocabulary, setVocabularies, navigate, setCountItems, respVocabs]);
 
   if (isLoading) {
     return <div></div>;
@@ -83,12 +88,7 @@ export default function List({ nativeLang, translateLang }: SortedInputProps) {
             authStore={AuthStore.USE}
           />
         ))}
-        <Pagination
-          currentPage={pageNum}
-          countItems={countItems}
-          setPageNum={setPageNum}
-          countItemsPerPage={setCountItemsPerPage}
-        />
+        <Pagination />
       </div>
     </>
   );

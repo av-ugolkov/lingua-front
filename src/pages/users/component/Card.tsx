@@ -1,15 +1,15 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import clsx from 'clsx';
 
-import Avatar from '../header/Avatar';
-import Button from '../elements/Button';
-import ShortCard from '../elements/Vocabulary/ShortCard';
+import Avatar from '@/components/elements/Avatar';
+import Button from '@/components/elements/Button';
+import ShortCard from '@/components/elements/Vocabulary/ShortCard';
+import useFetch from '@/hooks/useFetch';
 import { AccessID } from '@/models/Access';
-import { useNotificationStore } from '../notification/useNotificationStore';
+import { useNotificationStore } from '@/components/notification/useNotificationStore';
 import { getUserID, isActiveToken } from '@/scripts/AuthToken';
 import { IUser } from './List';
 import api, { AuthStore, RequestMethod } from '@/scripts/api';
-import useFetch from '@/hooks/useFetch';
 
 export interface IVocab {
   id: string;
@@ -25,12 +25,15 @@ export default function Card(user: IUser) {
   const [vocabularies, setVocabularies] = useState<IVocab[]>([]);
   const [isSubscribe, setIsSubscribe] = useState(false);
   const { notificationSuccess, notificationError } = useNotificationStore();
+
+  const query = useMemo(() => new Map([['user_id', user.id]]), [user.id]);
   const { isLoading: isLoadingUser, response: responseUser } = useFetch(
     '/vocabularies/user',
     RequestMethod.GET,
     AuthStore.OPTIONAL,
-    { query: `user_id=${user.id}` }
+    { query: query }
   );
+
   const { fetchFunc: fetchCheck } = api.get('/subscriber/check', AuthStore.USE);
 
   const { fetchFunc: fetchSubscribe } = api.post(
@@ -144,7 +147,7 @@ export default function Card(user: IUser) {
   useEffect(() => {
     async function asyncCheck() {
       const response = await fetchCheck({
-        query: `subscriber_id=${user.id}`,
+        query: new Map([['subscriber_id', user.id]]),
       });
       if (response.ok) {
         setIsSubscribe(response.data['is_subscriber']);

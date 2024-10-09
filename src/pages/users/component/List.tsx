@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import useFetch from '@/hooks/useFetch';
-import { usePaginationStore } from '../elements/Pagination/usePaginationStore';
-import { useSearchStore } from '../elements/SearchPanel/useSearchStore';
-import { useSortedStore } from '../elements/SortAndOrder/useSortedStore';
+import { usePaginationStore } from '@/components/elements/Pagination/usePaginationStore';
+import Pagination from '@/components/elements/Pagination/Pagination';
+import { useSearchStore } from '@/components/elements/SearchPanel/useSearchStore';
+import { useSortedStore } from '@/components/elements/SortAndOrder/useSortedStore';
 import Card from './Card';
-import Pagination from '../elements/Pagination/Pagination';
 import { AuthStore, RequestMethod } from '@/scripts/api';
 
 export interface IUser {
@@ -21,14 +21,19 @@ export default function List() {
   const { sort, order } = useSortedStore();
   const [users, setUsers] = useState<IUser[]>([]);
 
+  const query = useMemo(
+    () =>
+      new Map<string, any>([
+        ['page', page],
+        ['per_page', itemsPerPage],
+        ['order', order],
+        ['sort', sort],
+        ['search', searchValue],
+      ]),
+    [itemsPerPage, order, page, searchValue, sort]
+  );
   const { response } = useFetch('/users', RequestMethod.GET, AuthStore.NO, {
-    query: new Map([
-      ['page', `${page}`],
-      ['per_page', `${itemsPerPage}`],
-      ['order', `${order}`],
-      ['sort', `${sort}`],
-      ['search', searchValue],
-    ]),
+    query: query,
   });
 
   useEffect(() => {

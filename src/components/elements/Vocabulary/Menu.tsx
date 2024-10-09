@@ -50,7 +50,7 @@ export default function Menu({ vocabID }: { vocabID: string }) {
   function deleteVocabulary() {
     async function asyncDeleteVocabulary() {
       const response = await fetchDeleteVocabulary({
-        query: `name=${getVocabulary(vocabID).name}`,
+        query: new Map([['name', getVocabulary(vocabID).name]]),
       });
       if (response.ok) {
         removeVocabulary(vocabID);

@@ -1,16 +1,29 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { BellIcon } from '@heroicons/react/24/outline';
 import { BellAlertIcon } from '@heroicons/react/24/solid';
 
 import { getUserID, isActiveToken } from '@/scripts/AuthToken.ts';
-import api, { AuthStore } from '@/scripts/api';
+import api, { AuthStore, RequestMethod } from '@/scripts/api';
+import useFetch from '@/hooks/useFetch';
 
 export default function NotificationBtn({ id }: { id: string }) {
   const [isAlarm, setAlarm] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const { fetchFunc: getFetchFunc } = api.get(
+
+  const queryGetNotification = useMemo(
+    () =>
+      new Map<string, any>([
+        ['user_id', getUserID()],
+        ['vocab_id', id],
+      ]),
+    [id]
+  );
+  const { isLoading, response: respGetNotification } = useFetch(
     '/notifications/vocabulary',
-    AuthStore.USE
+    RequestMethod.GET,
+    AuthStore.USE,
+    {
+      query: queryGetNotification,
+    }
   );
   const { fetchFunc: setFetchFunc } = api.post(
     '/notifications/vocabulary',
@@ -18,26 +31,18 @@ export default function NotificationBtn({ id }: { id: string }) {
   );
 
   useEffect(() => {
-    async function asyncGetNotification() {
-      const respGetNotification = await getFetchFunc({
-        query: `user_id=${getUserID()}&vocab_id=${id}`,
-      });
-      if (respGetNotification.ok) {
-        setAlarm(respGetNotification.data['notification']);
-      }
-      setIsLoading(false);
+    if (respGetNotification.ok) {
+      setAlarm(respGetNotification.data['notification']);
     }
-    if (isActiveToken()) {
-      asyncGetNotification();
-    } else {
-      setIsLoading(false);
-    }
-  }, [getFetchFunc, id]);
+  }, [respGetNotification.data, respGetNotification.ok]);
 
   function setNotificationVocab() {
     async function asyncSetNotificationVocab() {
       const resp = await setFetchFunc({
-        query: `user_id=${getUserID()}&vocab_id=${id}`,
+        query: new Map<string, any>([
+          ['user_id', getUserID()],
+          ['vocab_id', id],
+        ]),
       });
       if (resp.ok) {
         setAlarm(resp.data['notification']);

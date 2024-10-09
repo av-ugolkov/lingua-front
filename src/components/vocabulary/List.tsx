@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import WordCard from './WordCard';
 import { useVocabWordsStore } from '@/hooks/stores/useVocabWordsStore';
@@ -20,11 +20,12 @@ export default function List() {
   const searchStore = useSearchStore();
   const { sort, order } = useSortedStore();
 
+  const query = useMemo(() => new Map<string, any>([['id', id]]), [id]);
   const { isLoading, response } = useFetch(
     '/vocabulary/words',
     RequestMethod.GET,
     AuthStore.OPTIONAL,
-    { query: `id=${id}` }
+    { query: query }
   );
 
   useEffect(() => {
