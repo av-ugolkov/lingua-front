@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import HeaderBtn from './HeaderBtn';
 import Account from './Account';
 import api, { AuthStore } from '@/scripts/api';
-import { isActiveToken } from '@/scripts/AuthToken';
+import { getAccessToken, isActiveToken } from '@/scripts/AuthToken';
 
 export default function Header() {
   const navigate = useNavigate();
@@ -21,18 +21,21 @@ export default function Header() {
         setIsAuth(true);
         setAccountName(response.data['name']);
       } else if (response.status === 401) {
-        setIsAuth(false);
-        setAccountName('');
+        signOut();
       }
       setIsLoading(false);
     }
 
-    if (isActiveToken()) {
-      asyncGetUser();
-    } else {
+    function signOut() {
       setIsAuth(false);
       setAccountName('');
       setIsLoading(false);
+    }
+
+    if (isActiveToken() || getAccessToken() !== '') {
+      asyncGetUser();
+    } else {
+      signOut();
     }
   }, [fetchGetUser]);
 
