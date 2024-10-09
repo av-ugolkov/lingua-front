@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import ShortCard from '../elements/Vocabulary/ShortCard';
+import ShortCard from '@/components/elements/Vocabulary/ShortCard';
 import { AuthStore, RequestMethod } from '@/scripts/api';
 import useFetch from '@/hooks/useFetch';
 
@@ -16,13 +16,13 @@ export interface Vocab {
 }
 
 export default function RecommendedVocabs() {
-  const { response: respRecomendVocabs } = useFetch(
+  const [vocabs, setVocabs] = useState<Vocab[]>([]);
+
+  const { isLoading, response: respRecomendVocabs } = useFetch(
     '/vocabularies/recommended',
     RequestMethod.GET,
     AuthStore.OPTIONAL
   );
-
-  const [vocabs, setVocabs] = useState<Vocab[]>([]);
 
   useEffect(() => {
     if (respRecomendVocabs.ok) {
@@ -43,6 +43,10 @@ export default function RecommendedVocabs() {
       setVocabs(vocabs);
     }
   }, [respRecomendVocabs]);
+
+  if (isLoading) {
+    return <div></div>;
+  }
 
   return (
     <section className='bg-blue-100 p-8 mt-8 shadow-md shadow-blue-300 text-center'>

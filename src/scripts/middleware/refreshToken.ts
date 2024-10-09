@@ -1,11 +1,6 @@
 import api, { AuthStore, IResponseData } from '@/scripts/api';
 
 export const refreshToken = async (): Promise<IResponseData> => {
-  const response = await fetchToken();
-  return response;
-};
-
-async function fetchToken(): Promise<IResponseData> {
   try {
     const response = await api.get('/auth/refresh', AuthStore.USE).fetchFunc();
     if (response.ok) {
@@ -13,10 +8,11 @@ async function fetchToken(): Promise<IResponseData> {
     }
     return response;
   } catch (error: any) {
+    console.error(error);
     return {
       ok: false,
       status: 0,
       data: error,
     };
   }
-}
+};

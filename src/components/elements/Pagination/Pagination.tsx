@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/20/solid';
 
-import getPaginationItems from '../../vocabularies/getPaginationItems';
+import getPaginationItems from './getPaginationItems';
 import ListBox, { IListBoxItem } from '../ListBox';
 import { usePaginationStore } from './usePaginationStore';
 

@@ -6,13 +6,6 @@ import api, {
   IResponseData,
   RequestMethod,
 } from '@/scripts/api';
-import {
-  deleteAccessToken,
-  getAccessToken,
-  isActiveToken,
-  setAccessToken,
-} from '@/scripts/AuthToken';
-import { refreshToken } from '@/scripts/middleware/refreshToken';
 
 const useFetch = (
   url: string,
@@ -35,30 +28,6 @@ const useFetch = (
         },
         body: data?.body,
       };
-
-      if (useAuth !== AuthStore.NO) {
-        let token = getAccessToken();
-        if (token === '' || !isActiveToken()) {
-          const respToken = await refreshToken();
-          if (respToken.ok) {
-            setAccessToken(respToken.data);
-            token = respToken.data;
-          } else {
-            deleteAccessToken();
-            if (useAuth == AuthStore.USE) {
-              setResponse(respToken);
-              setIsLoading(false);
-            }
-          }
-        }
-
-        if (isActiveToken()) {
-          init.headers = {
-            ...init.headers,
-            Authorization: `Bearer ${token}`,
-          };
-        }
-      }
 
       try {
         const respData = await api.fetchData(url, init, data?.query);

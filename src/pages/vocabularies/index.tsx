@@ -1,11 +1,12 @@
+import { useEffect, useState } from 'react';
+
 import SearchInput from '@/components/elements/SearchPanel/SearchInput';
 import SortedPanel from '@/components/elements/SortAndOrder/SortedPanel';
-import List from '@/components/vocabularies/List';
+import List from '@/pages/vocabularies/component/List';
 import ListBox, { IListBoxItem } from '@/components/elements/ListBox';
 import { useLanguagesStore } from '@/hooks/stores/useLanguagesStore';
 import { SortWordTypes } from '@/models/Sorted';
 import { LanguageIcon } from '@heroicons/react/24/outline';
-import { useEffect, useState } from 'react';
 import ArrowBothSide from '@/assets/ArrowBothSide';
 
 export default function Vocabularies() {
