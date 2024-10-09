@@ -7,7 +7,7 @@ import {
 } from '@heroicons/react/24/outline';
 import DropdownMenu from '../Dropdown/DropdownMenu';
 import DropdownItem from '../Dropdown/Item';
-import Edit, { IEditData } from '@/components/user_vocabularies/Edit';
+import Edit, { IEditData } from '@/pages/account/vocabularies/component/Edit';
 import { getUserID } from '@/scripts/AuthToken';
 import { useVocabulariesStore } from '@/hooks/stores/useVocabulariesStore';
 import api, { AuthStore } from '@/scripts/api';

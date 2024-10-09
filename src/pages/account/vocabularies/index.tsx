@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 
-import List from '@/components/user_vocabularies/List';
+import List from '@/pages/account/vocabularies/component/List';
 import Button from '@/components/elements/Button';
-import Create from '@/components/user_vocabularies/Create';
+import Create from '@/pages/account/vocabularies/component/Create';
 import { useVocabulariesStore } from '@/hooks/stores/useVocabulariesStore';
 import { VocabularyData } from '@/models/Vocabulary.ts';
 import { useLanguagesStore } from '@/hooks/stores/useLanguagesStore';

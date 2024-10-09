@@ -2,13 +2,13 @@ import { useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { useVocabulariesStore } from '@/hooks/stores/useVocabulariesStore';
-import { useSearchStore } from '../elements/SearchPanel/useSearchStore';
-import { useSortedStore } from '../elements/SortAndOrder/useSortedStore';
+import { useSearchStore } from '@/components/elements/SearchPanel/useSearchStore';
+import { useSortedStore } from '@/components/elements/SortAndOrder/useSortedStore';
 import { AuthStore, RequestMethod } from '@/scripts/api';
-import FullCard from '../elements/Vocabulary/FullCard';
-import Pagination from '../elements/Pagination/Pagination';
+import FullCard from '@/components/elements/Vocabulary/FullCard';
+import Pagination from '@/components/elements/Pagination/Pagination';
 import useFetch from '@/hooks/useFetch';
-import { usePaginationStore } from '../elements/Pagination/usePaginationStore';
+import { usePaginationStore } from '@/components/elements/Pagination/usePaginationStore';
 
 interface SortedInputProps {
   nativeLang: string;
@@ -59,7 +59,7 @@ export default function List({ nativeLang, translateLang }: SortedInputProps) {
           description: item['description'],
           wordsCount: item['words_count'],
           tags: item['tags'],
-          words: item['words'],
+          words: item['words'] || [],
           createdAt: new Date(item['created_at']),
           updatedAt: new Date(item['updated_at']),
         });

@@ -18,21 +18,58 @@ const useFetch = (
 
   useEffect(() => {
     setIsLoading(true);
-    const fetch = async function asyncFetchData() {
-      const init: RequestInit = {
-        method: method,
-        credentials: 'include',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: data?.body,
-      };
 
+    const fetch = async function asyncFetchData() {
       try {
-        const respData = await api.fetchData(url, init, data?.query);
-        setResponse(respData);
-        setIsLoading(false);
+        switch (method) {
+          case RequestMethod.GET:
+            api
+              .get(url, useAuth)
+              .fetchFunc({ query: data?.query })
+              .then((respData) => {
+                setResponse(respData);
+                setIsLoading(false);
+              });
+            break;
+          case RequestMethod.POST:
+            api
+              .post(url, useAuth)
+              .fetchFunc({
+                body: data?.body,
+                query: data?.query,
+              })
+              .then((respData) => {
+                setResponse(respData);
+                setIsLoading(false);
+              });
+            break;
+          case RequestMethod.PUT:
+            api
+              .put(url, useAuth)
+              .fetchFunc({
+                body: data?.body,
+                query: data?.query,
+              })
+              .then((respData) => {
+                setResponse(respData);
+                setIsLoading(false);
+              });
+            break;
+          case RequestMethod.DELETE:
+            api
+              .delete(url, useAuth)
+              .fetchFunc({
+                body: data?.body,
+                query: data?.query,
+              })
+              .then((respData) => {
+                setResponse(respData);
+                setIsLoading(false);
+              });
+            break;
+          default:
+            throw new Error('Invalid method');
+        }
       } catch (error: any) {
         setResponse({ ok: false, status: 0, data: error });
         setIsLoading(false);

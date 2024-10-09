@@ -2,12 +2,12 @@ import { useEffect, useState } from 'react';
 
 import { PlusIcon } from '@heroicons/react/24/outline';
 
-import Button from '../elements/Button';
+import Button from '../../../../components/elements/Button';
 import SelectLanguages from './SelectLanguages';
 import api, { AuthStore } from '@/scripts/api';
 import { ILanguage, useLanguagesStore } from '@/hooks/stores/useLanguagesStore';
 import CloseBtn from './CloseBtn';
-import BgLock from '../elements/BgLock';
+import BgLock from '../../../../components/elements/BgLock';
 import { EmptyVocabulary, VocabularyData } from '@/models/Vocabulary.ts';
 
 export interface IAccess {
