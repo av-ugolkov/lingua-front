@@ -6,7 +6,7 @@ import Pagination from '@/components/elements/Pagination/Pagination';
 import { useSearchStore } from '@/components/elements/SearchPanel/useSearchStore';
 import { useSortedStore } from '@/components/elements/SortAndOrder/useSortedStore';
 import Card from './Card';
-import { AuthStore, RequestMethod } from '@/scripts/api';
+import { AuthStore, IQueryType, RequestMethod } from '@/scripts/api';
 
 export interface IUser {
   id: string;
@@ -21,15 +21,14 @@ export default function List() {
   const { sort, order } = useSortedStore();
   const [users, setUsers] = useState<IUser[]>([]);
 
-  const query = useMemo(
-    () =>
-      new Map<string, any>([
-        ['page', page],
-        ['per_page', itemsPerPage],
-        ['order', order],
-        ['sort', sort],
-        ['search', searchValue],
-      ]),
+  const query = useMemo<IQueryType>(
+    () => [
+      ['page', page],
+      ['per_page', itemsPerPage],
+      ['order', order],
+      ['sort', sort],
+      ['search', searchValue],
+    ],
     [itemsPerPage, order, page, searchValue, sort]
   );
   const { response } = useFetch('/users', RequestMethod.GET, AuthStore.NO, {

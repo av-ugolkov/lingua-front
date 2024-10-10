@@ -10,7 +10,7 @@ import Edit, { IEditData } from './Edit';
 import { useLanguagesStore } from '@/hooks/stores/useLanguagesStore';
 import LockItem from '../../../../components/elements/LockItem';
 import { VocabularyData } from '@/models/Vocabulary.ts';
-import api, { AuthStore, RequestMethod } from '@/scripts/api';
+import api, { AuthStore, IQueryType, RequestMethod } from '@/scripts/api';
 import useFetch from '@/hooks/useFetch';
 
 const CountRequestWords = '8';
@@ -34,12 +34,11 @@ export default function Card({
   const vocabulariesStore = useVocabulariesStore();
   const { languages } = useLanguagesStore();
 
-  const query = useMemo(
-    () =>
-      new Map([
-        ['id', vocab.id],
-        ['limit', `${CountRequestWords}`],
-      ]),
+  const query = useMemo<IQueryType>(
+    () => [
+      ['id', vocab.id],
+      ['limit', `${CountRequestWords}`],
+    ],
     [vocab.id]
   );
 
@@ -80,7 +79,7 @@ export default function Card({
   function deleteVocabulary() {
     async function asyncDeleteVocabulary() {
       const response = await api.delete(`/account/vocabulary`, AuthStore.USE, {
-        query: new Map([['name', vocabData.name]]),
+        query: [['name', vocabData.name]],
       });
       if (response.ok) {
         vocabulariesStore.removeVocabulary(vocab.id);

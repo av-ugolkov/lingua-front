@@ -3,18 +3,17 @@ import { BellIcon } from '@heroicons/react/24/outline';
 import { BellAlertIcon } from '@heroicons/react/24/solid';
 
 import { getUserID, isActiveToken } from '@/scripts/AuthToken.ts';
-import api, { AuthStore, RequestMethod } from '@/scripts/api';
+import api, { AuthStore, IQueryType, RequestMethod } from '@/scripts/api';
 import useFetch from '@/hooks/useFetch';
 
 export default function NotificationBtn({ id }: { id: string }) {
   const [isAlarm, setAlarm] = useState(false);
 
-  const queryGetNotification = useMemo(
-    () =>
-      new Map<string, any>([
-        ['user_id', getUserID()],
-        ['vocab_id', id],
-      ]),
+  const queryGetNotification = useMemo<IQueryType>(
+    () => [
+      ['user_id', getUserID()],
+      ['vocab_id', id],
+    ],
     [id]
   );
   const { isLoading, response: respGetNotification } = useFetch(
@@ -35,10 +34,10 @@ export default function NotificationBtn({ id }: { id: string }) {
   function setNotificationVocab() {
     async function asyncSetNotificationVocab() {
       const resp = await api.post('/notifications/vocabulary', AuthStore.USE, {
-        query: new Map<string, any>([
+        query: [
           ['user_id', getUserID()],
           ['vocab_id', id],
-        ]),
+        ],
       });
       if (resp.ok) {
         setAlarm(resp.data['notification']);

@@ -23,11 +23,12 @@ export enum AuthStore {
 }
 
 export interface IRequestData {
+  headers?: HeadersInit | undefined;
   body?: string | undefined;
-  query?: Map<string, any> | undefined;
+  query?: IQueryType | undefined;
 }
 
-export type IQueryType = { [key: string]: any };
+export type IQueryType = [string, any][];
 
 export interface IResponseData {
   status: number;
@@ -44,12 +45,12 @@ const emptyResponse: IResponseData = {
 const fetchData = async (
   url: string,
   init: RequestInit,
-  query?: Map<string, any>
+  query?: IQueryType
 ): Promise<IResponseData> => {
   const fullUrl = new URL(getAddr() + url);
-  if (query && query.size > 0) {
-    query.forEach((v, k) => {
-      fullUrl.searchParams.append(k, v);
+  if (query && query.length > 0) {
+    query.forEach((v) => {
+      fullUrl.searchParams.append(v[0], v[1]);
     });
   }
   const finger = getBrowserFingerprint() || '';
@@ -87,6 +88,7 @@ async function fetchFunc(
     headers: {
       Accept: 'application/json',
       'Content-Type': 'application/json',
+      ...data?.headers,
     },
     body: data?.body,
   };
@@ -133,6 +135,5 @@ export default {
     fetchFunc(url, RequestMethod.PATCH, useAuth, data),
   delete: (url: string, useAuth: AuthStore, data?: IRequestData) =>
     fetchFunc(url, RequestMethod.DELETE, useAuth, data),
-  fetchData,
   emptyResponse,
 };

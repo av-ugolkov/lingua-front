@@ -121,7 +121,7 @@ export default function WordCard({
   function cancelChanges() {
     async function asyncCancelChanges() {
       const response = await api.get('/vocabulary/word', AuthStore.USE, {
-        query: new Map([['id', word.id]]),
+        query: [['id', word.id]],
       });
       if (response.ok) {
         word.native.text = response.data['native']['text'];
@@ -144,10 +144,10 @@ export default function WordCard({
         '/vocabulary/word/pronunciation',
         AuthStore.USE,
         {
-          query: new Map([
+          query: [
             ['id', vocabID],
             ['text', word.native.text],
-          ]),
+          ],
         }
       );
       if (response.ok) {

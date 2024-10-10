@@ -9,7 +9,7 @@ import { AccessID } from '@/models/Access';
 import { useNotificationStore } from '@/components/notification/useNotificationStore';
 import { getUserID, isActiveToken } from '@/scripts/AuthToken';
 import { IUser } from './List';
-import api, { AuthStore, RequestMethod } from '@/scripts/api';
+import api, { AuthStore, IQueryType, RequestMethod } from '@/scripts/api';
 
 export interface IVocab {
   id: string;
@@ -26,8 +26,8 @@ export default function Card(user: IUser) {
   const [isSubscribe, setIsSubscribe] = useState(false);
   const { notificationSuccess, notificationError } = useNotificationStore();
 
-  const queryVocabUser = useMemo(
-    () => new Map([['user_id', user.id]]),
+  const queryVocabUser = useMemo<IQueryType>(
+    () => [['user_id', user.id]],
     [user.id]
   );
   const { isLoading: isLoadingUser, response: responseUser } = useFetch(
@@ -146,7 +146,7 @@ export default function Card(user: IUser) {
   useEffect(() => {
     async function asyncCheck() {
       const response = await api.get('/subscriber/check', AuthStore.USE, {
-        query: new Map([['subscriber_id', user.id]]),
+        query: [['subscriber_id', user.id]],
       });
       if (response.ok) {
         setIsSubscribe(response.data['is_subscriber']);

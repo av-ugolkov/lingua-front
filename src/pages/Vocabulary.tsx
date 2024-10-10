@@ -8,13 +8,13 @@ import { SortWordTypes } from '@/models/Sorted';
 import Header from '@/components/vocabulary/Header.tsx';
 import { VocabularyData } from '@/models/Vocabulary.ts';
 import { useVocabulariesStore } from '@/hooks/stores/useVocabulariesStore.ts';
-import { AuthStore, RequestMethod } from '@/scripts/api';
+import { AuthStore, IQueryType, RequestMethod } from '@/scripts/api';
 import useFetch from '@/hooks/useFetch';
 
 export default function Vocabulary() {
   const { id } = useParams();
 
-  const query = useMemo(() => new Map<string, any>([['id', id]]), [id]);
+  const query = useMemo<IQueryType>(() => [['id', id]], [id]);
   const { isLoading, response: respVocabInfo } = useFetch(
     '/vocabulary/info',
     RequestMethod.GET,

@@ -43,7 +43,7 @@ export default function ShortCard({
     const response = await api.get(
       '/vocabulary/access/user',
       AuthStore.OPTIONAL,
-      { query: new Map([['id', id]]) }
+      { query: [['id', id]] }
     );
     if (response.ok) {
       const access = response.data['access'];

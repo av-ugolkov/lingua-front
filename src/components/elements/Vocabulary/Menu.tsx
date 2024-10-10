@@ -41,7 +41,7 @@ export default function Menu({ vocabID }: { vocabID: string }) {
   function deleteVocabulary() {
     async function asyncDeleteVocabulary() {
       const response = await api.delete(`/vocabulary`, AuthStore.USE, {
-        query: new Map([['name', getVocabulary(vocabID).name]]),
+        query: [['name', getVocabulary(vocabID).name]],
       });
       if (response.ok) {
         removeVocabulary(vocabID);

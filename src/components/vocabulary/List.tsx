@@ -7,7 +7,7 @@ import { useSearchStore } from '@/components/elements/SearchPanel/useSearchStore
 import { useSortedStore } from '@/components/elements/SortAndOrder/useSortedStore';
 import { useVocabulariesStore } from '@/hooks/stores/useVocabulariesStore.ts';
 import { EmptyVocabWord, VocabWord } from '@/models/Word.ts';
-import { AuthStore, RequestMethod } from '@/scripts/api';
+import { AuthStore, IQueryType, RequestMethod } from '@/scripts/api';
 import useFetch from '@/hooks/useFetch';
 
 export default function List() {
@@ -20,7 +20,7 @@ export default function List() {
   const searchStore = useSearchStore();
   const { sort, order } = useSortedStore();
 
-  const query = useMemo(() => new Map<string, any>([['id', id]]), [id]);
+  const query = useMemo<IQueryType>(() => [['id', id]], [id]);
   const { isLoading, response } = useFetch(
     '/vocabulary/words',
     RequestMethod.GET,

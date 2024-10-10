@@ -5,7 +5,7 @@ import Pagination from '../../components/elements/Pagination/Pagination';
 import { useSearchStore } from '../../components/elements/SearchPanel/useSearchStore';
 import { useSortedStore } from '../../components/elements/SortAndOrder/useSortedStore';
 import { useVocabulariesStore } from '@/hooks/stores/useVocabulariesStore.ts';
-import { AuthStore, RequestMethod } from '@/scripts/api';
+import { AuthStore, IQueryType, RequestMethod } from '@/scripts/api';
 import useFetch from '@/hooks/useFetch';
 import { usePaginationStore } from '../../components/elements/Pagination/usePaginationStore';
 
@@ -23,18 +23,17 @@ export default function List({ nativeLang, translateLang }: SortedInputProps) {
   const { vocabularies, addVocabulary, setVocabularies } =
     useVocabulariesStore();
 
-  const query = useMemo(
-    () =>
-      new Map<string, any>([
-        ['page', page],
-        ['per_page', itemsPerPage],
-        ['order', order],
-        ['sort', sort],
-        ['search', searchValue],
-        ['native_lang', nativeLang],
-        ['translate_lang', translateLang],
-        ['limit_words', LIMIT_WORDS],
-      ]),
+  const query = useMemo<IQueryType>(
+    () => [
+      ['page', page],
+      ['per_page', itemsPerPage],
+      ['order', order],
+      ['sort', sort],
+      ['search', searchValue],
+      ['native_lang', nativeLang],
+      ['translate_lang', translateLang],
+      ['limit_words', LIMIT_WORDS],
+    ],
     [page, itemsPerPage, order, sort, searchValue, nativeLang, translateLang]
   );
   const { isLoading, response: respVocabs } = useFetch(

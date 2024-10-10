@@ -42,7 +42,7 @@ export default function FullCard({
 
   async function asyncVocabAccess() {
     const response = await api.get('/vocabulary/access/user', authStore, {
-      query: new Map([['id', id]]),
+      query: [['id', id]],
     });
     if (response.ok) {
       const access = response.data['access'];

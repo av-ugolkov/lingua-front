@@ -2,14 +2,14 @@ import { useEffect, useMemo, useState } from 'react';
 
 import RecomendedVocabs from '@/pages/main/component/RecommendedVocabs';
 import { useNotificationStore } from '@/components/notification/useNotificationStore';
-import { AuthStore, RequestMethod } from '@/scripts/api';
+import { AuthStore, IQueryType, RequestMethod } from '@/scripts/api';
 import useFetch from '@/hooks/useFetch';
 
 export default function HomePage() {
   const { clearNotifications } = useNotificationStore();
   const [word, setWord] = useState('');
 
-  const query = useMemo(() => new Map([['lang_code', 'en']]), []);
+  const query = useMemo<IQueryType>(() => [['lang_code', 'en']], []);
   const { response: respRandomWord } = useFetch(
     '/dictionary/word/random',
     RequestMethod.GET,
