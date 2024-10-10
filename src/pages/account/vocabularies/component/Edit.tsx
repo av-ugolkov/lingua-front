@@ -29,7 +29,7 @@ export default function Edit({
 
   useEffect(() => {
     async function asyncFetchAccesses() {
-      const respData = await api.get('/accesses', AuthStore.NO).fetchFunc();
+      const respData = await api.get('/accesses', AuthStore.NO);
       if (respData.ok) {
         const accessesData: IAccess[] = [];
         respData.data.forEach((item: any) => {

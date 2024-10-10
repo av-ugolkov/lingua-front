@@ -23,10 +23,6 @@ export default function ShortCard({
   const [isShowSignInUpPopup, setIsShowSignInUpPopup] = useState(false);
   const { languages } = useLanguagesStore();
   const { notificationWarning } = useNotificationStore();
-  const { fetchFunc: fetchVocabAccess } = api.get(
-    '/vocabulary/access/user',
-    AuthStore.OPTIONAL
-  );
 
   if (languages.size == 0) {
     return <></>;
@@ -44,7 +40,11 @@ export default function ShortCard({
   }
 
   async function asyncVocabAccess() {
-    const response = await fetchVocabAccess({ query: new Map([['id', id]]) });
+    const response = await api.get(
+      '/vocabulary/access/user',
+      AuthStore.OPTIONAL,
+      { query: new Map([['id', id]]) }
+    );
     if (response.ok) {
       const access = response.data['access'];
       switch (access) {

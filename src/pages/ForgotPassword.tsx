@@ -11,14 +11,9 @@ export default function ForgotPsw() {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
 
-  const { fetchFunc: fetchRecoveryPsw } = api.post(
-    '/auth/recovery_password',
-    AuthStore.NO
-  );
-
   function recoveryPsw() {
     async function asyncRecoveryPsw() {
-      const response = await fetchRecoveryPsw({
+      const response = await api.post('/auth/recovery_password', AuthStore.NO, {
         body: JSON.stringify({ email: email }),
       });
       if (response.ok) {

@@ -25,10 +25,6 @@ export default function NotificationBtn({ id }: { id: string }) {
       query: queryGetNotification,
     }
   );
-  const { fetchFunc: setFetchFunc } = api.post(
-    '/notifications/vocabulary',
-    AuthStore.USE
-  );
 
   useEffect(() => {
     if (respGetNotification.ok) {
@@ -38,7 +34,7 @@ export default function NotificationBtn({ id }: { id: string }) {
 
   function setNotificationVocab() {
     async function asyncSetNotificationVocab() {
-      const resp = await setFetchFunc({
+      const resp = await api.post('/notifications/vocabulary', AuthStore.USE, {
         query: new Map<string, any>([
           ['user_id', getUserID()],
           ['vocab_id', id],

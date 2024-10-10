@@ -9,14 +9,13 @@ import { getAccessToken, isActiveToken } from '@/scripts/AuthToken';
 export default function Header() {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
-  const { fetchFunc: fetchGetUser } = api.get('/user/id', AuthStore.USE);
 
   const [isAuth, setIsAuth] = useState(false);
   const [accountName, setAccountName] = useState('');
 
   useEffect(() => {
     async function asyncGetUser() {
-      const response = await fetchGetUser();
+      const response = await api.get('/user/id', AuthStore.USE);
       if (response.ok) {
         setIsAuth(true);
         setAccountName(response.data['name']);
@@ -37,7 +36,7 @@ export default function Header() {
     } else {
       signOut();
     }
-  }, [fetchGetUser]);
+  }, []);
 
   if (isLoading) {
     return <div></div>;

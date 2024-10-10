@@ -16,18 +16,9 @@ export default function Menu({ vocabID }: { vocabID: string }) {
   const [isShowEditPopup, setIsShowEditPopup] = useState(false);
   const { getVocabulary, removeVocabulary } = useVocabulariesStore();
 
-  const { fetchFunc: fetchEditVocabulary } = api.put(
-    `/vocabulary`,
-    AuthStore.USE
-  );
-  const { fetchFunc: fetchDeleteVocabulary } = api.delete(
-    `/vocabulary`,
-    AuthStore.USE
-  );
-
   function editVocabulary(editData: IEditData) {
     async function asyncEditVocabulary() {
-      const response = await fetchEditVocabulary({
+      const response = await api.put(`/vocabulary`, AuthStore.USE, {
         body: JSON.stringify({
           id: vocabID,
           name: editData.name,
@@ -49,7 +40,7 @@ export default function Menu({ vocabID }: { vocabID: string }) {
 
   function deleteVocabulary() {
     async function asyncDeleteVocabulary() {
-      const response = await fetchDeleteVocabulary({
+      const response = await api.delete(`/vocabulary`, AuthStore.USE, {
         query: new Map([['name', getVocabulary(vocabID).name]]),
       });
       if (response.ok) {

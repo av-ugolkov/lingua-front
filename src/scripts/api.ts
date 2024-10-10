@@ -75,69 +75,64 @@ const fetchData = async (
     });
 };
 
-function fetchFunc(
+async function fetchFunc(
   url: string,
   method: RequestMethod,
-  useAuth: AuthStore = AuthStore.NO
+  useAuth: AuthStore = AuthStore.NO,
+  data?: IRequestData
 ) {
-  const fetchFunc = async function asyncFetchData(
-    data?: IRequestData
-  ): Promise<IResponseData> {
-    const init: RequestInit = {
-      method: method,
-      credentials: 'include',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: data?.body,
-    };
-
-    if (useAuth !== AuthStore.NO) {
-      let token = getAccessToken();
-      if (token === '' || !isActiveToken()) {
-        const respToken = await refreshToken();
-        if (respToken.ok) {
-          setAccessToken(respToken.data);
-          token = respToken.data;
-        } else {
-          deleteAccessToken();
-          if (useAuth == AuthStore.USE) {
-            return respToken;
-          }
-        }
-      }
-
-      if (isActiveToken()) {
-        init.headers = {
-          ...init.headers,
-          Authorization: `Bearer ${token}`,
-        };
-      }
-    }
-
-    try {
-      const respData = await fetchData(url, init, data?.query);
-      return respData;
-    } catch (error: any) {
-      return { ok: false, status: 0, data: error };
-    }
+  const init: RequestInit = {
+    method: method,
+    credentials: 'include',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+    body: data?.body,
   };
 
-  return { fetchFunc };
+  if (useAuth !== AuthStore.NO) {
+    let token = getAccessToken();
+    if (token === '' || !isActiveToken()) {
+      const respToken = await refreshToken();
+      if (respToken.ok) {
+        setAccessToken(respToken.data);
+        token = respToken.data;
+      } else {
+        deleteAccessToken();
+        if (useAuth == AuthStore.USE) {
+          return respToken;
+        }
+      }
+    }
+
+    if (isActiveToken()) {
+      init.headers = {
+        ...init.headers,
+        Authorization: `Bearer ${token}`,
+      };
+    }
+  }
+
+  try {
+    const respData = await fetchData(url, init, data?.query);
+    return respData;
+  } catch (error: any) {
+    return { ok: false, status: 0, data: error };
+  }
 }
 
 export default {
-  get: (url: string, useAuth: AuthStore) =>
-    fetchFunc(url, RequestMethod.GET, useAuth),
-  post: (url: string, useAuth: AuthStore) =>
-    fetchFunc(url, RequestMethod.POST, useAuth),
-  put: (url: string, useAuth: AuthStore) =>
-    fetchFunc(url, RequestMethod.PUT, useAuth),
-  patch: (url: string, useAuth: AuthStore) =>
-    fetchFunc(url, RequestMethod.PATCH, useAuth),
-  delete: (url: string, useAuth: AuthStore) =>
-    fetchFunc(url, RequestMethod.DELETE, useAuth),
+  get: (url: string, useAuth: AuthStore, data?: IRequestData) =>
+    fetchFunc(url, RequestMethod.GET, useAuth, data),
+  post: (url: string, useAuth: AuthStore, data?: IRequestData) =>
+    fetchFunc(url, RequestMethod.POST, useAuth, data),
+  put: (url: string, useAuth: AuthStore, data?: IRequestData) =>
+    fetchFunc(url, RequestMethod.PUT, useAuth, data),
+  patch: (url: string, useAuth: AuthStore, data?: IRequestData) =>
+    fetchFunc(url, RequestMethod.PATCH, useAuth, data),
+  delete: (url: string, useAuth: AuthStore, data?: IRequestData) =>
+    fetchFunc(url, RequestMethod.DELETE, useAuth, data),
   fetchData,
   emptyResponse,
 };

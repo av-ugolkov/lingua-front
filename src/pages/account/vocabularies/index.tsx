@@ -22,10 +22,6 @@ export default function Vocabularies() {
   const [translateLang, setTranslateLang] = useState('any');
 
   const vocabulariesStore = useVocabulariesStore();
-  const { fetchFunc: fetchCreateVocabulary } = api.post(
-    `/vocabulary`,
-    AuthStore.USE
-  );
 
   useEffect(() => {
     if (languagesStore.size > 0) {
@@ -51,7 +47,7 @@ export default function Vocabularies() {
         description: vocab.description,
         tags: [],
       });
-      const response = await fetchCreateVocabulary({
+      const response = await api.post(`/vocabulary`, AuthStore.USE, {
         body: body,
       });
       if (response.ok) {

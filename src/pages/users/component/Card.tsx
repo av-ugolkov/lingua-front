@@ -26,30 +26,31 @@ export default function Card(user: IUser) {
   const [isSubscribe, setIsSubscribe] = useState(false);
   const { notificationSuccess, notificationError } = useNotificationStore();
 
-  const query = useMemo(() => new Map([['user_id', user.id]]), [user.id]);
+  const queryVocabUser = useMemo(
+    () => new Map([['user_id', user.id]]),
+    [user.id]
+  );
   const { isLoading: isLoadingUser, response: responseUser } = useFetch(
     '/vocabularies/user',
     RequestMethod.GET,
     AuthStore.OPTIONAL,
-    { query: query }
+    { query: queryVocabUser }
   );
 
-  const { fetchFunc: fetchCheck } = api.get('/subscriber/check', AuthStore.USE);
-
-  const { fetchFunc: fetchSubscribe } = api.post(
-    '/user/subscribe',
-    AuthStore.USE
-  );
-  const { fetchFunc: fetchUnsubscribe } = api.post(
-    '/user/unsubscribe',
-    AuthStore.USE
-  );
+  async function fetchSubscribe(subUserID: string) {
+    return api.post('/user/subscribe', AuthStore.USE, {
+      body: JSON.stringify({ id: subUserID }),
+    });
+  }
+  async function fetchUnsubscribe(subUserID: string) {
+    return api.post('/user/unsubscribe', AuthStore.USE, {
+      body: JSON.stringify({ id: subUserID }),
+    });
+  }
 
   function userSubscribe(subUserID: string) {
     async function asyncSubscribe() {
-      const response = await fetchSubscribe({
-        body: JSON.stringify({ id: subUserID }),
-      });
+      const response = await fetchSubscribe(subUserID);
       if (response.ok) {
         notificationSuccess(`You subscribed to ${user.name}`);
       } else {
@@ -61,9 +62,7 @@ export default function Card(user: IUser) {
 
   function userUnsubscribe(subUserID: string) {
     async function asyncUnsubscribe() {
-      const response = await fetchUnsubscribe({
-        body: JSON.stringify({ id: subUserID }),
-      });
+      const response = await fetchUnsubscribe(subUserID);
       if (response.ok) {
         notificationSuccess(`You unsubscribed from ${user.name}`);
       } else {
@@ -146,7 +145,7 @@ export default function Card(user: IUser) {
 
   useEffect(() => {
     async function asyncCheck() {
-      const response = await fetchCheck({
+      const response = await api.get('/subscriber/check', AuthStore.USE, {
         query: new Map([['subscriber_id', user.id]]),
       });
       if (response.ok) {
@@ -156,7 +155,7 @@ export default function Card(user: IUser) {
     if (isActiveToken()) {
       asyncCheck();
     }
-  }, [fetchCheck, user.id]);
+  }, [user.id]);
 
   if (isLoadingUser) {
     return <></>;

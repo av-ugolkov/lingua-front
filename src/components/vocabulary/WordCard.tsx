@@ -31,23 +31,6 @@ export default function WordCard({
   const { id: vocabID } = useParams();
   const vocabWordsStore = useVocabWordsStore();
   const { notificationWarning } = useNotificationStore();
-  const { fetchFunc: fetchAddWord } = api.post(
-    '/vocabulary/word',
-    AuthStore.USE
-  );
-  const { fetchFunc: fetchUpdateWord } = api.post(
-    '/vocabulary/word/update',
-    AuthStore.USE
-  );
-  const { fetchFunc: fetchDeleteWord } = api.delete(
-    '/vocabulary/word',
-    AuthStore.USE
-  );
-  const { fetchFunc: fetchWord } = api.get('/vocabulary/word', AuthStore.USE);
-  const { fetchFunc: fetchPronunciation } = api.get(
-    '/vocabulary/word/pronunciation',
-    AuthStore.USE
-  );
 
   function addVocabWord() {
     async function asyncAddWord() {
@@ -65,7 +48,9 @@ export default function WordCard({
         created: InvalidateDate,
       };
       const bodyData = JSON.stringify(jsonBodyData);
-      const response = await fetchAddWord({ body: bodyData });
+      const response = await api.post('/vocabulary/word', AuthStore.USE, {
+        body: bodyData,
+      });
       if (response.ok) {
         const newWord: VocabWord = {
           id: response.data['id'],
@@ -104,7 +89,11 @@ export default function WordCard({
       };
       const bodyData = JSON.stringify(jsonBodyData);
 
-      const response = await fetchUpdateWord({ body: bodyData });
+      const response = await api.post(
+        '/vocabulary/word/update',
+        AuthStore.USE,
+        { body: bodyData }
+      );
       console.warn('response: ', response.data);
     }
 
@@ -115,7 +104,9 @@ export default function WordCard({
     async function asyncDelete() {
       const jsonBodyData = { vocab_id: vocabID, word_id: word.id };
       const bodyData = JSON.stringify(jsonBodyData);
-      const response = await fetchDeleteWord({ body: bodyData });
+      const response = await api.delete('/vocabulary/word', AuthStore.USE, {
+        body: bodyData,
+      });
 
       if (response.ok) {
         vocabWordsStore.removeWord(word.id);
@@ -129,7 +120,9 @@ export default function WordCard({
 
   function cancelChanges() {
     async function asyncCancelChanges() {
-      const response = await fetchWord({ query: new Map([['id', word.id]]) });
+      const response = await api.get('/vocabulary/word', AuthStore.USE, {
+        query: new Map([['id', word.id]]),
+      });
       if (response.ok) {
         word.native.text = response.data['native']['text'];
         word.native.pronunciation =
@@ -147,12 +140,16 @@ export default function WordCard({
 
   function getPronunciation() {
     async function asyncGetPronunciation() {
-      const response = await fetchPronunciation({
-        query: new Map([
-          ['id', vocabID],
-          ['text', word.native.text],
-        ]),
-      });
+      const response = await api.get(
+        '/vocabulary/word/pronunciation',
+        AuthStore.USE,
+        {
+          query: new Map([
+            ['id', vocabID],
+            ['text', word.native.text],
+          ]),
+        }
+      );
       if (response.ok) {
         word.native.pronunciation = response.data['native']['pronunciation'];
         updateWord(word);

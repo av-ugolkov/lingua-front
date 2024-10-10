@@ -14,7 +14,6 @@ import api, { AuthStore } from '@/scripts/api';
 export default function Menu() {
   const navigate = useNavigate();
   const { notificationWarning } = useNotificationStore();
-  const { fetchFunc: signOut } = api.post('/auth/sign_out', AuthStore.USE);
 
   return (
     <div className='fixed top-12 right-2 w-48 h-fit bg-gray-300 shadow-lg shadow-blue-300 z-[5]'>
@@ -52,7 +51,7 @@ export default function Menu() {
           <ArrowLeftStartOnRectangleIcon className='w-5 h-5 ml-2' />,
           () => {
             async function asyncLogout() {
-              const response = await signOut();
+              const response = await api.post('/auth/sign_out', AuthStore.USE);
               if (response.ok) {
                 deleteAccessToken();
                 navigate('/');

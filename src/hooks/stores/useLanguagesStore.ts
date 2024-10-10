@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import api from '@/scripts/api';
+import api, { AuthStore } from '@/scripts/api';
 
 export interface ILanguage {
   lang: string;
@@ -14,14 +14,7 @@ interface ILanguagesState {
 export const useLanguagesStore = create<ILanguagesState>((set) => ({
   languages: new Map(),
   fetchLanguages: async () => {
-    const response = await api.fetchData('/languages', {
-      method: 'get',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-    });
-
+    const response = await api.get('/languages', AuthStore.NO);
     if (response.ok) {
       const langs = new Map();
       response.data.forEach((item: any) => {

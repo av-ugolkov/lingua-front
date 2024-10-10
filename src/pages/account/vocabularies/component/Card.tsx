@@ -51,18 +51,10 @@ export default function Card({
       query: query,
     }
   );
-  const { fetchFunc: fetchEditVocabulary } = api.put(
-    `/account/vocabulary`,
-    AuthStore.USE
-  );
-  const { fetchFunc: fetchDeleteVocabulary } = api.delete(
-    `/account/vocabulary`,
-    AuthStore.USE
-  );
 
   function renameVocabulary(editData: IEditData) {
     async function asyncRenameVocabulary() {
-      const response = await fetchEditVocabulary({
+      const response = await api.put(`/account/vocabulary`, AuthStore.USE, {
         body: JSON.stringify({
           id: vocab.id,
           name: editData.name,
@@ -87,7 +79,7 @@ export default function Card({
 
   function deleteVocabulary() {
     async function asyncDeleteVocabulary() {
-      const response = await fetchDeleteVocabulary({
+      const response = await api.delete(`/account/vocabulary`, AuthStore.USE, {
         query: new Map([['name', vocabData.name]]),
       });
       if (response.ok) {

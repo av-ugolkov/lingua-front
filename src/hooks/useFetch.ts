@@ -23,18 +23,14 @@ const useFetch = (
       try {
         switch (method) {
           case RequestMethod.GET:
-            api
-              .get(url, useAuth)
-              .fetchFunc({ query: data?.query })
-              .then((respData) => {
-                setResponse(respData);
-                setIsLoading(false);
-              });
+            api.get(url, useAuth, { query: data?.query }).then((respData) => {
+              setResponse(respData);
+              setIsLoading(false);
+            });
             break;
           case RequestMethod.POST:
             api
-              .post(url, useAuth)
-              .fetchFunc({
+              .post(url, useAuth, {
                 body: data?.body,
                 query: data?.query,
               })
@@ -45,8 +41,7 @@ const useFetch = (
             break;
           case RequestMethod.PUT:
             api
-              .put(url, useAuth)
-              .fetchFunc({
+              .put(url, useAuth, {
                 body: data?.body,
                 query: data?.query,
               })
@@ -57,8 +52,7 @@ const useFetch = (
             break;
           case RequestMethod.DELETE:
             api
-              .delete(url, useAuth)
-              .fetchFunc({
+              .delete(url, useAuth, {
                 body: data?.body,
                 query: data?.query,
               })
