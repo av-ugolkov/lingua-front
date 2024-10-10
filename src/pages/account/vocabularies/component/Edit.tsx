@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
-import Button from '../elements/Button';
-import { fetchData } from '@/scripts/fetch/fetchData';
+import Button from '../../../../components/elements/Button';
+import api, { AuthStore } from '@/scripts/api';
 import { IAccess } from './Create';
 import CloseBtn from './CloseBtn';
-import BgLock from '../elements/BgLock';
+import BgLock from '../../../../components/elements/BgLock';
 import { AccessID } from '@/models/Access';
 
 export interface IEditData {
@@ -29,13 +29,7 @@ export default function Edit({
 
   useEffect(() => {
     async function asyncFetchAccesses() {
-      const respData = await fetchData('/accesses', {
-        method: 'get',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-      });
+      const respData = await api.get('/accesses', AuthStore.NO);
       if (respData.ok) {
         const accessesData: IAccess[] = [];
         respData.data.forEach((item: any) => {

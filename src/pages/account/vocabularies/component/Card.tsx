@@ -1,21 +1,17 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { TrashIcon, PencilIcon } from '@heroicons/react/24/outline';
 import ArrowBothSide from '@/assets/ArrowBothSide';
 
 import { useVocabulariesStore } from '@/hooks/stores/useVocabulariesStore';
-import DropdownMenu from '../elements/Dropdown/DropdownMenu';
-import DropdownItem from '../elements/Dropdown/Item';
-import {
-  RequestMethod,
-  AuthStore,
-  useFetch,
-  useFetchFunc,
-} from '@/hooks/fetch/useFetch';
+import DropdownMenu from '../../../../components/elements/Dropdown/DropdownMenu';
+import DropdownItem from '../../../../components/elements/Dropdown/Item';
 import Edit, { IEditData } from './Edit';
 import { useLanguagesStore } from '@/hooks/stores/useLanguagesStore';
-import LockItem from '../elements/LockItem';
-import { VocabularyData } from "@/models/Vocabulary.ts";
+import LockItem from '../../../../components/elements/LockItem';
+import { VocabularyData } from '@/models/Vocabulary.ts';
+import api, { AuthStore, IQueryType, RequestMethod } from '@/scripts/api';
+import useFetch from '@/hooks/useFetch';
 
 const CountRequestWords = '8';
 
@@ -38,26 +34,26 @@ export default function Card({
   const vocabulariesStore = useVocabulariesStore();
   const { languages } = useLanguagesStore();
 
+  const query = useMemo<IQueryType>(
+    () => [
+      ['id', vocab.id],
+      ['limit', `${CountRequestWords}`],
+    ],
+    [vocab.id]
+  );
+
   const { isLoading, response } = useFetch(
     '/vocabulary/words/random',
     RequestMethod.GET,
     AuthStore.USE,
-    { query: `id=${vocab.id}&limit=${CountRequestWords}` }
-  );
-  const { fetchFunc: fetchEditVocabulary } = useFetchFunc(
-    `/account/vocabulary`,
-    RequestMethod.PUT,
-    AuthStore.USE
-  );
-  const { fetchFunc: fetchDeleteVocabulary } = useFetchFunc(
-    `/account/vocabulary`,
-    RequestMethod.DELETE,
-    AuthStore.USE
+    {
+      query: query,
+    }
   );
 
   function renameVocabulary(editData: IEditData) {
     async function asyncRenameVocabulary() {
-      const response = await fetchEditVocabulary({
+      const response = await api.put(`/account/vocabulary`, AuthStore.USE, {
         body: JSON.stringify({
           id: vocab.id,
           name: editData.name,
@@ -82,8 +78,8 @@ export default function Card({
 
   function deleteVocabulary() {
     async function asyncDeleteVocabulary() {
-      const response = await fetchDeleteVocabulary({
-        query: `name=${vocabData.name}`,
+      const response = await api.delete(`/account/vocabulary`, AuthStore.USE, {
+        query: [['name', vocabData.name]],
       });
       if (response.ok) {
         vocabulariesStore.removeVocabulary(vocab.id);

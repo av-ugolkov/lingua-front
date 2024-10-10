@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-import { EmptyVocabulary, VocabularyData } from "@/models/Vocabulary.ts";
+import { EmptyVocabulary, VocabularyData } from '@/models/Vocabulary.ts';
 
 interface VocabulariesState {
   vocabularies: VocabularyData[];
@@ -8,6 +8,7 @@ interface VocabulariesState {
   setVocabularies: (vocabularies: VocabularyData[]) => void;
   addVocabulary: (vocabulary: VocabularyData) => void;
   removeVocabulary: (id: string) => void;
+  getWords: (id: string) => string[];
 }
 
 export const useVocabulariesStore = create<VocabulariesState>((set, get) => ({
@@ -36,4 +37,13 @@ export const useVocabulariesStore = create<VocabulariesState>((set, get) => ({
         (vocabulary) => vocabulary.id !== id
       ),
     })),
+  getWords: (id) => {
+    const vocabulary = get().vocabularies.find(
+      (vocabulary) => vocabulary.id === id
+    );
+    if (!vocabulary) {
+      return [];
+    }
+    return vocabulary.words;
+  },
 }));

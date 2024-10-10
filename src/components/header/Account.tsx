@@ -1,4 +1,4 @@
-import Avatar from './Avatar';
+import Avatar from '../elements/Avatar';
 import { useState } from 'react';
 import Menu from './Menu';
 

@@ -3,28 +3,40 @@ import { useNavigate } from 'react-router-dom';
 
 import HeaderBtn from './HeaderBtn';
 import Account from './Account';
-import { RequestMethod, AuthStore, useFetch } from '@/hooks/fetch/useFetch';
+import api, { AuthStore } from '@/scripts/api';
+import { getAccessToken, isActiveToken } from '@/scripts/AuthToken';
 
 export default function Header() {
   const navigate = useNavigate();
-  const { isLoading, response } = useFetch(
-    '/user/id',
-    RequestMethod.GET,
-    AuthStore.USE
-  );
+  const [isLoading, setIsLoading] = useState(true);
 
   const [isAuth, setIsAuth] = useState(false);
   const [accountName, setAccountName] = useState('');
 
   useEffect(() => {
-    if (response.ok) {
-      setIsAuth(true);
-      setAccountName(response.data['name']);
-    } else {
+    async function asyncGetUser() {
+      const response = await api.get('/user/id', AuthStore.USE);
+      if (response.ok) {
+        setIsAuth(true);
+        setAccountName(response.data['name']);
+      } else if (response.status === 401) {
+        signOut();
+      }
+      setIsLoading(false);
+    }
+
+    function signOut() {
       setIsAuth(false);
       setAccountName('');
+      setIsLoading(false);
     }
-  }, [response]);
+
+    if (isActiveToken() || getAccessToken() !== '') {
+      asyncGetUser();
+    } else {
+      signOut();
+    }
+  }, []);
 
   if (isLoading) {
     return <div></div>;

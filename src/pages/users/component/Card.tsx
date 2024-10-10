@@ -1,19 +1,15 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import clsx from 'clsx';
 
-import Avatar from '../header/Avatar';
-import Button from '../elements/Button';
-import {
-  AuthStore,
-  RequestMethod,
-  useFetch,
-  useFetchFunc,
-} from '@/hooks/fetch/useFetch';
-import ShortCard from '../elements/Vocabulary/ShortCard';
+import Avatar from '@/components/elements/Avatar';
+import Button from '@/components/elements/Button';
+import ShortCard from '@/components/elements/Vocabulary/ShortCard';
+import useFetch from '@/hooks/useFetch';
 import { AccessID } from '@/models/Access';
-import { useNotificationStore } from '../notification/useNotificationStore';
+import { useNotificationStore } from '@/components/notification/useNotificationStore';
 import { getUserID, isActiveToken } from '@/scripts/AuthToken';
 import { IUser } from './List';
+import api, { AuthStore, IQueryType, RequestMethod } from '@/scripts/api';
 
 export interface IVocab {
   id: string;
@@ -29,34 +25,32 @@ export default function Card(user: IUser) {
   const [vocabularies, setVocabularies] = useState<IVocab[]>([]);
   const [isSubscribe, setIsSubscribe] = useState(false);
   const { notificationSuccess, notificationError } = useNotificationStore();
+
+  const queryVocabUser = useMemo<IQueryType>(
+    () => [['user_id', user.id]],
+    [user.id]
+  );
   const { isLoading: isLoadingUser, response: responseUser } = useFetch(
     '/vocabularies/user',
     RequestMethod.GET,
     AuthStore.OPTIONAL,
-    { query: `user_id=${user.id}` }
-  );
-  const { fetchFunc: fetchCheck } = useFetchFunc(
-    '/subscriber/check',
-    RequestMethod.GET,
-    AuthStore.USE
+    { query: queryVocabUser }
   );
 
-  const { fetchFunc: fetchSubscribe } = useFetchFunc(
-    '/user/subscribe',
-    RequestMethod.POST,
-    AuthStore.USE
-  );
-  const { fetchFunc: fetchUnsubscribe } = useFetchFunc(
-    '/user/unsubscribe',
-    RequestMethod.POST,
-    AuthStore.USE
-  );
+  async function fetchSubscribe(subUserID: string) {
+    return api.post('/user/subscribe', AuthStore.USE, {
+      body: JSON.stringify({ id: subUserID }),
+    });
+  }
+  async function fetchUnsubscribe(subUserID: string) {
+    return api.post('/user/unsubscribe', AuthStore.USE, {
+      body: JSON.stringify({ id: subUserID }),
+    });
+  }
 
   function userSubscribe(subUserID: string) {
     async function asyncSubscribe() {
-      const response = await fetchSubscribe({
-        body: JSON.stringify({ id: subUserID }),
-      });
+      const response = await fetchSubscribe(subUserID);
       if (response.ok) {
         notificationSuccess(`You subscribed to ${user.name}`);
       } else {
@@ -68,9 +62,7 @@ export default function Card(user: IUser) {
 
   function userUnsubscribe(subUserID: string) {
     async function asyncUnsubscribe() {
-      const response = await fetchUnsubscribe({
-        body: JSON.stringify({ id: subUserID }),
-      });
+      const response = await fetchUnsubscribe(subUserID);
       if (response.ok) {
         notificationSuccess(`You unsubscribed from ${user.name}`);
       } else {
@@ -153,8 +145,8 @@ export default function Card(user: IUser) {
 
   useEffect(() => {
     async function asyncCheck() {
-      const response = await fetchCheck({
-        query: `subscriber_id=${user.id}`,
+      const response = await api.get('/subscriber/check', AuthStore.USE, {
+        query: [['subscriber_id', user.id]],
       });
       if (response.ok) {
         setIsSubscribe(response.data['is_subscriber']);
@@ -163,7 +155,7 @@ export default function Card(user: IUser) {
     if (isActiveToken()) {
       asyncCheck();
     }
-  }, [fetchCheck, user.id]);
+  }, [user.id]);
 
   if (isLoadingUser) {
     return <></>;
@@ -171,7 +163,7 @@ export default function Card(user: IUser) {
 
   return (
     <>
-      <div className='flex flex-row h-fit p-5 bg-blue-100 shadow-md shadow-blue-300'>
+      <div className='flex flex-row min-w-fit w-full h-fit p-5 bg-blue-100 shadow-md shadow-blue-300'>
         <div className='flex flex-col justify-between pr-5 border-r border-black'>
           <div>
             <div className='flex items-center mb-5 gap-x-5'>

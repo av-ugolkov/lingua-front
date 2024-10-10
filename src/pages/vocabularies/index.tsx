@@ -1,11 +1,12 @@
+import { useEffect, useState } from 'react';
+
 import SearchInput from '@/components/elements/SearchPanel/SearchInput';
 import SortedPanel from '@/components/elements/SortAndOrder/SortedPanel';
-import List from '@/components/vocabularies/List';
+import List from '@/pages/vocabularies/component/List';
 import ListBox, { IListBoxItem } from '@/components/elements/ListBox';
 import { useLanguagesStore } from '@/hooks/stores/useLanguagesStore';
 import { SortWordTypes } from '@/models/Sorted';
 import { LanguageIcon } from '@heroicons/react/24/outline';
-import { useEffect, useState } from 'react';
 import ArrowBothSide from '@/assets/ArrowBothSide';
 
 export default function Vocabularies() {
@@ -37,8 +38,8 @@ export default function Vocabularies() {
   }
 
   return (
-    <div className='grid p-4 min-w-[540px] w-full gap-5 grid-cols-1'>
-      <div className='flex justify-between'>
+    <>
+      <div className='flex justify-between py-5'>
         <div className='flex justify-start'>
           <SearchInput />
           <div className='flex items-center ml-3'>
@@ -46,7 +47,7 @@ export default function Vocabularies() {
             <ListBox
               id='native_language'
               items={mapToLanguages()}
-              defaultIndexValue={0}
+              indexValue={0}
               onChange={(value) => {
                 const lang =
                   languages.find((tp) => tp.lang === value) || languages[0];
@@ -58,7 +59,7 @@ export default function Vocabularies() {
             <ListBox
               id='translate_language'
               items={mapToLanguages()}
-              defaultIndexValue={0}
+              indexValue={0}
               onChange={(value) => {
                 const lang =
                   languages.find((tp) => tp.lang === value) || languages[0];
@@ -76,6 +77,6 @@ export default function Vocabularies() {
         nativeLang={nativeLang}
         translateLang={translateLang}
       />
-    </div>
+    </>
   );
 }

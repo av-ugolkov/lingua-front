@@ -1,15 +1,15 @@
 import { createBrowserRouter } from 'react-router-dom';
 
 import Root from '@/layouts/Root';
-import Main from '@/pages/Main';
+import Main from '@/pages/main';
 import About from '@/pages/About';
 import SignUp from '@/pages/SignUp';
 import SignIn from '@/pages/SignIn';
 import Contact from '@/pages/Contact';
-import AccountVocabularies from '@/pages/AccountVocabularies';
+import AccountVocabularies from '@/pages/account/vocabularies';
 import Vocabulary from '@/pages/Vocabulary';
-import Vocabularies from '@/pages/Vocabularies';
-import Users from './pages/Users';
+import Vocabularies from '@/pages/vocabularies';
+import Users from './pages/users';
 
 export const router = createBrowserRouter([
   {

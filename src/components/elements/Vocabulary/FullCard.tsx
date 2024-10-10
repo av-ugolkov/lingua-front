@@ -1,73 +1,30 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import AuthPopup from '../Auth/AuthPopup';
 import LockItem from '../LockItem';
-import {
-  AuthStore,
-  RequestMethod,
-  useFetch,
-  useFetchFunc,
-} from '@/hooks/fetch/useFetch';
-import { useLanguagesStore } from '@/hooks/stores/useLanguagesStore';
 import Tag from '../Tags/Tag';
 import ArrowBothSide from '@/assets/ArrowBothSide';
+import { useLanguagesStore } from '@/hooks/stores/useLanguagesStore';
 import { AccessID, AccessStatus } from '@/models/Access';
 import { getAccessToken } from '@/scripts/AuthToken';
 import { useNotificationStore } from '@/components/notification/useNotificationStore';
 import { useVocabulariesStore } from '@/hooks/stores/useVocabulariesStore.ts';
-
-const CountRequestWords = '12';
-
-interface IWord {
-  value: string;
-  pronunciation: string;
-}
+import Menu from './Menu';
+import api, { AuthStore } from '@/scripts/api';
 
 export default function FullCard({
   id,
   authStore,
-  rightCornerItem,
 }: {
   id: string;
   authStore: AuthStore;
-  rightCornerItem?: JSX.Element;
 }) {
   const navigate = useNavigate();
   const [isShowSignInUpPopup, setIsShowSignInUpPopup] = useState(false);
   const { languages } = useLanguagesStore();
   const { notificationWarning } = useNotificationStore();
-  const { getVocabulary } = useVocabulariesStore();
-  const [words, setWords] = useState<IWord[]>([]);
-
-  const { response: respRandomWords } = useFetch(
-    '/vocabulary/words/random',
-    RequestMethod.GET,
-    authStore,
-    { query: `id=${id}&limit=${CountRequestWords}` }
-  );
-  const { fetchFunc: fetchVocabAccess } = useFetchFunc(
-    '/vocabulary/access/user',
-    RequestMethod.GET,
-    authStore
-  );
-
-  useEffect(() => {
-    if (respRandomWords.ok) {
-      respRandomWords.data.forEach((item: any) => {
-        setWords((words) => [
-          ...words,
-          {
-            value: item['native']['text'],
-            pronunciation: item['native']['pronunciation'],
-          },
-        ]);
-      });
-    }
-    return () => {
-      setWords([]);
-    };
-  }, [respRandomWords]);
+  const { getVocabulary, getWords } = useVocabulariesStore();
 
   function openVocabulary() {
     if (
@@ -84,7 +41,9 @@ export default function FullCard({
   }
 
   async function asyncVocabAccess() {
-    const response = await fetchVocabAccess({ query: `id=${id}` });
+    const response = await api.get('/vocabulary/access/user', authStore, {
+      query: [['id', id]],
+    });
     if (response.ok) {
       const access = response.data['access'];
       switch (access) {
@@ -102,8 +61,14 @@ export default function FullCard({
 
   return (
     <div className='relative bg-blue-100 shadow-md shadow-blue-300 duration-300 hover:shadow-lg hover:shadow-blue-400 hover:duration-300'>
+      <div className='absolute top-2 right-1'>
+        <Menu
+          key={id}
+          vocabID={id}
+        />
+      </div>
       <button
-        className='flex flex-col justify-between items-start w-full px-5 py-4'
+        className='flex flex-col justify-between items-start w-full px-6 py-5'
         onClick={openVocabulary}>
         <div className='flex w-full justify-between'>
           <div className='flex gap-x-1 items-center'>
@@ -112,16 +77,15 @@ export default function FullCard({
             </h2>
             <LockItem accessID={getVocabulary(id).accessID} />
           </div>
-          {rightCornerItem}
         </div>
         <div className='flex w-full text-gray-500'>
           {getVocabulary(id).description}
         </div>
         <div className='flex flex-wrap w-full gap-1 mt-2'>
-          {words.map((word) => (
+          {getWords(id).map((word) => (
             <Tag
-              key={word.value}
-              value={word.value}
+              key={word}
+              value={word}
             />
           ))}
         </div>

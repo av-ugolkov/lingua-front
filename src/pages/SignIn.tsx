@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
-import { fetchData } from '@/scripts/fetch/fetchData';
 import Button from '@/components/elements/Button';
 import AuthInput from '@/components/elements/Auth/AuthInput';
 import { setAccessToken } from '@/scripts/AuthToken';
+import api, { AuthStore } from '@/scripts/api';
 
 export default function SignIn() {
   const navigate = useNavigate();
@@ -12,14 +12,8 @@ export default function SignIn() {
   const [password, setPassword] = useState('');
 
   async function signIn() {
-    const respData = await fetchData('/auth/sign_in', {
-      method: 'post',
-      credentials: 'include',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-        Authorization: `Basic ${btoa(username + ':' + password)}`,
-      },
+    const respData = await api.post('/auth/sign_in', AuthStore.NO, {
+      headers: { Authorization: `Basic ${btoa(username + ':' + password)}` },
     });
     if (respData.ok) {
       setAccessToken(respData.data.access_token);

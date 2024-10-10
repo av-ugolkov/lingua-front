@@ -1,6 +1,5 @@
 import { useNavigate } from 'react-router-dom';
 
-import { AuthStore, RequestMethod, useFetchFunc } from '@/hooks/fetch/useFetch';
 import { useNotificationStore } from '../notification/useNotificationStore';
 import {
   ArrowLeftStartOnRectangleIcon,
@@ -10,15 +9,11 @@ import {
   UserGroupIcon,
 } from '@heroicons/react/24/outline';
 import { deleteAccessToken } from '@/scripts/AuthToken';
+import api, { AuthStore } from '@/scripts/api';
 
 export default function Menu() {
   const navigate = useNavigate();
   const { notificationWarning } = useNotificationStore();
-  const { fetchFunc: signOut } = useFetchFunc(
-    '/auth/sign_out',
-    RequestMethod.POST,
-    AuthStore.USE
-  );
 
   return (
     <div className='fixed top-12 right-2 w-48 h-fit bg-gray-300 shadow-lg shadow-blue-300 z-[5]'>
@@ -56,7 +51,7 @@ export default function Menu() {
           <ArrowLeftStartOnRectangleIcon className='w-5 h-5 ml-2' />,
           () => {
             async function asyncLogout() {
-              const response = await signOut();
+              const response = await api.post('/auth/sign_out', AuthStore.USE);
               if (response.ok) {
                 deleteAccessToken();
                 navigate('/');

@@ -7,14 +7,14 @@ export interface IListBoxItem {
 export default function ListBox({
   id,
   items,
-  defaultIndexValue,
+  indexValue,
   onChange,
   classSelect,
   classOption,
 }: {
   id: string;
   items: IListBoxItem[];
-  defaultIndexValue: number;
+  indexValue: number;
   onChange: (value: string | number) => void;
   classSelect?: string;
   classOption?: string;
@@ -23,7 +23,7 @@ export default function ListBox({
     <>
       <select
         id={id}
-        defaultValue={items[defaultIndexValue].value}
+        value={items[indexValue].value}
         onChange={(e) => {
           onChange(e.target.value as any);
         }}
