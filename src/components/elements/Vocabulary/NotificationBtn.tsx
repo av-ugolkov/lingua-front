@@ -1,35 +1,18 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useState } from 'react';
 import { BellIcon } from '@heroicons/react/24/outline';
 import { BellAlertIcon } from '@heroicons/react/24/solid';
 
 import { getUserID, isActiveToken } from '@/scripts/AuthToken.ts';
-import api, { AuthStore, IQueryType, RequestMethod } from '@/scripts/api';
-import useFetch from '@/hooks/useFetch';
+import api, { AuthStore } from '@/scripts/api';
 
-export default function NotificationBtn({ id }: { id: string }) {
-  const [isAlarm, setAlarm] = useState(false);
-
-  const queryGetNotification = useMemo<IQueryType>(
-    () => [
-      ['user_id', getUserID()],
-      ['vocab_id', id],
-    ],
-    [id]
-  );
-  const { isLoading, response: respGetNotification } = useFetch(
-    '/notifications/vocabulary',
-    RequestMethod.GET,
-    AuthStore.USE,
-    {
-      query: queryGetNotification,
-    }
-  );
-
-  useEffect(() => {
-    if (respGetNotification.ok) {
-      setAlarm(respGetNotification.data['notification']);
-    }
-  }, [respGetNotification.data, respGetNotification.ok]);
+export default function NotificationBtn({
+  id,
+  notif,
+}: {
+  id: string;
+  notif: boolean;
+}) {
+  const [isNotif, setNotif] = useState(notif);
 
   function setNotificationVocab() {
     async function asyncSetNotificationVocab() {
@@ -40,16 +23,14 @@ export default function NotificationBtn({ id }: { id: string }) {
         ],
       });
       if (resp.ok) {
-        setAlarm(resp.data['notification']);
+        setNotif(resp.data['notification']);
       }
     }
 
     asyncSetNotificationVocab();
   }
 
-  if (isLoading) {
-    return <></>;
-  } else if (!isActiveToken()) {
+  if (!isActiveToken()) {
     return (
       <div
         className='w-full text-gray-400'
@@ -66,7 +47,7 @@ export default function NotificationBtn({ id }: { id: string }) {
         setNotificationVocab();
         event.stopPropagation();
       }}>
-      {isAlarm ? (
+      {isNotif ? (
         <BellAlertIcon
           className='text-green-500'
           title='ON'
