@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ExclamationCircleIcon } from '@heroicons/react/24/outline';
 
 import Button from '../Button';
-import CloseBtn from '@/components/user_vocabularies/CloseBtn';
+import CloseBtn from '@/pages/account/vocabularies/component/CloseBtn';
 import BgLock from '../BgLock';
 
 export default function AuthPopup({ close }: { close: () => void }) {

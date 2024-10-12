@@ -8,92 +8,69 @@ import {
   XCircleIcon,
 } from '@heroicons/react/24/outline';
 
-import { RequestMethod, AuthStore, useFetchFunc } from '@/hooks/fetch/useFetch';
-import {
-  EmptyWord,
-  InvalidateDate,
-  VocabWordState,
-  useVocabWordsStore,
-} from '@/hooks/stores/useVocabWordsStore';
+import { useVocabWordsStore } from '@/hooks/stores/useVocabWordsStore';
 import BtnCard from './BtnCard';
 import Tags from '../elements/Tags/Tags';
 import DropdownMenu from '../elements/Dropdown/DropdownMenu';
 import DropdownItem from '../elements/Dropdown/Item';
 import InputField from './InputField';
 import { useNotificationStore } from '../notification/useNotificationStore';
+import { EmptyVocabWord, VocabWord } from '@/models/Word.ts';
+import { InvalidateDate } from '@/models/Base.ts';
+import api, { AuthStore } from '@/scripts/api';
 
 export default function WordCard({
   word,
   updateWord,
   editable = true,
 }: {
-  word: VocabWordState;
-  updateWord: (state: VocabWordState) => void;
+  word: VocabWord;
+  updateWord: (state: VocabWord) => void;
   editable?: boolean;
 }) {
   const { id: vocabID } = useParams();
   const vocabWordsStore = useVocabWordsStore();
   const { notificationWarning } = useNotificationStore();
-  const { fetchFunc: fetchAddWord } = useFetchFunc(
-    '/vocabulary/word',
-    RequestMethod.POST,
-    AuthStore.USE
-  );
-  const { fetchFunc: fetchUpdateWord } = useFetchFunc(
-    '/vocabulary/word/update',
-    RequestMethod.POST,
-    AuthStore.USE
-  );
-  const { fetchFunc: fetchDeleteWord } = useFetchFunc(
-    '/vocabulary/word',
-    RequestMethod.DELETE,
-    AuthStore.USE
-  );
-  const { fetchFunc: fetchWord } = useFetchFunc(
-    '/vocabulary/word',
-    RequestMethod.GET,
-    AuthStore.USE
-  );
-  const { fetchFunc: fetchPronunciation } = useFetchFunc(
-    '/vocabulary/word/pronunciation',
-    RequestMethod.GET,
-    AuthStore.USE
-  );
 
   function addVocabWord() {
     async function asyncAddWord() {
-      const jsonBodyData = {
-        id: '00000000-0000-0000-0000-000000000000',
-        vocab_id: vocabID,
+      const jsonBodyData: VocabWord = {
+        id: '',
+        vocabID: vocabID || '',
         native: {
-          id: '00000000-0000-0000-0000-000000000000',
-          text: word.wordValue,
-          pronunciation: word.wordPronunciation,
+          id: '',
+          text: word.native.text,
+          pronunciation: word.native.pronunciation,
         },
         translates: word.translates,
         examples: word.examples,
+        updated: InvalidateDate,
+        created: InvalidateDate,
       };
       const bodyData = JSON.stringify(jsonBodyData);
-      const response = await fetchAddWord({ body: bodyData });
+      const response = await api.post('/vocabulary/word', AuthStore.USE, {
+        body: bodyData,
+      });
       if (response.ok) {
-        const newWord: VocabWordState = {
+        const newWord: VocabWord = {
           id: response.data['id'],
-          wordID: response.data['native']['id'],
+          native: {
+            id: response.data['native']['id'],
+            text: word.native.text,
+            pronunciation: word.native.pronunciation,
+          },
           vocabID: vocabID || '',
-          wordValue: word.wordValue,
-          wordPronunciation: word.wordPronunciation,
-          translates: [...word.translates],
-          examples: [...word.examples],
+          translates: [...(word.translates || [])],
+          examples: [...(word.examples || [])],
           created: new Date(response.data['created']),
           updated: new Date(response.data['updated']),
         };
 
         vocabWordsStore.addWord(newWord);
-        updateWord(EmptyWord);
-      } else {
-        console.warn(response);
+        updateWord(EmptyVocabWord);
       }
     }
+
     asyncAddWord();
   }
 
@@ -104,15 +81,19 @@ export default function WordCard({
         vocab_id: vocabID,
         native: {
           id: word.id,
-          text: word.wordValue,
-          pronunciation: word.wordPronunciation,
+          text: word.native.text,
+          pronunciation: word.native.pronunciation,
         },
         translates: word.translates,
         examples: word.examples,
       };
       const bodyData = JSON.stringify(jsonBodyData);
 
-      const response = await fetchUpdateWord({ body: bodyData });
+      const response = await api.post(
+        '/vocabulary/word/update',
+        AuthStore.USE,
+        { body: bodyData }
+      );
       console.warn('response: ', response.data);
     }
 
@@ -123,7 +104,9 @@ export default function WordCard({
     async function asyncDelete() {
       const jsonBodyData = { vocab_id: vocabID, word_id: word.id };
       const bodyData = JSON.stringify(jsonBodyData);
-      const response = await fetchDeleteWord({ body: bodyData });
+      const response = await api.delete('/vocabulary/word', AuthStore.USE, {
+        body: bodyData,
+      });
 
       if (response.ok) {
         vocabWordsStore.removeWord(word.id);
@@ -137,10 +120,13 @@ export default function WordCard({
 
   function cancelChanges() {
     async function asyncCancelChanges() {
-      const response = await fetchWord({ query: `id=${word.id}` });
+      const response = await api.get('/vocabulary/word', AuthStore.USE, {
+        query: [['id', word.id]],
+      });
       if (response.ok) {
-        word.wordValue = response.data['native']['text'];
-        word.wordPronunciation = response.data['native']['pronunciation'] || '';
+        word.native.text = response.data['native']['text'];
+        word.native.pronunciation =
+          response.data['native']['pronunciation'] || '';
         word.examples = response.data['examples'] || [];
         word.translates = response.data['translates'] || [];
         updateWord(word);
@@ -154,11 +140,18 @@ export default function WordCard({
 
   function getPronunciation() {
     async function asyncGetPronunciation() {
-      const response = await fetchPronunciation({
-        query: `id=${vocabID}&text=${word.wordValue}`,
-      });
+      const response = await api.get(
+        '/vocabulary/word/pronunciation',
+        AuthStore.USE,
+        {
+          query: [
+            ['id', vocabID],
+            ['text', word.native.text],
+          ],
+        }
+      );
       if (response.ok) {
-        word.wordPronunciation = response.data['native']['pronunciation'];
+        word.native.pronunciation = response.data['native']['pronunciation'];
         updateWord(word);
       } else {
         notificationWarning(response.data);
@@ -171,24 +164,26 @@ export default function WordCard({
   return (
     <>
       <div className='flex flex-row min-w-[540px] bg-blue-100 mb-8 border-solid border-[1px] border-gray-300 shadow-md shadow-blue-300'>
-        <div className='p-2 m-2 w-[96%]'>
+        <div className='p-2 m-2 w-full'>
           <div className='flex gap-x-3'>
             <InputField
-              value={word.wordValue}
+              value={word.native.text}
               placeholder='Word'
+              disabled={!editable}
               onChange={(v) => {
-                word.wordValue = v;
+                word.native.text = v;
                 updateWord(word);
               }}
             />
             <InputField
-              value={word.wordPronunciation}
+              value={word.native.pronunciation}
               placeholder='Pronunciation'
+              disabled={!editable}
               onChange={(v) => {
-                word.wordPronunciation = v;
+                word.native.pronunciation = v;
                 updateWord(word);
               }}>
-              {word.wordValue !== '' && (
+              {word.native.text !== '' && editable && (
                 <ArrowDownCircleIcon
                   title='Download pronunciation'
                   onClick={() => {
@@ -205,6 +200,7 @@ export default function WordCard({
               id={word.id}
               tags={word.translates}
               placeholder='Type new translate and press Enter'
+              disabled={!editable}
               onAddTag={(tag) => {
                 word.translates.push(tag);
                 updateWord(word);
@@ -221,6 +217,7 @@ export default function WordCard({
               id={word.id}
               tags={word.examples}
               placeholder='Type new example and press Enter'
+              disabled={!editable}
               onAddTag={(tag) => {
                 word.examples.push(tag);
                 updateWord(word);
@@ -237,17 +234,17 @@ export default function WordCard({
             </div>
           )}
         </div>
-        <div className='flex flex-col justify-around align-middle mx-2'>
-          {word.id === '' ? (
-            <BtnCard onClick={addVocabWord}>
-              <PlusCircleIcon
-                className='w-6'
-                color='blue'
-                title='Add word'
-              />
-            </BtnCard>
-          ) : (
-            editable && (
+        {editable && (
+          <div className='flex flex-col justify-around align-middle mx-2'>
+            {word.id === '' ? (
+              <BtnCard onClick={addVocabWord}>
+                <PlusCircleIcon
+                  className='w-6'
+                  color='blue'
+                  title='Add word'
+                />
+              </BtnCard>
+            ) : (
               <>
                 <DropdownMenu
                   title='Menu'
@@ -280,9 +277,9 @@ export default function WordCard({
                   />
                 </BtnCard>
               </>
-            )
-          )}
-        </div>
+            )}
+          </div>
+        )}
       </div>
     </>
   );

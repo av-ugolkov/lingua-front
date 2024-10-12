@@ -1,42 +1,17 @@
 import { create } from 'zustand';
 
 import { Order, Sorted } from '@/models/Sorted';
-
-export const InvalidateDate = new Date(1970, 1, 1, 0, 0, 0, 0);
-
-export interface VocabWordState {
-  id: string;
-  vocabID: string;
-  wordID: string;
-  wordValue: string;
-  wordPronunciation: string;
-  translates: string[];
-  examples: string[];
-  updated: Date;
-  created: Date;
-}
+import { VocabWord } from "@/models/Word.ts";
 
 interface VocabWordsState {
-  words: VocabWordState[];
-  setWords: (words: VocabWordState[]) => void;
-  getOrderedWords: (sort: Sorted, order: Order) => VocabWordState[];
-  addWord: (word: VocabWordState) => void;
-  updateWord: (word: VocabWordState) => void;
+  words: VocabWord[];
+  setWords: (words: VocabWord[]) => void;
+  getOrderedWords: (sort: Sorted, order: Order) => VocabWord[];
+  addWord: (word: VocabWord) => void;
+  updateWord: (word: VocabWord) => void;
   removeWord: (id: string) => void;
   clearWords: () => void;
 }
-
-export const EmptyWord: VocabWordState = {
-  id: '',
-  vocabID: '',
-  wordID: '',
-  wordValue: '',
-  wordPronunciation: '',
-  translates: [],
-  examples: [],
-  updated: InvalidateDate,
-  created: InvalidateDate,
-};
 
 export const useVocabWordsStore = create<VocabWordsState>((set, get) => ({
   words: [],
@@ -61,9 +36,9 @@ export const useVocabWordsStore = create<VocabWordsState>((set, get) => ({
         break;
       case Sorted.ABC:
         if (order === Order.DESC) {
-          words.sort((a, b) => b.wordValue.localeCompare(a.wordValue));
+          words.sort((a, b) => b.native.text.localeCompare(a.native.text));
         } else {
-          words.sort((a, b) => a.wordValue.localeCompare(b.wordValue));
+          words.sort((a, b) => a.native.text.localeCompare(b.native.text));
         }
         break;
     }

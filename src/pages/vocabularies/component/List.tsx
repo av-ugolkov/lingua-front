@@ -1,13 +1,13 @@
 import { useEffect, useMemo } from 'react';
 
 import FullCard from '@/components/elements/Vocabulary/FullCard';
-import Pagination from '../../components/elements/Pagination/Pagination';
-import { useSearchStore } from '../../components/elements/SearchPanel/useSearchStore';
-import { useSortedStore } from '../../components/elements/SortAndOrder/useSortedStore';
+import Pagination from '../../../components/elements/Pagination/Pagination';
+import { useSearchStore } from '../../../components/elements/SearchPanel/useSearchStore';
+import { useSortedStore } from '../../../components/elements/SortAndOrder/useSortedStore';
 import { useVocabulariesStore } from '@/hooks/stores/useVocabulariesStore.ts';
 import { AuthStore, IQueryType, RequestMethod } from '@/scripts/api';
 import useFetch from '@/hooks/useFetch';
-import { usePaginationStore } from '../../components/elements/Pagination/usePaginationStore';
+import { usePaginationStore } from '../../../components/elements/Pagination/usePaginationStore';
 
 interface SortedInputProps {
   nativeLang: string;

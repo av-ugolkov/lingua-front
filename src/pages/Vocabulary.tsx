@@ -1,27 +1,51 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
 import List from '@/components/vocabulary/List';
-import { RequestMethod, AuthStore, useFetch } from '@/hooks/fetch/useFetch';
 import SearchInput from '@/components/elements/SearchPanel/SearchInput';
 import SortedPanel from '@/components/elements/SortAndOrder/SortedPanel';
 import { SortWordTypes } from '@/models/Sorted';
+import Header from '@/components/vocabulary/Header.tsx';
+import { VocabularyData } from '@/models/Vocabulary.ts';
+import { useVocabulariesStore } from '@/hooks/stores/useVocabulariesStore.ts';
+import { AuthStore, IQueryType, RequestMethod } from '@/scripts/api';
+import useFetch from '@/hooks/useFetch';
 
 export default function Vocabulary() {
   const { id } = useParams();
-  const [name, setName] = useState('');
-  const { isLoading, response } = useFetch(
-    `/vocabulary`,
+
+  const query = useMemo<IQueryType>(() => [['id', id]], [id]);
+  const { isLoading, response: respVocabInfo } = useFetch(
+    '/vocabulary/info',
     RequestMethod.GET,
-    AuthStore.USE,
-    { query: `id=${id}` }
+    AuthStore.OPTIONAL,
+    {
+      query: query,
+    }
   );
 
+  const vocabulariesStore = useVocabulariesStore();
   useEffect(() => {
-    if (response.ok) {
-      setName(response.data['name']);
+    if (respVocabInfo.ok) {
+      const vocab: VocabularyData = {
+        id: respVocabInfo.data['id'],
+        name: respVocabInfo.data['name'],
+        userID: respVocabInfo.data['user_id'],
+        userName: respVocabInfo.data['user_name'],
+        accessID: respVocabInfo.data['access_id'],
+        nativeLang: respVocabInfo.data['native_lang'],
+        translateLang: respVocabInfo.data['translate_lang'],
+        description: respVocabInfo.data['description'],
+        wordsCount: respVocabInfo.data['words_count'],
+        editable: respVocabInfo.data['editable'],
+        tags: respVocabInfo.data['tags'],
+        words: respVocabInfo.data['words'],
+        createdAt: new Date(respVocabInfo.data['created_at']),
+        updatedAt: new Date(respVocabInfo.data['updated_at']),
+      };
+      vocabulariesStore.addVocabulary(vocab);
     }
-  }, [response]);
+  }, [respVocabInfo, vocabulariesStore]);
 
   if (isLoading) {
     return <div></div>;
@@ -29,7 +53,7 @@ export default function Vocabulary() {
 
   return (
     <>
-      <h2 className='pt-5 pb-2 text-2xl font-bold'>{name}</h2>
+      <Header />
       <div className='flex justify-between'>
         <SearchInput />
         <SortedPanel sortedTypes={SortWordTypes} />

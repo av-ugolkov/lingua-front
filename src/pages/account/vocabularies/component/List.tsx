@@ -1,25 +1,25 @@
 import { useEffect, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-import FullCard from '@/components/elements/Vocabulary/FullCard';
-import Pagination from '../../components/elements/Pagination/Pagination';
-import { useSearchStore } from '../../components/elements/SearchPanel/useSearchStore';
-import { useSortedStore } from '../../components/elements/SortAndOrder/useSortedStore';
-import { useVocabulariesStore } from '@/hooks/stores/useVocabulariesStore.ts';
+import { useVocabulariesStore } from '@/hooks/stores/useVocabulariesStore';
+import { useSearchStore } from '@/components/elements/SearchPanel/useSearchStore';
+import { useSortedStore } from '@/components/elements/SortAndOrder/useSortedStore';
 import { AuthStore, IQueryType, RequestMethod } from '@/scripts/api';
+import FullCard from '@/components/elements/Vocabulary/FullCard';
+import Pagination from '@/components/elements/Pagination/Pagination';
 import useFetch from '@/hooks/useFetch';
-import { usePaginationStore } from '../../components/elements/Pagination/usePaginationStore';
+import { usePaginationStore } from '@/components/elements/Pagination/usePaginationStore';
 
 interface SortedInputProps {
   nativeLang: string;
   translateLang: string;
 }
 
-const LIMIT_WORDS = 12;
-
 export default function List({ nativeLang, translateLang }: SortedInputProps) {
-  const { page, itemsPerPage, setCountItems } = usePaginationStore();
+  const navigate = useNavigate();
   const { sort, order } = useSortedStore();
   const { searchValue } = useSearchStore();
+  const { page, itemsPerPage, setCountItems } = usePaginationStore();
   const { vocabularies, addVocabulary, setVocabularies } =
     useVocabulariesStore();
 
@@ -32,14 +32,13 @@ export default function List({ nativeLang, translateLang }: SortedInputProps) {
       ['search', searchValue],
       ['native_lang', nativeLang],
       ['translate_lang', translateLang],
-      ['limit_words', LIMIT_WORDS],
     ],
     [page, itemsPerPage, order, sort, searchValue, nativeLang, translateLang]
   );
   const { isLoading, response: respVocabs } = useFetch(
-    '/vocabularies',
+    '/account/vocabularies',
     RequestMethod.GET,
-    AuthStore.NO,
+    AuthStore.USE,
     {
       query: query,
     }
@@ -58,33 +57,38 @@ export default function List({ nativeLang, translateLang }: SortedInputProps) {
           translateLang: item['translate_lang'],
           description: item['description'],
           wordsCount: item['words_count'],
-          tags: item['tags'] || [],
+          tags: item['tags'],
           words: item['words'] || [],
           createdAt: new Date(item['created_at']),
           updatedAt: new Date(item['updated_at']),
         });
       });
       setCountItems(respVocabs.data['total_count']);
+    } else if (respVocabs.status === 401) {
+      navigate('/');
     }
+
     return () => {
       setVocabularies([]);
     };
-  }, [respVocabs, addVocabulary, setVocabularies, setCountItems]);
+  }, [addVocabulary, setVocabularies, navigate, setCountItems, respVocabs]);
 
   if (isLoading) {
     return <div></div>;
   }
 
   return (
-    <div className='grid w-full gap-y-5 grid-cols-1'>
-      {vocabularies.map((item) => (
-        <FullCard
-          key={item.id}
-          id={item.id}
-          authStore={AuthStore.OPTIONAL}
-        />
-      ))}
-      <Pagination />
-    </div>
+    <>
+      <div className='grid w-full gap-y-5 grid-cols-1'>
+        {vocabularies.map((item) => (
+          <FullCard
+            key={item.id}
+            id={item.id}
+            authStore={AuthStore.USE}
+          />
+        ))}
+        <Pagination />
+      </div>
+    </>
   );
 }

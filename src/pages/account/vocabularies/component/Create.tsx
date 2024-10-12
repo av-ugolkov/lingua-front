@@ -2,31 +2,19 @@ import { useEffect, useState } from 'react';
 
 import { PlusIcon } from '@heroicons/react/24/outline';
 
-import Button from '../elements/Button';
+import Button from '../../../../components/elements/Button';
 import SelectLanguages from './SelectLanguages';
-import { VocabularyState } from '@/hooks/stores/useVocabulariesStore';
-import { fetchData } from '@/scripts/fetch/fetchData';
+import api, { AuthStore } from '@/scripts/api';
 import { ILanguage, useLanguagesStore } from '@/hooks/stores/useLanguagesStore';
 import CloseBtn from './CloseBtn';
-import BgLock from '../elements/BgLock';
-import { AccessID } from '@/models/Access';
+import BgLock from '../../../../components/elements/BgLock';
+import { EmptyVocabulary, VocabularyData } from '@/models/Vocabulary.ts';
 
 export interface IAccess {
   id: number;
   type: string;
   name: string;
 }
-
-const tempVocabulary: VocabularyState = {
-  id: '',
-  name: '',
-  accessID: AccessID.Public,
-  nativeLang: '',
-  translateLang: '',
-  description: '',
-  tags: [],
-  userID: '',
-};
 
 const tempLanguages: ILanguage[] = [];
 const tempAccesses: IAccess[] = [];
@@ -36,10 +24,10 @@ export default function Create({
   addCallback,
   closeCallback,
 }: {
-  addCallback: (vocabulary: VocabularyState) => void;
+  addCallback: (vocabulary: VocabularyData) => void;
   closeCallback: () => void;
 }) {
-  const [vocab, setVocab] = useState(tempVocabulary);
+  const [vocab, setVocab] = useState(EmptyVocabulary);
   const { languages: languagesStore } = useLanguagesStore();
   const [languages, setLanguages] = useState(tempLanguages);
   const [accesses, setAccesses] = useState(tempAccesses);
@@ -60,13 +48,7 @@ export default function Create({
 
   useEffect(() => {
     async function asyncFetchAccesses() {
-      const respData = await fetchData('/accesses', {
-        method: 'get',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-      });
+      const respData = await api.get('/accesses', AuthStore.NO);
       if (respData.ok) {
         const accessesData: IAccess[] = [];
         respData.data.forEach((item: any) => {

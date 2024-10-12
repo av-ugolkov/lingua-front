@@ -1,15 +1,17 @@
-import { IVocab } from './Card';
-import { useLanguagesStore } from '@/hooks/stores/useLanguagesStore';
-import { useNavigate } from 'react-router-dom';
-import LockItem from '../elements/LockItem';
-import { AccessID, AccessStatus } from '@/models/Access';
-import { AuthStore, RequestMethod, useFetchFunc } from '@/hooks/fetch/useFetch';
-import { getAccessToken } from '@/scripts/AuthToken';
-import { useNotificationStore } from '../notification/useNotificationStore';
 import { useState } from 'react';
-import AuthPopup from '../elements/Auth/AuthPopup';
+import { useNavigate } from 'react-router-dom';
 
-export default function VocabTag({
+import { useLanguagesStore } from '@/hooks/stores/useLanguagesStore';
+import { useNotificationStore } from '../../notification/useNotificationStore';
+import { AccessID, AccessStatus } from '@/models/Access';
+import { getAccessToken } from '@/scripts/AuthToken';
+import LockItem from '../LockItem';
+import AuthPopup from '../Auth/AuthPopup';
+import NotificationBtn from '@/components/elements/Vocabulary/NotificationBtn.tsx';
+import api, { AuthStore } from '@/scripts/api';
+import { IVocab } from '@/pages/users/component/Card';
+
+export default function ShortCard({
   id,
   name,
   accessID,
@@ -21,11 +23,6 @@ export default function VocabTag({
   const [isShowSignInUpPopup, setIsShowSignInUpPopup] = useState(false);
   const { languages } = useLanguagesStore();
   const { notificationWarning } = useNotificationStore();
-  const { fetchFunc: fetchVocabAccess } = useFetchFunc(
-    '/vocabulary/access/user',
-    RequestMethod.GET,
-    AuthStore.OPTIONAL
-  );
 
   if (languages.size == 0) {
     return <></>;
@@ -43,7 +40,11 @@ export default function VocabTag({
   }
 
   async function asyncVocabAccess() {
-    const response = await fetchVocabAccess({ query: `id=${id}` });
+    const response = await api.get(
+      '/vocabulary/access/user',
+      AuthStore.OPTIONAL,
+      { query: [['id', id]] }
+    );
     if (response.ok) {
       const access = response.data['access'];
       switch (access) {
@@ -55,7 +56,6 @@ export default function VocabTag({
           navigate(`/vocabulary/${id}`);
           break;
       }
-      console.warn(response.data);
     }
   }
 
@@ -66,15 +66,20 @@ export default function VocabTag({
         className='flex flex-col px-3 py-1 bg-gray-300 border border-gray-400 duration-300 hover:shadow hover:shadow-blue-500 hover:duration-300'
         onClick={openVocabulary}>
         <div className='flex w-full justify-between'>
-          <div className='flex content-start'>{name}</div>
-          <LockItem
-            accessID={accessID}
-            size={5}
-          />
+          <div className='flex gap-x-1'>
+            <div className='flex content-start'>{name}</div>
+            <LockItem
+              accessID={accessID}
+              size={5}
+            />
+          </div>
+          <div className='flex w-6 items-center'>
+            <NotificationBtn id={id} />
+          </div>
         </div>
         <div
           id='sub'
-          className='flex w-full justify-between text-gray-600'>
+          className='flex w-full min-w-60 justify-between gap-x-4 text-gray-600'>
           <div className='flex'>{`${languages.get(
             nativeLang
           )} ↔ ${languages.get(translateLang)}`}</div>

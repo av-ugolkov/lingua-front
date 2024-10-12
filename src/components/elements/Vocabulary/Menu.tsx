@@ -7,48 +7,29 @@ import {
 } from '@heroicons/react/24/outline';
 import DropdownMenu from '../Dropdown/DropdownMenu';
 import DropdownItem from '../Dropdown/Item';
-import { Vocab } from './Card';
-import { AuthStore, RequestMethod, useFetchFunc } from '@/hooks/fetch/useFetch';
-import Edit, { IEditData } from '@/components/user_vocabularies/Edit';
+import Edit, { IEditData } from '@/pages/account/vocabularies/component/Edit';
 import { getUserID } from '@/scripts/AuthToken';
+import { useVocabulariesStore } from '@/hooks/stores/useVocabulariesStore';
+import api, { AuthStore } from '@/scripts/api';
 
-export default function Menu({
-  vocab,
-  changeVocab,
-  deleteVocab,
-}: {
-  vocab: Vocab;
-  changeVocab: (vocab: Vocab) => void;
-  deleteVocab: (id: string) => void;
-}) {
+export default function Menu({ vocabID }: { vocabID: string }) {
   const [isShowEditPopup, setIsShowEditPopup] = useState(false);
-
-  const { fetchFunc: fetchEditVocabulary } = useFetchFunc(
-    `/account/vocabulary`,
-    RequestMethod.PUT,
-    AuthStore.USE
-  );
-  const { fetchFunc: fetchDeleteVocabulary } = useFetchFunc(
-    `/account/vocabulary`,
-    RequestMethod.DELETE,
-    AuthStore.USE
-  );
+  const { getVocabulary, removeVocabulary } = useVocabulariesStore();
 
   function editVocabulary(editData: IEditData) {
     async function asyncEditVocabulary() {
-      const response = await fetchEditVocabulary({
+      const response = await api.put(`/vocabulary`, AuthStore.USE, {
         body: JSON.stringify({
-          id: vocab.id,
+          id: vocabID,
           name: editData.name,
           description: editData.description,
           access_id: editData.accessID,
         }),
       });
       if (response.ok) {
-        vocab.name = editData.name;
-        vocab.description = editData.description;
-        vocab.accessID = editData.accessID;
-        changeVocab(vocab);
+        getVocabulary(vocabID).name = editData.name;
+        getVocabulary(vocabID).description = editData.description;
+        getVocabulary(vocabID).accessID = editData.accessID;
       } else {
         console.error(response);
       }
@@ -59,11 +40,11 @@ export default function Menu({
 
   function deleteVocabulary() {
     async function asyncDeleteVocabulary() {
-      const response = await fetchDeleteVocabulary({
-        query: `name=${vocab.name}`,
+      const response = await api.delete(`/vocabulary`, AuthStore.USE, {
+        query: [['name', getVocabulary(vocabID).name]],
       });
       if (response.ok) {
-        deleteVocab(vocab.id);
+        removeVocabulary(vocabID);
       } else {
         console.error(response);
       }
@@ -75,7 +56,7 @@ export default function Menu({
   return (
     <>
       <DropdownMenu baseSize='w-7 h-7'>
-        {getUserID() == vocab.userID ? (
+        {getUserID() == getVocabulary(vocabID).userID ? (
           <>
             <DropdownItem onClick={() => setIsShowEditPopup(true)}>
               Edit
@@ -96,9 +77,9 @@ export default function Menu({
       {isShowEditPopup && (
         <Edit
           editData={{
-            name: vocab.name,
-            description: vocab.description,
-            accessID: vocab.accessID,
+            name: getVocabulary(vocabID).name,
+            description: getVocabulary(vocabID).description,
+            accessID: getVocabulary(vocabID).accessID,
           }}
           saveCallback={(editData) => {
             editVocabulary(editData);
