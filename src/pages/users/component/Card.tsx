@@ -18,6 +18,7 @@ export interface IVocab {
   nativeLang: string;
   translateLang: string;
   wordsCount: number;
+  isNotification: boolean;
 }
 
 export default function Card(user: IUser) {
@@ -133,6 +134,7 @@ export default function Card(user: IUser) {
             nativeLang: item['native_lang'],
             translateLang: item['translate_lang'],
             wordsCount: item['words_count'],
+            isNotification: item['notification'],
           },
         ]);
       });

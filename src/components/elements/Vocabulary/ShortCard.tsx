@@ -18,6 +18,7 @@ export default function ShortCard({
   nativeLang,
   translateLang,
   wordsCount,
+  isNotification,
 }: IVocab) {
   const navigate = useNavigate();
   const [isShowSignInUpPopup, setIsShowSignInUpPopup] = useState(false);
@@ -74,7 +75,10 @@ export default function ShortCard({
             />
           </div>
           <div className='flex w-6 items-center'>
-            <NotificationBtn id={id} />
+            <NotificationBtn
+              id={id}
+              notif={isNotification}
+            />
           </div>
         </div>
         <div
