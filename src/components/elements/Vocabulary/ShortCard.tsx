@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
-import { useLanguagesStore } from '@/hooks/stores/useLanguagesStore';
 import { useNotificationStore } from '../../notification/useNotificationStore';
 import { AccessID, AccessStatus } from '@/models/Access';
 import { getAccessToken } from '@/scripts/AuthToken';
@@ -10,6 +10,7 @@ import AuthPopup from '../Auth/AuthPopup';
 import NotificationBtn from '@/components/elements/Vocabulary/NotificationBtn.tsx';
 import api, { AuthStore } from '@/scripts/api';
 import { IVocab } from '@/pages/users/component/Card';
+import { RootState } from '@/redux/store/store';
 
 export default function ShortCard({
   id,
@@ -22,10 +23,10 @@ export default function ShortCard({
 }: IVocab) {
   const navigate = useNavigate();
   const [isShowSignInUpPopup, setIsShowSignInUpPopup] = useState(false);
-  const { languages } = useLanguagesStore();
+  const languages = useSelector((state: RootState) => state.langs);
   const { notificationWarning } = useNotificationStore();
 
-  if (languages.size == 0) {
+  if (languages.length === 0) {
     return <></>;
   }
 
@@ -60,6 +61,10 @@ export default function ShortCard({
     }
   }
 
+  function getLang(langCode: string): string {
+    return languages.find((lang) => lang.code === langCode)?.lang || '';
+  }
+
   return (
     <>
       <button
@@ -84,9 +89,9 @@ export default function ShortCard({
         <div
           id='sub'
           className='flex w-full min-w-60 justify-between gap-x-4 text-gray-600'>
-          <div className='flex'>{`${languages.get(
-            nativeLang
-          )} ↔ ${languages.get(translateLang)}`}</div>
+          <div className='flex'>{`${getLang(nativeLang)} ↔ ${getLang(
+            translateLang
+          )}`}</div>
           <div className='flex'>
             {wordsCount} word{wordsCount != 1 && 's'}
           </div>

@@ -1,14 +1,16 @@
 import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 
 import { PlusIcon } from '@heroicons/react/24/outline';
 
 import Button from '../../../../components/elements/Button';
 import SelectLanguages from './SelectLanguages';
 import api, { AuthStore } from '@/scripts/api';
-import { ILanguage, useLanguagesStore } from '@/hooks/stores/useLanguagesStore';
 import CloseBtn from './CloseBtn';
 import BgLock from '../../../../components/elements/BgLock';
 import { EmptyVocabulary, VocabularyData } from '@/models/Vocabulary.ts';
+import { RootState } from '@/redux/store/store';
+import { ILanguage } from '@/redux/languages/sliceLanguage';
 
 export interface IAccess {
   id: number;
@@ -28,14 +30,14 @@ export default function Create({
   closeCallback: () => void;
 }) {
   const [vocab, setVocab] = useState(EmptyVocabulary);
-  const { languages: languagesStore } = useLanguagesStore();
-  const [languages, setLanguages] = useState(tempLanguages);
+  const languages = useSelector((state: RootState) => state.langs);
+  const [listLangs, setListLangs] = useState(tempLanguages);
   const [accesses, setAccesses] = useState(tempAccesses);
 
   useEffect(() => {
-    if (languagesStore.size > 0) {
-      languagesStore.forEach((v, k) => {
-        setLanguages((prev) => [
+    if (languages.size > 0) {
+      languages.forEach((v, k) => {
+        setListLangs((prev) => [
           ...prev,
           {
             lang: v,
@@ -44,7 +46,7 @@ export default function Create({
         ]);
       });
     }
-  }, [languagesStore]);
+  }, [languages]);
 
   useEffect(() => {
     async function asyncFetchAccesses() {
@@ -95,13 +97,13 @@ export default function Create({
             <SelectLanguages
               key='native_lang'
               title='Source language'
-              languages={languages}
+              languages={listLangs}
               onSelect={(e) => setVocab({ ...vocab, nativeLang: e })}
             />
             <SelectLanguages
               key='translate_lang'
               title='Second language'
-              languages={languages}
+              languages={listLangs}
               onSelect={(e) => setVocab({ ...vocab, translateLang: e })}
             />
 

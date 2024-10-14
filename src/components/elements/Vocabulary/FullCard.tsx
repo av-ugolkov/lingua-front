@@ -5,13 +5,14 @@ import AuthPopup from '../Auth/AuthPopup';
 import LockItem from '../LockItem';
 import Tag from '../Tags/Tag';
 import ArrowBothSide from '@/assets/ArrowBothSide';
-import { useLanguagesStore } from '@/hooks/stores/useLanguagesStore';
 import { AccessID, AccessStatus } from '@/models/Access';
 import { getAccessToken } from '@/scripts/AuthToken';
 import { useNotificationStore } from '@/components/notification/useNotificationStore';
 import { useVocabulariesStore } from '@/hooks/stores/useVocabulariesStore.ts';
 import Menu from './Menu';
 import api, { AuthStore } from '@/scripts/api';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/redux/store/store';
 
 export default function FullCard({
   id,
@@ -22,9 +23,9 @@ export default function FullCard({
 }) {
   const navigate = useNavigate();
   const [isShowSignInUpPopup, setIsShowSignInUpPopup] = useState(false);
-  const { languages } = useLanguagesStore();
   const { notificationWarning } = useNotificationStore();
   const { getVocabulary, getWords } = useVocabulariesStore();
+  const languages = useSelector((state: RootState) => state.langs);
 
   function openVocabulary() {
     if (
@@ -57,6 +58,10 @@ export default function FullCard({
       }
       console.warn(response.data);
     }
+  }
+
+  function getLang(langCode: string): string {
+    return languages.find((lang) => lang.code === langCode)?.lang || 'unknown';
   }
 
   return (
@@ -92,13 +97,9 @@ export default function FullCard({
         <div className='flex flex-col w-full border-t border-black mt-2 pt-2'>
           <div className='flex justify-between items-center text-gray-500'>
             <div className='flex'>
-              <p className='m-0'>
-                {languages.get(getVocabulary(id).nativeLang)}
-              </p>
+              <p className='m-0'>{getLang(getVocabulary(id).nativeLang)}</p>
               <ArrowBothSide className='w-5 mx-1' />
-              <p className='m-0'>
-                {languages.get(getVocabulary(id).translateLang)}
-              </p>
+              <p className='m-0'>{getLang(getVocabulary(id).translateLang)}</p>
             </div>
             <p className='m-0'>
               {getVocabulary(id).wordsCount} word
