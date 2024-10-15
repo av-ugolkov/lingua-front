@@ -11,6 +11,8 @@ import { useNotificationStore } from '@/components/notification/useNotificationS
 import { useVocabulariesStore } from '@/hooks/stores/useVocabulariesStore.ts';
 import Menu from './Menu';
 import api, { AuthStore } from '@/scripts/api';
+import { getCreateDate, getVocab } from '@/redux/vocabularies/slice';
+import { useAppSelector } from '@/hooks/redux';
 import { getLang } from '@/redux/languages/slice';
 
 export default function FullCard({
@@ -23,16 +25,21 @@ export default function FullCard({
   const navigate = useNavigate();
   const [isShowSignInUpPopup, setIsShowSignInUpPopup] = useState(false);
   const { notificationWarning } = useNotificationStore();
-  const { getVocabulary, getWords } = useVocabulariesStore();
+  const { getWords } = useVocabulariesStore();
+  const vocab = useAppSelector((state) => getVocab(state, id));
+  const nativeLang = useAppSelector((state) =>
+    getLang(state, vocab.nativeLang)
+  );
+  const translateLang = useAppSelector((state) =>
+    getLang(state, vocab.translateLang)
+  );
+  const createdAt = useAppSelector((state) => getCreateDate(state, id));
 
   function openVocabulary() {
-    if (
-      getVocabulary(id).accessID !== AccessID.Public &&
-      getAccessToken() === ''
-    ) {
+    if (vocab.accessID !== AccessID.Public && getAccessToken() === '') {
       setIsShowSignInUpPopup(true);
       return;
-    } else if (getVocabulary(id).accessID === AccessID.Subscribers) {
+    } else if (vocab.accessID === AccessID.Subscribers) {
       asyncVocabAccess();
     } else {
       navigate(`/vocabulary/${id}`);
@@ -71,15 +78,11 @@ export default function FullCard({
         onClick={openVocabulary}>
         <div className='flex w-full justify-between'>
           <div className='flex gap-x-1 items-center'>
-            <h2 className='flex items-center mr-1 text-xl'>
-              {getVocabulary(id).name}
-            </h2>
-            <LockItem accessID={getVocabulary(id).accessID} />
+            <h2 className='flex items-center mr-1 text-xl'>{vocab.name}</h2>
+            <LockItem accessID={vocab.accessID} />
           </div>
         </div>
-        <div className='flex w-full text-gray-500'>
-          {getVocabulary(id).description}
-        </div>
+        <div className='flex w-full text-gray-500'>{vocab.description}</div>
         <div className='flex flex-wrap w-full gap-1 mt-2'>
           {getWords(id).map((word) => (
             <Tag
@@ -91,20 +94,18 @@ export default function FullCard({
         <div className='flex flex-col w-full border-t border-black mt-2 pt-2'>
           <div className='flex justify-between items-center text-gray-500'>
             <div className='flex'>
-              <p className='m-0'>{getLang(getVocabulary(id).nativeLang)}</p>
+              <p className='m-0'>{nativeLang}</p>
               <ArrowBothSide className='w-5 mx-1' />
-              <p className='m-0'>{getLang(getVocabulary(id).translateLang)}</p>
+              <p className='m-0'>{translateLang}</p>
             </div>
             <p className='m-0'>
-              {getVocabulary(id).wordsCount} word
-              {getVocabulary(id).wordsCount != 1 && 's'}
+              {vocab.wordsCount} word
+              {vocab.wordsCount != 1 && 's'}
             </p>
           </div>
           <div className='flex justify-between items-center text-gray-500'>
-            <p className='m-0 font-bold'>{getVocabulary(id).userName}</p>
-            <p className='m-0'>
-              {getVocabulary(id).createdAt?.toLocaleString('en-GB')}
-            </p>
+            <p className='m-0 font-bold'>{vocab.userName}</p>
+            <p className='m-0'>{createdAt}</p>
           </div>
         </div>
       </button>

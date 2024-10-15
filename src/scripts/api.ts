@@ -1,4 +1,4 @@
-import { getAddr } from '@/config';
+import { getFullAddr } from '@/config';
 import getBrowserFingerprint from './get-browser-fingerprint';
 import {
   deleteAccessToken,
@@ -47,7 +47,7 @@ const fetchData = async (
   init: RequestInit,
   query?: IQueryType
 ): Promise<IResponseData> => {
-  const fullUrl = new URL(getAddr() + url);
+  const fullUrl = new URL(getFullAddr(url));
   if (query && query.length > 0) {
     query.forEach((v) => {
       fullUrl.searchParams.append(v[0], v[1]);

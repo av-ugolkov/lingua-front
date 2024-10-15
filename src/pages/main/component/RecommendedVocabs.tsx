@@ -13,6 +13,7 @@ export interface Vocab {
   accessID: number;
   nativeLang: string;
   translateLang: string;
+  isNotification: boolean;
 }
 
 export default function RecommendedVocabs() {
@@ -38,6 +39,7 @@ export default function RecommendedVocabs() {
           translateLang: item['translate_lang'],
           description: item['description'],
           wordsCount: item['words_count'],
+          isNotification: item['is_notification'],
         });
       });
       setVocabs(vocabs);
@@ -60,7 +62,13 @@ export default function RecommendedVocabs() {
             vocabs.map((vocab) => (
               <ShortCard
                 key={vocab.id}
-                {...vocab}
+                id={vocab.id}
+                name={vocab.name}
+                accessID={vocab.accessID}
+                nativeCode={vocab.nativeLang}
+                translateCode={vocab.translateLang}
+                wordsCount={vocab.wordsCount}
+                isNotification={vocab.isNotification}
               />
             ))
           )}

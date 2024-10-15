@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit/react';
-import { languagesApi } from './api';
+import { api } from './api';
 
 export interface ILanguage {
   lang: string;
@@ -8,29 +8,35 @@ export interface ILanguage {
 
 const initialState: ILanguage[] = [];
 
-const langsSlice = createSlice({
-  name: 'language',
+const slice = createSlice({
+  name: 'langs',
   initialState,
-  reducers: {},
+  reducers: {
+    setLangs: (state, action: { payload: ILanguage[] }) => {
+      action.payload.forEach((item: ILanguage) => {
+        state.push(item);
+      });
+    },
+  },
   extraReducers: (builder) => {
     builder.addMatcher(
-      languagesApi.endpoints.getLanguages.matchFulfilled,
-      (state, action) => {
+      api.endpoints.getLanguages.matchFulfilled,
+      (state, action: { payload: ILanguage[] }) => {
         action.payload.forEach((item: ILanguage) => {
-          state.push({
-            lang: item.lang,
-            code: item.code,
-          });
+          state.push(item);
         });
       }
     );
   },
+  selectors: {
+    getLang: (state, code: string) => {
+      const lang = state.find((item) => item.code === code)?.lang || 'Unknown';
+      return lang;
+    },
+  },
 });
 
-export const getLang = (code: string): string => {
-  return initialState.find((item) => item.code === code)?.lang || 'Unknown';
-};
+export const { setLangs } = slice.actions;
+export const { getLang } = slice.selectors;
 
-const { reducer } = langsSlice;
-
-export default reducer;
+export default slice.reducer;

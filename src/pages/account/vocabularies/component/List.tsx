@@ -1,7 +1,6 @@
 import { useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { useVocabulariesStore } from '@/hooks/stores/useVocabulariesStore';
 import { useSearchStore } from '@/components/elements/SearchPanel/useSearchStore';
 import { useSortedStore } from '@/components/elements/SortAndOrder/useSortedStore';
 import { AuthStore, IQueryType, RequestMethod } from '@/scripts/api';
@@ -9,6 +8,9 @@ import FullCard from '@/components/elements/Vocabulary/FullCard';
 import Pagination from '@/components/elements/Pagination/Pagination';
 import useFetch from '@/hooks/useFetch';
 import { usePaginationStore } from '@/components/elements/Pagination/usePaginationStore';
+import { clearVocabs, setVocabs } from '@/redux/vocabularies/slice';
+import { VocabularyData } from '@/models/Vocabulary';
+import { useAppDispatch, useAppSelector } from '@/hooks/redux';
 
 interface SortedInputProps {
   nativeLang: string;
@@ -16,12 +18,11 @@ interface SortedInputProps {
 }
 
 export default function List({ nativeLang, translateLang }: SortedInputProps) {
-  const navigate = useNavigate();
   const { sort, order } = useSortedStore();
   const { searchValue } = useSearchStore();
   const { page, itemsPerPage, setCountItems } = usePaginationStore();
-  const { vocabularies, addVocabulary, setVocabularies } =
-    useVocabulariesStore();
+  const vocabs = useAppSelector((state) => state.vocabs);
+  const dispatch = useAppDispatch();
 
   const query = useMemo<IQueryType>(
     () => [
@@ -46,8 +47,9 @@ export default function List({ nativeLang, translateLang }: SortedInputProps) {
 
   useEffect(() => {
     if (respVocabs.ok) {
+      const vocabs: VocabularyData[] = [];
       respVocabs.data['vocabularies'].forEach((item: any) => {
-        addVocabulary({
+        vocabs.push({
           id: item['id'],
           name: item['name'],
           userID: item['user_id'],
@@ -59,36 +61,35 @@ export default function List({ nativeLang, translateLang }: SortedInputProps) {
           wordsCount: item['words_count'],
           tags: item['tags'],
           words: item['words'] || [],
-          createdAt: new Date(item['created_at']),
-          updatedAt: new Date(item['updated_at']),
+          createdAt: item['created_at'],
+          updatedAt: item['updated_at'],
         });
       });
+      dispatch(setVocabs(vocabs));
       setCountItems(respVocabs.data['total_count']);
     } else if (respVocabs.status === 401) {
-      navigate('/');
+      useNavigate.call('/');
     }
 
     return () => {
-      setVocabularies([]);
+      dispatch(clearVocabs());
     };
-  }, [addVocabulary, setVocabularies, navigate, setCountItems, respVocabs]);
+  }, [setCountItems, dispatch, respVocabs]);
 
   if (isLoading) {
     return <div></div>;
   }
 
   return (
-    <>
-      <div className='grid w-full gap-y-5 grid-cols-1'>
-        {vocabularies.map((item) => (
-          <FullCard
-            key={item.id}
-            id={item.id}
-            authStore={AuthStore.USE}
-          />
-        ))}
-        <Pagination />
-      </div>
-    </>
+    <div className='grid w-full gap-y-5 grid-cols-1'>
+      {vocabs.map((item) => (
+        <FullCard
+          key={item.id}
+          id={item.id}
+          authStore={AuthStore.USE}
+        />
+      ))}
+      <Pagination />
+    </div>
   );
 }

@@ -9,23 +9,35 @@ import LockItem from '../LockItem';
 import AuthPopup from '../Auth/AuthPopup';
 import NotificationBtn from '@/components/elements/Vocabulary/NotificationBtn.tsx';
 import api, { AuthStore } from '@/scripts/api';
-import { IVocab } from '@/pages/users/component/Card';
 import { RootState } from '@/redux/store/store';
 import { getLang } from '@/redux/languages/slice';
+import { useAppSelector } from '@/hooks/redux';
 
 export default function ShortCard({
   id,
   name,
   accessID,
-  nativeLang,
-  translateLang,
+  nativeCode,
+  translateCode,
   wordsCount,
   isNotification,
-}: IVocab) {
+}: {
+  id: string;
+  name: string;
+  accessID: AccessID;
+  nativeCode: string;
+  translateCode: string;
+  wordsCount: number;
+  isNotification: boolean;
+}) {
   const navigate = useNavigate();
   const [isShowSignInUpPopup, setIsShowSignInUpPopup] = useState(false);
   const languages = useSelector((state: RootState) => state.langs);
   const { notificationWarning } = useNotificationStore();
+  const nativeLang = useAppSelector((state) => getLang(state, nativeCode));
+  const translateLang = useAppSelector((state) =>
+    getLang(state, translateCode)
+  );
 
   if (languages.length === 0) {
     return <></>;
@@ -86,9 +98,7 @@ export default function ShortCard({
         <div
           id='sub'
           className='flex w-full min-w-60 justify-between gap-x-4 text-gray-600'>
-          <div className='flex'>{`${getLang(nativeLang)} ↔ ${getLang(
-            translateLang
-          )}`}</div>
+          <div className='flex'>{`${nativeLang} ↔ ${translateLang}`}</div>
           <div className='flex'>
             {wordsCount} word{wordsCount != 1 && 's'}
           </div>

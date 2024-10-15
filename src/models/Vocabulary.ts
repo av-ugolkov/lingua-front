@@ -12,8 +12,8 @@ export interface VocabularyData {
   userID?: string;
   userName?: string;
   editable?: boolean;
-  createdAt?: Date;
-  updatedAt?: Date;
+  createdAt?: number;
+  updatedAt?: number;
   words: string[];
 }
 
@@ -30,6 +30,6 @@ export const EmptyVocabulary: VocabularyData = {
   userName: '',
   words: [],
   editable: false,
-  createdAt: new Date(),
-  updatedAt: new Date(),
+  createdAt: 0,
+  updatedAt: 0,
 };

@@ -1,9 +1,9 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { ILanguage } from './slice';
-import { getAddr } from '@/config';
+import { getFullAddr } from '@/config';
 
-export const languagesApi = createApi({
-  baseQuery: fetchBaseQuery({ baseUrl: getAddr() + '/languages' }),
+export const api = createApi({
+  baseQuery: fetchBaseQuery({ baseUrl: getFullAddr('/languages') }),
   endpoints: (build) => ({
     getLanguages: build.query<ILanguage[], void>({
       query: () => '',
@@ -11,4 +11,4 @@ export const languagesApi = createApi({
   }),
 });
 
-export const { useGetLanguagesQuery } = languagesApi;
+export const { useGetLanguagesQuery } = api;

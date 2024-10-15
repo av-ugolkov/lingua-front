@@ -1,12 +1,14 @@
 import { configureStore } from '@reduxjs/toolkit';
 
-import { languagesApi } from '../languages/apiLanguage';
-import langReducer from '../languages/sliceLanguage';
+import { api as languagesApi } from '../languages/api';
+import langReducer from '../languages/slice';
+import vocabsReducer from '../vocabularies/slice';
 
 export const store = configureStore({
   reducer: {
     [languagesApi.reducerPath]: languagesApi.reducer,
     langs: langReducer,
+    vocabs: vocabsReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(languagesApi.middleware),
