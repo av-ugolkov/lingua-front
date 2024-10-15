@@ -11,6 +11,7 @@ import NotificationBtn from '@/components/elements/Vocabulary/NotificationBtn.ts
 import api, { AuthStore } from '@/scripts/api';
 import { IVocab } from '@/pages/users/component/Card';
 import { RootState } from '@/redux/store/store';
+import { getLang } from '@/redux/languages/slice';
 
 export default function ShortCard({
   id,
@@ -59,10 +60,6 @@ export default function ShortCard({
           break;
       }
     }
-  }
-
-  function getLang(langCode: string): string {
-    return languages.find((lang) => lang.code === langCode)?.lang || '';
   }
 
   return (

@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { ILanguage } from './sliceLanguage';
+import { ILanguage } from './slice';
 import { getAddr } from '@/config';
 
 export const languagesApi = createApi({

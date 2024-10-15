@@ -3,14 +3,13 @@ import { useSelector } from 'react-redux';
 
 import { PlusIcon } from '@heroicons/react/24/outline';
 
-import Button from '../../../../components/elements/Button';
+import Button from '@/components/elements/Button';
 import SelectLanguages from './SelectLanguages';
 import api, { AuthStore } from '@/scripts/api';
 import CloseBtn from './CloseBtn';
-import BgLock from '../../../../components/elements/BgLock';
+import BgLock from '@/components/elements/BgLock';
 import { EmptyVocabulary, VocabularyData } from '@/models/Vocabulary.ts';
 import { RootState } from '@/redux/store/store';
-import { ILanguage } from '@/redux/languages/sliceLanguage';
 
 export interface IAccess {
   id: number;
@@ -18,7 +17,6 @@ export interface IAccess {
   name: string;
 }
 
-const tempLanguages: ILanguage[] = [];
 const tempAccesses: IAccess[] = [];
 const maxDescriptionLength = 150;
 
@@ -31,22 +29,7 @@ export default function Create({
 }) {
   const [vocab, setVocab] = useState(EmptyVocabulary);
   const languages = useSelector((state: RootState) => state.langs);
-  const [listLangs, setListLangs] = useState(tempLanguages);
   const [accesses, setAccesses] = useState(tempAccesses);
-
-  useEffect(() => {
-    if (languages.size > 0) {
-      languages.forEach((v, k) => {
-        setListLangs((prev) => [
-          ...prev,
-          {
-            lang: v,
-            code: k,
-          },
-        ]);
-      });
-    }
-  }, [languages]);
 
   useEffect(() => {
     async function asyncFetchAccesses() {
@@ -97,13 +80,13 @@ export default function Create({
             <SelectLanguages
               key='native_lang'
               title='Source language'
-              languages={listLangs}
+              languages={languages}
               onSelect={(e) => setVocab({ ...vocab, nativeLang: e })}
             />
             <SelectLanguages
               key='translate_lang'
               title='Second language'
-              languages={listLangs}
+              languages={languages}
               onSelect={(e) => setVocab({ ...vocab, translateLang: e })}
             />
 

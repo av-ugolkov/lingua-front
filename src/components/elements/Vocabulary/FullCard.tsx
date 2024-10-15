@@ -11,8 +11,7 @@ import { useNotificationStore } from '@/components/notification/useNotificationS
 import { useVocabulariesStore } from '@/hooks/stores/useVocabulariesStore.ts';
 import Menu from './Menu';
 import api, { AuthStore } from '@/scripts/api';
-import { useSelector } from 'react-redux';
-import { RootState } from '@/redux/store/store';
+import { getLang } from '@/redux/languages/slice';
 
 export default function FullCard({
   id,
@@ -25,7 +24,6 @@ export default function FullCard({
   const [isShowSignInUpPopup, setIsShowSignInUpPopup] = useState(false);
   const { notificationWarning } = useNotificationStore();
   const { getVocabulary, getWords } = useVocabulariesStore();
-  const languages = useSelector((state: RootState) => state.langs);
 
   function openVocabulary() {
     if (
@@ -58,10 +56,6 @@ export default function FullCard({
       }
       console.warn(response.data);
     }
-  }
-
-  function getLang(langCode: string): string {
-    return languages.find((lang) => lang.code === langCode)?.lang || 'unknown';
   }
 
   return (

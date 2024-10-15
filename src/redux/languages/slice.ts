@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit/react';
-import { languagesApi } from './apiLanguage';
+import { languagesApi } from './api';
 
 export interface ILanguage {
   lang: string;
@@ -26,6 +26,10 @@ const langsSlice = createSlice({
     );
   },
 });
+
+export const getLang = (code: string): string => {
+  return initialState.find((item) => item.code === code)?.lang || 'Unknown';
+};
 
 const { reducer } = langsSlice;
 
