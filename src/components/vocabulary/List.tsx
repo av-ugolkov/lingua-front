@@ -2,8 +2,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useMemo, useState } from 'react';
 
 import WordCard from './WordCard';
-import { useSearchStore } from '@/components/elements/SearchPanel/useSearchStore';
-import { useSortedStore } from '@/components/elements/SortAndOrder/useSortedStore';
 import { EmptyVocabWord, VocabWord } from '@/models/Word.ts';
 import { AuthStore, IQueryType, RequestMethod } from '@/scripts/api';
 import useFetch from '@/hooks/useFetch';
@@ -17,16 +15,17 @@ import {
 } from '@/redux/words/slice';
 
 export default function List() {
+  const dispatch = useAppDispatch();
   const { id } = useParams();
   const navigate = useNavigate();
   const [tempWord, setTempWord] = useState(EmptyVocabWord);
   const vocab = useAppSelector((state) => getVocab(state, id || ''));
-  const searchStore = useSearchStore();
-  const { sort, order } = useSortedStore();
+  const { searchValue, sort, order } = useAppSelector(
+    (state) => state.searchAndOrder
+  );
   const orderedWords = useAppSelector((state) =>
     getOrderedWords(state, sort, order)
   );
-  const dispatch = useAppDispatch();
 
   const query = useMemo<IQueryType>(() => [['id', id]], [id]);
   const { isLoading, response } = useFetch(
@@ -50,8 +49,8 @@ export default function List() {
           },
           translates: item['translates'] || [],
           examples: item['examples'] || [],
-          updated: new Date(item['updated']),
-          created: new Date(item['created']),
+          updated: item['updated'],
+          created: item['created'],
         });
       });
       dispatch(setWords(words));
@@ -81,9 +80,9 @@ export default function List() {
       {orderedWords
         .filter((word) => {
           return (
-            word.native.text.toLowerCase().includes(searchStore.searchValue) ||
+            word.native.text.toLowerCase().includes(searchValue) ||
             word.translates.some((item) =>
-              item.toLowerCase().includes(searchStore.searchValue)
+              item.toLowerCase().includes(searchValue)
             )
           );
         })

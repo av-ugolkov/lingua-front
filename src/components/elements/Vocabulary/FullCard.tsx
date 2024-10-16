@@ -7,12 +7,12 @@ import Tag from '../Tags/Tag';
 import ArrowBothSide from '@/assets/ArrowBothSide';
 import { AccessID, AccessStatus } from '@/models/Access';
 import { getAccessToken } from '@/scripts/AuthToken';
-import { useNotificationStore } from '@/components/notification/useNotificationStore';
 import Menu from './Menu';
 import api, { AuthStore } from '@/scripts/api';
 import { getCreateDate, getVocab, getWords } from '@/redux/vocabularies/slice';
-import { useAppSelector } from '@/hooks/redux';
+import { useAppDispatch, useAppSelector } from '@/hooks/redux';
 import { getLang } from '@/redux/languages/slice';
+import { notificationWarning } from '@/redux/notifications/slice';
 
 export default function FullCard({
   id,
@@ -23,7 +23,6 @@ export default function FullCard({
 }) {
   const navigate = useNavigate();
   const [isShowSignInUpPopup, setIsShowSignInUpPopup] = useState(false);
-  const { notificationWarning } = useNotificationStore();
   const vocab = useAppSelector((state) => getVocab(state, id));
   const nativeLang = useAppSelector((state) =>
     getLang(state, vocab.nativeLang)
@@ -33,6 +32,7 @@ export default function FullCard({
   );
   const createdAt = useAppSelector((state) => getCreateDate(state, id));
   const words = useAppSelector((state) => getWords(state, id));
+  const dispatch = useAppDispatch();
 
   function openVocabulary() {
     if (vocab.accessID !== AccessID.Public && getAccessToken() === '') {
@@ -53,7 +53,7 @@ export default function FullCard({
       const access = response.data['access'];
       switch (access) {
         case AccessStatus.Forbidden:
-          notificationWarning('Forbidden');
+          dispatch(notificationWarning('Forbidden'));
           break;
         case AccessStatus.Read:
         case AccessStatus.Edit:

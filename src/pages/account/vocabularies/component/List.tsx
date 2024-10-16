@@ -1,16 +1,14 @@
 import { useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { useSearchStore } from '@/components/elements/SearchPanel/useSearchStore';
-import { useSortedStore } from '@/components/elements/SortAndOrder/useSortedStore';
 import { AuthStore, IQueryType, RequestMethod } from '@/scripts/api';
 import FullCard from '@/components/elements/Vocabulary/FullCard';
 import Pagination from '@/components/elements/Pagination/Pagination';
 import useFetch from '@/hooks/useFetch';
-import { usePaginationStore } from '@/components/elements/Pagination/usePaginationStore';
 import { clearVocabs, setVocabs } from '@/redux/vocabularies/slice';
 import { VocabularyData } from '@/models/Vocabulary';
 import { useAppDispatch, useAppSelector } from '@/hooks/redux';
+import { setCountItems } from '@/redux/pagination/slice';
 
 interface SortedInputProps {
   nativeLang: string;
@@ -18,9 +16,10 @@ interface SortedInputProps {
 }
 
 export default function List({ nativeLang, translateLang }: SortedInputProps) {
-  const { sort, order } = useSortedStore();
-  const { searchValue } = useSearchStore();
-  const { page, itemsPerPage, setCountItems } = usePaginationStore();
+  const { searchValue, sort, order } = useAppSelector(
+    (state) => state.searchAndOrder
+  );
+  const { page, itemsPerPage } = useAppSelector((state) => state.pagination);
   const vocabs = useAppSelector((state) => state.vocabs);
   const dispatch = useAppDispatch();
 
@@ -66,7 +65,7 @@ export default function List({ nativeLang, translateLang }: SortedInputProps) {
         });
       });
       dispatch(setVocabs(vocabs));
-      setCountItems(respVocabs.data['total_count']);
+      dispatch(setCountItems(respVocabs.data['total_count']));
     } else if (respVocabs.status === 401) {
       useNavigate.call('/');
     }
@@ -74,7 +73,7 @@ export default function List({ nativeLang, translateLang }: SortedInputProps) {
     return () => {
       dispatch(clearVocabs());
     };
-  }, [setCountItems, dispatch, respVocabs]);
+  }, [respVocabs, dispatch]);
 
   if (isLoading) {
     return <div></div>;

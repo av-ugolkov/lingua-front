@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
-import { useNotificationStore } from '../../notification/useNotificationStore';
 import { AccessID, AccessStatus } from '@/models/Access';
 import { getAccessToken } from '@/scripts/AuthToken';
 import LockItem from '../LockItem';
@@ -11,14 +10,15 @@ import NotificationBtn from '@/components/elements/Vocabulary/NotificationBtn.ts
 import api, { AuthStore } from '@/scripts/api';
 import { RootState } from '@/redux/store/store';
 import { getLang } from '@/redux/languages/slice';
-import { useAppSelector } from '@/hooks/redux';
+import { useAppDispatch, useAppSelector } from '@/hooks/redux';
 import { getVocab } from '@/redux/vocabularies/slice';
+import { notificationWarning } from '@/redux/notifications/slice';
 
 export default function ShortCard({ id }: { id: string }) {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const [isShowSignInUpPopup, setIsShowSignInUpPopup] = useState(false);
   const languages = useSelector((state: RootState) => state.langs);
-  const { notificationWarning } = useNotificationStore();
   const vocab = useAppSelector((state) => getVocab(state, id));
   const nativeLang = useAppSelector((state) =>
     getLang(state, vocab.nativeLang)
@@ -52,7 +52,7 @@ export default function ShortCard({ id }: { id: string }) {
       const access = response.data['access'];
       switch (access) {
         case AccessStatus.Forbidden:
-          notificationWarning('Forbidden');
+          dispatch(notificationWarning('Forbidden'));
           break;
         case AccessStatus.Read:
         case AccessStatus.Edit:

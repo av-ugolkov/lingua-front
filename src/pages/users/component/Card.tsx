@@ -5,20 +5,22 @@ import Avatar from '@/components/elements/Avatar';
 import Button from '@/components/elements/Button';
 import ShortCard from '@/components/elements/Vocabulary/ShortCard';
 import useFetch from '@/hooks/useFetch';
-import { useNotificationStore } from '@/components/notification/useNotificationStore';
 import { getUserID, isActiveToken } from '@/scripts/AuthToken';
 import { IUser } from './List';
 import api, { AuthStore, IQueryType, RequestMethod } from '@/scripts/api';
 import { VocabularyData } from '@/models/Vocabulary';
 import { useAppDispatch } from '@/hooks/redux';
 import { setVocabs } from '@/redux/vocabularies/slice';
+import {
+  notificationError,
+  notificationSuccess,
+} from '@/redux/notifications/slice';
 
 export default function Card(user: IUser) {
+  const dispatch = useAppDispatch();
   const uid = getUserID();
   const [isSubscribe, setIsSubscribe] = useState(false);
   const [userVocabs, setUserVocabs] = useState<VocabularyData[]>([]);
-  const { notificationSuccess, notificationError } = useNotificationStore();
-  const dispatch = useAppDispatch();
 
   const queryVocabUser = useMemo<IQueryType>(
     () => [['user_id', user.id]],
@@ -46,9 +48,9 @@ export default function Card(user: IUser) {
     async function asyncSubscribe() {
       const response = await fetchSubscribe(subUserID);
       if (response.ok) {
-        notificationSuccess(`You subscribed to ${user.name}`);
+        dispatch(notificationSuccess(`You subscribed to ${user.name}`));
       } else {
-        notificationError(response.data);
+        dispatch(notificationError(response.data));
       }
     }
     asyncSubscribe();

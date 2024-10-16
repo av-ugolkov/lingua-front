@@ -3,7 +3,8 @@ import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/20/solid';
 
 import getPaginationItems from './getPaginationItems';
 import ListBox, { IListBoxItem } from '../ListBox';
-import { usePaginationStore } from './usePaginationStore';
+import { useAppDispatch, useAppSelector } from '@/hooks/redux';
+import { setItemsPerPage, setPage } from '@/redux/pagination/slice';
 
 const countsItemsPerPage: IListBoxItem[] = [
   { key: '5', value: '5' },
@@ -14,8 +15,10 @@ const countsItemsPerPage: IListBoxItem[] = [
 ];
 
 export default function Pagination() {
-  const { page, setPage, countItems, itemsPerPage, setItemsPerPage } =
-    usePaginationStore();
+  const { page, itemsPerPage, countItems } = useAppSelector(
+    (state) => state.pagination
+  );
+  const dispatch = useAppDispatch();
   const maxPage = Math.ceil(countItems / itemsPerPage);
   const pageNums = getPaginationItems(page, maxPage, 7);
 
@@ -40,7 +43,7 @@ export default function Pagination() {
           className='isolate inline-flex -space-x-px shadow-sm'>
           <div
             onClick={() => {
-              if (page > 1) setPage(page - 1);
+              if (page > 1) dispatch(setPage(page - 1));
             }}
             className='relative inline-flex items-center p-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-400 hover:text-white focus:z-20 focus:outline-offset-0'>
             <span className='sr-only'>Previous</span>
@@ -52,7 +55,7 @@ export default function Pagination() {
           {pageNums.map((pageNum, ind) => (
             <div
               key={ind}
-              onClick={() => setPage(pageNum)}
+              onClick={() => dispatch(setPage(pageNum))}
               aria-current='page'
               className={clsx(
                 'relative z-10 inline-flex items-center px-4 py-2 text-sm cursor-default select-none font-semibold text-black hover:bg-gray-400 hover:text-white focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600',
@@ -63,7 +66,7 @@ export default function Pagination() {
           ))}
           <div
             onClick={() => {
-              if (page < maxPage) setPage(page + 1);
+              if (page < maxPage) dispatch(setPage(page + 1));
             }}
             className='relative inline-flex items-center p-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-400 hover:text-white focus:z-20 focus:outline-offset-0'>
             <span className='sr-only'>Next</span>
@@ -80,8 +83,8 @@ export default function Pagination() {
                 (item) => item.value === `${itemsPerPage}`
               )}
               onChange={(value) => {
-                setPage(1);
-                setItemsPerPage(+value);
+                dispatch(setPage(1));
+                dispatch(setItemsPerPage(+value));
               }}
               classSelect='block w-fit bg-transparent pl-2 border border-gray-300 text-black text-sm focus:ring-primary-500 focus:border-primary-500'
             />

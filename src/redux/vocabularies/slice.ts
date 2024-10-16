@@ -42,11 +42,11 @@ const slice = createSlice({
     },
     getCreateDate: (state, id: string) => {
       const vocabulary = state.find((vocab) => vocab.id === id);
-      return new Date(vocabulary?.createdAt || 0).toLocaleString('en-GB');
+      return new Date(vocabulary?.createdAt || '').toLocaleString('en-GB');
     },
     getUpdateDate: (state, id: string) => {
       const vocabulary = state.find((vocab) => vocab.id === id);
-      return new Date(vocabulary?.updatedAt || 0).toLocaleString('en-GB');
+      return new Date(vocabulary?.updatedAt || '').toLocaleString('en-GB');
     },
   },
 });

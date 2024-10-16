@@ -12,8 +12,8 @@ export interface VocabularyData {
   userID?: string;
   userName?: string;
   editable?: boolean;
-  createdAt?: number;
-  updatedAt?: number;
+  createdAt?: string;
+  updatedAt?: string;
   words?: string[];
   isNotification?: boolean;
 }

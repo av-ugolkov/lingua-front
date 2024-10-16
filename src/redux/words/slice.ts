@@ -1,6 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit/react';
 
-import { EmptyVocabulary } from '@/models/Vocabulary';
 import { VocabWord } from '@/models/Word';
 import { Order, Sorted } from '@/models/Sorted';
 
@@ -39,10 +38,7 @@ const slice = createSlice({
   selectors: {
     getWord: (state, id: string) => {
       const word = state.find((word) => word.id === id);
-      if (!word) {
-        return EmptyVocabulary;
-      }
-      return word;
+      return word || {};
     },
     getOrderedWords: (state, sort: Sorted, order: Order) => {
       switch (sort) {

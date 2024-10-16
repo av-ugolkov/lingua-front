@@ -1,7 +1,9 @@
-import clsx from 'clsx';
-import Notification from './notification';
-import { useNotificationStore } from './useNotificationStore';
 import { useEffect } from 'react';
+import clsx from 'clsx';
+
+import Notification from './notification';
+import { useAppDispatch, useAppSelector } from '@/hooks/redux';
+import { setSettings } from '@/redux/notifications/slice';
 
 export interface ContainerSettings {
   position: 'top' | 'bottom' | 'middle';
@@ -16,11 +18,12 @@ export default function NotificationContainer({
   timeout,
   max,
 }: ContainerSettings) {
-  const { notifications, setSettings } = useNotificationStore();
+  const dispatch = useAppDispatch();
+  const { notifications } = useAppSelector((state) => state.notifications);
 
   useEffect(() => {
-    setSettings({ max });
-  }, [max, setSettings]);
+    dispatch(setSettings({ max }));
+  }, [max, dispatch]);
 
   return (
     <div className='relative w-full h-full'>

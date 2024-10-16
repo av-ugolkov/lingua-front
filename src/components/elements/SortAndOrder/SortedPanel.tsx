@@ -4,19 +4,21 @@ import clsx from 'clsx';
 
 import { ISortType, Order } from '@/models/Sorted';
 import { ChartBarIcon } from '@heroicons/react/24/outline';
-import { useSortedStore } from './useSortedStore';
+import { useAppDispatch, useAppSelector } from '@/hooks/redux';
+import { setOrderType } from '@/redux/search_and_order/slice';
 
 export default function SortedPanel({
   sortedTypes,
 }: {
   sortedTypes: ISortType[];
 }) {
-  const { sort, order, setOrderType } = useSortedStore();
+  const { sort, order } = useAppSelector((state) => state.searchAndOrder);
+  const dispatch = useAppDispatch();
   const [scaleX, setScaleX] = useState(-1);
 
   useEffect(() => {
-    setOrderType(sortedTypes[0].type, Order.DESC);
-  }, [setOrderType, sortedTypes]);
+    dispatch(setOrderType({ s: sortedTypes[0].type, o: Order.DESC }));
+  }, [sortedTypes, dispatch]);
 
   return (
     <div className='flex h-full items-center'>
@@ -25,10 +27,10 @@ export default function SortedPanel({
         onClick={() => {
           if (scaleX === 1) {
             setScaleX(-1);
-            setOrderType(sort, Order.DESC);
+            dispatch(setOrderType({ s: sort, o: Order.DESC }));
           } else {
             setScaleX(1);
-            setOrderType(sort, Order.ASC);
+            dispatch(setOrderType({ s: sort, o: Order.ASC }));
           }
         }}>
         <ChartBarIcon
@@ -45,7 +47,7 @@ export default function SortedPanel({
           const typeSort =
             sortedTypes.find((tp) => tp.type.toString() === e.target.value) ||
             sortedTypes[0];
-          setOrderType(typeSort.type, order);
+          dispatch(setOrderType({ s: typeSort.type, o: order }));
         }}>
         {sortedTypes.map((tp) => (
           <option

@@ -13,10 +13,10 @@ import { useAppDispatch } from '@/hooks/redux';
 import { clearVocabs, setVocabs } from '@/redux/vocabularies/slice';
 
 export default function Vocabulary() {
-  const { id } = useParams();
-  const query = useMemo<IQueryType>(() => [['id', id]], [id]);
   const dispatch = useAppDispatch();
+  const { id } = useParams();
 
+  const query = useMemo<IQueryType>(() => [['id', id]], [id]);
   const { isLoading, response: respVocabInfo } = useFetch(
     '/vocabulary/info',
     RequestMethod.GET,

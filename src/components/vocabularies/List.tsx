@@ -1,15 +1,13 @@
 import { useEffect, useMemo } from 'react';
 
 import FullCard from '@/components/elements/Vocabulary/FullCard';
-import Pagination from '../../components/elements/Pagination/Pagination';
-import { useSearchStore } from '../../components/elements/SearchPanel/useSearchStore';
-import { useSortedStore } from '../../components/elements/SortAndOrder/useSortedStore';
+import Pagination from '@/components/elements/Pagination/Pagination';
 import { AuthStore, IQueryType, RequestMethod } from '@/scripts/api';
 import useFetch from '@/hooks/useFetch';
-import { usePaginationStore } from '../../components/elements/Pagination/usePaginationStore';
 import { VocabularyData } from '@/models/Vocabulary';
 import { useAppDispatch, useAppSelector } from '@/hooks/redux';
 import { clearVocabs, setVocabs } from '@/redux/vocabularies/slice';
+import { setCountItems } from '@/redux/pagination/slice';
 
 interface SortedInputProps {
   nativeLang: string;
@@ -19,9 +17,10 @@ interface SortedInputProps {
 const LIMIT_WORDS = 12;
 
 export default function List({ nativeLang, translateLang }: SortedInputProps) {
-  const { page, itemsPerPage, setCountItems } = usePaginationStore();
-  const { sort, order } = useSortedStore();
-  const { searchValue } = useSearchStore();
+  const { page, itemsPerPage } = useAppSelector((state) => state.pagination);
+  const { searchValue, sort, order } = useAppSelector(
+    (state) => state.searchAndOrder
+  );
   const vocabs = useAppSelector((state) => state.vocabs);
   const dispatch = useAppDispatch();
 
@@ -68,12 +67,12 @@ export default function List({ nativeLang, translateLang }: SortedInputProps) {
         });
       });
       dispatch(setVocabs(vocabs));
-      setCountItems(respVocabs.data['total_count']);
+      dispatch(setCountItems(respVocabs.data['total_count']));
     }
     return () => {
       dispatch(clearVocabs());
     };
-  }, [respVocabs, setCountItems, dispatch]);
+  }, [respVocabs, dispatch]);
 
   if (isLoading) {
     return <div></div>;

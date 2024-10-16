@@ -12,17 +12,15 @@ import NotificationContainer from '@/components/notification/container';
 const root = document.getElementById('root');
 
 ReactDOM.createRoot(root!).render(
-  <>
+  <Provider store={store}>
     <NotificationContainer
       position='bottom'
       side='right'
       timeout={7000}
       max={5}
     />
-    <Provider store={store}>
-      <RouterProvider router={router} />
-    </Provider>
-  </>
+    <RouterProvider router={router} />
+  </Provider>
 );
 
 if (import.meta.hot) {
