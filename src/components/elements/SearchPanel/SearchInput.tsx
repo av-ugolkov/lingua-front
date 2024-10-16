@@ -1,15 +1,19 @@
-import { MagnifyingGlassIcon, XMarkIcon } from '@heroicons/react/24/outline';
-import { useSearchStore } from './useSearchStore';
 import { useEffect } from 'react';
 
+import { MagnifyingGlassIcon, XMarkIcon } from '@heroicons/react/24/outline';
+
+import { useAppDispatch, useAppSelector } from '@/hooks/redux';
+import { setSearchValue } from '@/redux/search_and_order/slice';
+
 export default function SearchInput() {
-  const { searchValue, setSearchValue } = useSearchStore();
+  const { searchValue } = useAppSelector((state) => state.searchAndOrder);
+  const disptach = useAppDispatch();
 
   useEffect(() => {
     return () => {
-      setSearchValue('');
+      disptach(setSearchValue(''));
     };
-  }, [setSearchValue]);
+  }, [disptach]);
 
   return (
     <>
@@ -21,14 +25,14 @@ export default function SearchInput() {
             className='flex p-0.5 bg-transparent border-none w-full outline-none whitespace-nowrap active:border-none'
             placeholder='Search'
             value={searchValue}
-            onChange={(e) => setSearchValue(e.target.value)}
+            onChange={(e) => disptach(setSearchValue(e.target.value))}
           />
         </div>
         {searchValue === '' ? (
           <MagnifyingGlassIcon className='size-6 py-0.5 mx-1 px-0.5' />
         ) : (
           <XMarkIcon
-            onClick={() => setSearchValue('')}
+            onClick={() => disptach(setSearchValue(''))}
             className='size-6 py-0.5 mx-1 px-0.5'
           />
         )}

@@ -1,12 +1,13 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import RecomendedVocabs from '@/pages/main/component/RecommendedVocabs';
-import { useNotificationStore } from '@/components/notification/useNotificationStore';
 import { AuthStore, IQueryType, RequestMethod } from '@/scripts/api';
 import useFetch from '@/hooks/useFetch';
+import { useAppDispatch } from '@/hooks/redux';
+import { clearNotifications } from '@/redux/notifications/slice';
 
 export default function HomePage() {
-  const { clearNotifications } = useNotificationStore();
+  const dispatch = useAppDispatch();
   const [word, setWord] = useState('');
 
   const query = useMemo<IQueryType>(() => [['lang_code', 'en']], []);
@@ -19,9 +20,9 @@ export default function HomePage() {
 
   useEffect(() => {
     return () => {
-      clearNotifications();
+      dispatch(clearNotifications());
     };
-  }, [clearNotifications]);
+  }, [dispatch]);
 
   useEffect(() => {
     if (respRandomWord.ok) {

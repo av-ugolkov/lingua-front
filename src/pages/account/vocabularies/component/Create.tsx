@@ -1,14 +1,15 @@
 import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 
 import { PlusIcon } from '@heroicons/react/24/outline';
 
-import Button from '../../../../components/elements/Button';
+import Button from '@/components/elements/Button';
 import SelectLanguages from './SelectLanguages';
 import api, { AuthStore } from '@/scripts/api';
-import { ILanguage, useLanguagesStore } from '@/hooks/stores/useLanguagesStore';
 import CloseBtn from './CloseBtn';
-import BgLock from '../../../../components/elements/BgLock';
+import BgLock from '@/components/elements/BgLock';
 import { EmptyVocabulary, VocabularyData } from '@/models/Vocabulary.ts';
+import { RootState } from '@/redux/store/store';
 
 export interface IAccess {
   id: number;
@@ -16,7 +17,6 @@ export interface IAccess {
   name: string;
 }
 
-const tempLanguages: ILanguage[] = [];
 const tempAccesses: IAccess[] = [];
 const maxDescriptionLength = 150;
 
@@ -28,23 +28,8 @@ export default function Create({
   closeCallback: () => void;
 }) {
   const [vocab, setVocab] = useState(EmptyVocabulary);
-  const { languages: languagesStore } = useLanguagesStore();
-  const [languages, setLanguages] = useState(tempLanguages);
+  const languages = useSelector((state: RootState) => state.langs);
   const [accesses, setAccesses] = useState(tempAccesses);
-
-  useEffect(() => {
-    if (languagesStore.size > 0) {
-      languagesStore.forEach((v, k) => {
-        setLanguages((prev) => [
-          ...prev,
-          {
-            lang: v,
-            code: k,
-          },
-        ]);
-      });
-    }
-  }, [languagesStore]);
 
   useEffect(() => {
     async function asyncFetchAccesses() {

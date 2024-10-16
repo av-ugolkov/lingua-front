@@ -4,34 +4,33 @@ import SearchInput from '@/components/elements/SearchPanel/SearchInput';
 import SortedPanel from '@/components/elements/SortAndOrder/SortedPanel';
 import List from '@/pages/vocabularies/component/List';
 import ListBox, { IListBoxItem } from '@/components/elements/ListBox';
-import { useLanguagesStore } from '@/hooks/stores/useLanguagesStore';
 import { SortWordTypes } from '@/models/Sorted';
 import { LanguageIcon } from '@heroicons/react/24/outline';
 import ArrowBothSide from '@/assets/ArrowBothSide';
+import { RootState } from '@/redux/store/store';
+import { useSelector } from 'react-redux';
 
 export default function Vocabularies() {
-  const { languages: languagesStore } = useLanguagesStore();
-  const [languages, setLanguages] = useState([{ lang: 'Any', code: 'any' }]);
+  const languages = useSelector((state: RootState) => state.langs);
+  const [listLangs, setListLangs] = useState([{ lang: 'Any', code: 'any' }]);
   const [nativeLang, setNativeLang] = useState('any');
   const [translateLang, setTranslateLang] = useState('any');
 
   useEffect(() => {
-    if (languagesStore.size > 0) {
-      languagesStore.forEach((v, k) => {
-        setLanguages((prev) => [
-          ...prev,
-          {
-            lang: v,
-            code: k,
-          },
-        ]);
+    if (languages.length > 0) {
+      languages.forEach((lang) => {
+        setListLangs((prev) => [...prev, lang]);
       });
     }
-  }, [languagesStore]);
+
+    return () => {
+      setListLangs([{ lang: 'Any', code: 'any' }]);
+    };
+  }, [languages]);
 
   function mapToLanguages(): IListBoxItem[] {
     const items: IListBoxItem[] = [];
-    languages.forEach((item) => {
+    listLangs.forEach((item) => {
       items.push({ key: item.code, value: item.lang });
     });
     return items;
@@ -50,7 +49,7 @@ export default function Vocabularies() {
               indexValue={0}
               onChange={(value) => {
                 const lang =
-                  languages.find((tp) => tp.lang === value) || languages[0];
+                  listLangs.find((tp) => tp.lang === value) || listLangs[0];
                 setNativeLang(lang.code);
               }}
               classSelect='block w-fit p-1 bg-transparent border border-black text-black text-sm focus:ring-primary-500 focus:border-primary-500'
@@ -62,7 +61,7 @@ export default function Vocabularies() {
               indexValue={0}
               onChange={(value) => {
                 const lang =
-                  languages.find((tp) => tp.lang === value) || languages[0];
+                  listLangs.find((tp) => tp.lang === value) || listLangs[0];
                 setTranslateLang(lang.code);
               }}
               classSelect='block w-fit p-1 bg-transparent border border-black text-black text-sm focus:ring-primary-500 focus:border-primary-500'

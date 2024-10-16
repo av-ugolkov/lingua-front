@@ -1,3 +1,6 @@
+import { useEffect } from 'react';
+
+import clsx from 'clsx';
 import {
   CheckCircleIcon,
   ExclamationCircleIcon,
@@ -8,10 +11,9 @@ import {
 import {
   NotificationData,
   NotificationType,
-  useNotificationStore,
-} from './useNotificationStore';
-import clsx from 'clsx';
-import { useEffect } from 'react';
+  removeNotification,
+} from '@/redux/notifications/slice';
+import { useAppDispatch } from '@/hooks/redux';
 
 export default function Notification({
   notification,
@@ -20,13 +22,13 @@ export default function Notification({
   notification: NotificationData;
   timeout: number;
 }) {
-  const { removeNotification } = useNotificationStore();
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     setTimeout(() => {
-      removeNotification(notification.id);
+      dispatch(removeNotification(notification.id));
     }, timeout);
-  }, [notification.id, removeNotification, timeout]);
+  }, [notification.id, timeout, dispatch]);
 
   return (
     <>

@@ -8,16 +8,16 @@ import {
   XCircleIcon,
 } from '@heroicons/react/24/outline';
 
-import { useVocabWordsStore } from '@/hooks/stores/useVocabWordsStore';
 import BtnCard from './BtnCard';
 import Tags from '../elements/Tags/Tags';
 import DropdownMenu from '../elements/Dropdown/DropdownMenu';
 import DropdownItem from '../elements/Dropdown/Item';
 import InputField from './InputField';
-import { useNotificationStore } from '../notification/useNotificationStore';
 import { EmptyVocabWord, VocabWord } from '@/models/Word.ts';
-import { InvalidateDate } from '@/models/Base.ts';
 import api, { AuthStore } from '@/scripts/api';
+import { useAppDispatch } from '@/hooks/redux';
+import { addWord, removeWord } from '@/redux/words/slice';
+import { notificationWarning } from '@/redux/notifications/slice';
 
 export default function WordCard({
   word,
@@ -28,9 +28,8 @@ export default function WordCard({
   updateWord: (state: VocabWord) => void;
   editable?: boolean;
 }) {
+  const dispatch = useAppDispatch();
   const { id: vocabID } = useParams();
-  const vocabWordsStore = useVocabWordsStore();
-  const { notificationWarning } = useNotificationStore();
 
   function addVocabWord() {
     async function asyncAddWord() {
@@ -44,8 +43,8 @@ export default function WordCard({
         },
         translates: word.translates,
         examples: word.examples,
-        updated: InvalidateDate,
-        created: InvalidateDate,
+        updated: '',
+        created: '',
       };
       const bodyData = JSON.stringify(jsonBodyData);
       const response = await api.post('/vocabulary/word', AuthStore.USE, {
@@ -62,11 +61,11 @@ export default function WordCard({
           vocabID: vocabID || '',
           translates: [...(word.translates || [])],
           examples: [...(word.examples || [])],
-          created: new Date(response.data['created']),
-          updated: new Date(response.data['updated']),
+          created: response.data['created'],
+          updated: response.data['updated'],
         };
 
-        vocabWordsStore.addWord(newWord);
+        dispatch(addWord(newWord));
         updateWord(EmptyVocabWord);
       }
     }
@@ -109,7 +108,7 @@ export default function WordCard({
       });
 
       if (response.ok) {
-        vocabWordsStore.removeWord(word.id);
+        dispatch(removeWord(word.id));
       } else {
         console.error(response.data);
       }
@@ -154,7 +153,7 @@ export default function WordCard({
         word.native.pronunciation = response.data['native']['pronunciation'];
         updateWord(word);
       } else {
-        notificationWarning(response.data);
+        dispatch(notificationWarning(response.data));
       }
     }
 
@@ -228,9 +227,9 @@ export default function WordCard({
               }}
             />
           </div>
-          {word.updated != InvalidateDate && (
+          {word.updated != '' && (
             <div className='relative w-full text-gray-400 bottom-[-14px] text-right'>
-              {word.created.toLocaleString('en-GB')}
+              {new Date(word.created).toLocaleString('en-GB')}
             </div>
           )}
         </div>

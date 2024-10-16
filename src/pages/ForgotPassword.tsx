@@ -2,12 +2,13 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import Button from '@/components/elements/Button';
-import { useNotificationStore } from '@/components/notification/useNotificationStore';
 import { setAccessToken } from '@/scripts/AuthToken';
 import api, { AuthStore } from '@/scripts/api';
+import { useAppDispatch } from '@/hooks/redux';
+import { notificationError } from '@/redux/notifications/slice';
 
 export default function ForgotPsw() {
-  const { notificationError } = useNotificationStore();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
 
@@ -20,7 +21,7 @@ export default function ForgotPsw() {
         setAccessToken(response.data['access_token']);
         navigate('/');
       } else {
-        notificationError(response.data);
+        dispatch(notificationError(response.data));
       }
     }
 

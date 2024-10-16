@@ -1,22 +1,12 @@
 import { Outlet } from 'react-router-dom';
 
 import Header from '@/components/header/Header';
-import { useEffect, useState } from 'react';
-import { useLanguagesStore } from '@/hooks/stores/useLanguagesStore';
+import { useGetLanguagesQuery } from '@/redux/languages/api';
 
 export default function Root() {
-  const { languages, fetchLanguages } = useLanguagesStore();
-  const [loading, setLoading] = useState(true);
+  const { isLoading } = useGetLanguagesQuery();
 
-  useEffect(() => {
-    if (languages.size === 0) {
-      fetchLanguages().then(() => setLoading(false));
-    } else {
-      setLoading(false);
-    }
-  }, [fetchLanguages, languages.size]);
-
-  if (loading) {
+  if (isLoading) {
     return <div></div>;
   }
 
