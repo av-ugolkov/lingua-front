@@ -14,7 +14,8 @@ export interface VocabularyData {
   editable?: boolean;
   createdAt?: number;
   updatedAt?: number;
-  words: string[];
+  words?: string[];
+  isNotification?: boolean;
 }
 
 export const EmptyVocabulary: VocabularyData = {
@@ -28,8 +29,5 @@ export const EmptyVocabulary: VocabularyData = {
   tags: [],
   userID: '',
   userName: '',
-  words: [],
   editable: false,
-  createdAt: 0,
-  updatedAt: 0,
 };

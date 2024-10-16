@@ -12,31 +12,19 @@ import api, { AuthStore } from '@/scripts/api';
 import { RootState } from '@/redux/store/store';
 import { getLang } from '@/redux/languages/slice';
 import { useAppSelector } from '@/hooks/redux';
+import { getVocab } from '@/redux/vocabularies/slice';
 
-export default function ShortCard({
-  id,
-  name,
-  accessID,
-  nativeCode,
-  translateCode,
-  wordsCount,
-  isNotification,
-}: {
-  id: string;
-  name: string;
-  accessID: AccessID;
-  nativeCode: string;
-  translateCode: string;
-  wordsCount: number;
-  isNotification: boolean;
-}) {
+export default function ShortCard({ id }: { id: string }) {
   const navigate = useNavigate();
   const [isShowSignInUpPopup, setIsShowSignInUpPopup] = useState(false);
   const languages = useSelector((state: RootState) => state.langs);
   const { notificationWarning } = useNotificationStore();
-  const nativeLang = useAppSelector((state) => getLang(state, nativeCode));
+  const vocab = useAppSelector((state) => getVocab(state, id));
+  const nativeLang = useAppSelector((state) =>
+    getLang(state, vocab.nativeLang)
+  );
   const translateLang = useAppSelector((state) =>
-    getLang(state, translateCode)
+    getLang(state, vocab.translateLang)
   );
 
   if (languages.length === 0) {
@@ -47,7 +35,7 @@ export default function ShortCard({
     if (getAccessToken() === '') {
       setIsShowSignInUpPopup(true);
       return;
-    } else if (accessID === AccessID.Subscribers) {
+    } else if (vocab.accessID === AccessID.Subscribers) {
       asyncVocabAccess();
     } else {
       navigate(`/vocabulary/${id}`);
@@ -82,16 +70,16 @@ export default function ShortCard({
         onClick={openVocabulary}>
         <div className='flex w-full justify-between'>
           <div className='flex gap-x-1'>
-            <div className='flex content-start'>{name}</div>
+            <div className='flex content-start'>{vocab.name}</div>
             <LockItem
-              accessID={accessID}
+              accessID={vocab.accessID}
               size={5}
             />
           </div>
           <div className='flex w-6 items-center'>
             <NotificationBtn
               id={id}
-              notif={isNotification}
+              notif={vocab.isNotification || false}
             />
           </div>
         </div>
@@ -100,7 +88,7 @@ export default function ShortCard({
           className='flex w-full min-w-60 justify-between gap-x-4 text-gray-600'>
           <div className='flex'>{`${nativeLang} ↔ ${translateLang}`}</div>
           <div className='flex'>
-            {wordsCount} word{wordsCount != 1 && 's'}
+            {vocab.wordsCount} word{vocab.wordsCount != 1 && 's'}
           </div>
         </div>
       </button>

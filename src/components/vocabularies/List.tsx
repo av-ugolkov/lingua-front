@@ -60,8 +60,8 @@ export default function List({ nativeLang, translateLang }: SortedInputProps) {
           wordsCount: item['words_count'],
           tags: item['tags'] || [],
           words: item['words'] || [],
-          createdAt: new Date(item['created_at']),
-          updatedAt: new Date(item['updated_at']),
+          createdAt: item['created_at'],
+          updatedAt: item['updated_at'],
         });
       });
       setCountItems(respVocabs.data['total_count']);

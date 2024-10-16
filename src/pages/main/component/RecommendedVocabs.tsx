@@ -1,24 +1,14 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import ShortCard from '@/components/elements/Vocabulary/ShortCard';
 import { AuthStore, RequestMethod } from '@/scripts/api';
 import useFetch from '@/hooks/useFetch';
-
-export interface Vocab {
-  id: string;
-  name: string;
-  description: string;
-  wordsCount: number;
-  userID: string;
-  userName: string;
-  accessID: number;
-  nativeLang: string;
-  translateLang: string;
-  isNotification: boolean;
-}
+import { VocabularyData } from '@/models/Vocabulary';
+import { useAppDispatch, useAppSelector } from '@/hooks/redux';
+import { clearVocabs, setVocabs } from '@/redux/vocabularies/slice';
 
 export default function RecommendedVocabs() {
-  const [vocabs, setVocabs] = useState<Vocab[]>([]);
-
+  const vocabs = useAppSelector((state) => state.vocabs);
+  const dispatch = useAppDispatch();
   const { isLoading, response: respRecomendVocabs } = useFetch(
     '/vocabularies/recommended',
     RequestMethod.GET,
@@ -27,7 +17,7 @@ export default function RecommendedVocabs() {
 
   useEffect(() => {
     if (respRecomendVocabs.ok) {
-      const vocabs: Vocab[] = [];
+      const vocabs: VocabularyData[] = [];
       respRecomendVocabs.data.forEach((item: any) => {
         vocabs.push({
           id: item['id'],
@@ -37,14 +27,19 @@ export default function RecommendedVocabs() {
           accessID: item['access_id'],
           nativeLang: item['native_lang'],
           translateLang: item['translate_lang'],
+          tags: item['tags'] || [],
           description: item['description'],
           wordsCount: item['words_count'],
           isNotification: item['is_notification'],
         });
       });
-      setVocabs(vocabs);
+      dispatch(setVocabs(vocabs));
     }
-  }, [respRecomendVocabs]);
+
+    return () => {
+      dispatch(clearVocabs());
+    };
+  }, [respRecomendVocabs, dispatch]);
 
   if (isLoading) {
     return <div></div>;
@@ -63,12 +58,6 @@ export default function RecommendedVocabs() {
               <ShortCard
                 key={vocab.id}
                 id={vocab.id}
-                name={vocab.name}
-                accessID={vocab.accessID}
-                nativeCode={vocab.nativeLang}
-                translateCode={vocab.translateLang}
-                wordsCount={vocab.wordsCount}
-                isNotification={vocab.isNotification}
               />
             ))
           )}

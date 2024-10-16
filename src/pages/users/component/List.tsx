@@ -7,6 +7,8 @@ import { useSearchStore } from '@/components/elements/SearchPanel/useSearchStore
 import { useSortedStore } from '@/components/elements/SortAndOrder/useSortedStore';
 import Card from './Card';
 import { AuthStore, IQueryType, RequestMethod } from '@/scripts/api';
+import { clearVocabs } from '@/redux/vocabularies/slice';
+import { useAppDispatch } from '@/hooks/redux';
 
 export interface IUser {
   id: string;
@@ -20,6 +22,7 @@ export default function List() {
   const { searchValue } = useSearchStore();
   const { sort, order } = useSortedStore();
   const [users, setUsers] = useState<IUser[]>([]);
+  const dispatch = useAppDispatch();
 
   const query = useMemo<IQueryType>(
     () => [
@@ -49,11 +52,11 @@ export default function List() {
       setUsers(users);
       setCountItems(response.data['count_users']);
     }
-
     return () => {
       setUsers([]);
+      dispatch(clearVocabs());
     };
-  }, [response, setCountItems]);
+  }, [response, setCountItems, dispatch]);
 
   return (
     <>
