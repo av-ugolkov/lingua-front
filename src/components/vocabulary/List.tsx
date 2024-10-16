@@ -2,24 +2,31 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useMemo, useState } from 'react';
 
 import WordCard from './WordCard';
-import { useVocabWordsStore } from '@/hooks/stores/useVocabWordsStore';
 import { useSearchStore } from '@/components/elements/SearchPanel/useSearchStore';
 import { useSortedStore } from '@/components/elements/SortAndOrder/useSortedStore';
 import { EmptyVocabWord, VocabWord } from '@/models/Word.ts';
 import { AuthStore, IQueryType, RequestMethod } from '@/scripts/api';
 import useFetch from '@/hooks/useFetch';
-import { useAppSelector } from '@/hooks/redux';
+import { useAppDispatch, useAppSelector } from '@/hooks/redux';
 import { getVocab } from '@/redux/vocabularies/slice';
+import {
+  clearWords,
+  getOrderedWords,
+  setWords,
+  updateWord,
+} from '@/redux/words/slice';
 
 export default function List() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [tempWord, setTempWord] = useState(EmptyVocabWord);
-  const { getOrderedWords, setWords, updateWord, clearWords } =
-    useVocabWordsStore();
   const vocab = useAppSelector((state) => getVocab(state, id || ''));
   const searchStore = useSearchStore();
   const { sort, order } = useSortedStore();
+  const orderedWords = useAppSelector((state) =>
+    getOrderedWords(state, sort, order)
+  );
+  const dispatch = useAppDispatch();
 
   const query = useMemo<IQueryType>(() => [['id', id]], [id]);
   const { isLoading, response } = useFetch(
@@ -47,15 +54,15 @@ export default function List() {
           created: new Date(item['created']),
         });
       });
-      setWords(words);
+      dispatch(setWords(words));
     } else if (!isLoading) {
       navigate('/');
     }
 
     return () => {
-      clearWords();
+      dispatch(clearWords());
     };
-  }, [isLoading, response, id, setWords, clearWords, navigate]);
+  }, [isLoading, response, id, navigate, dispatch]);
 
   if (isLoading) {
     return <div></div>;
@@ -71,7 +78,7 @@ export default function List() {
           }}
         />
       )}
-      {getOrderedWords(sort, order)
+      {orderedWords
         .filter((word) => {
           return (
             word.native.text.toLowerCase().includes(searchStore.searchValue) ||
@@ -84,7 +91,7 @@ export default function List() {
           <div key={word.id}>
             <WordCard
               word={word}
-              updateWord={updateWord}
+              updateWord={(word) => dispatch(updateWord(word))}
               editable={vocab.editable}
             />
           </div>

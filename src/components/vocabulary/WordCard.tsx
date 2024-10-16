@@ -8,7 +8,6 @@ import {
   XCircleIcon,
 } from '@heroicons/react/24/outline';
 
-import { useVocabWordsStore } from '@/hooks/stores/useVocabWordsStore';
 import BtnCard from './BtnCard';
 import Tags from '../elements/Tags/Tags';
 import DropdownMenu from '../elements/Dropdown/DropdownMenu';
@@ -18,6 +17,8 @@ import { useNotificationStore } from '../notification/useNotificationStore';
 import { EmptyVocabWord, VocabWord } from '@/models/Word.ts';
 import { InvalidateDate } from '@/models/Base.ts';
 import api, { AuthStore } from '@/scripts/api';
+import { useAppDispatch } from '@/hooks/redux';
+import { addWord, removeWord } from '@/redux/words/slice';
 
 export default function WordCard({
   word,
@@ -29,8 +30,8 @@ export default function WordCard({
   editable?: boolean;
 }) {
   const { id: vocabID } = useParams();
-  const vocabWordsStore = useVocabWordsStore();
   const { notificationWarning } = useNotificationStore();
+  const dispatch = useAppDispatch();
 
   function addVocabWord() {
     async function asyncAddWord() {
@@ -66,7 +67,7 @@ export default function WordCard({
           updated: new Date(response.data['updated']),
         };
 
-        vocabWordsStore.addWord(newWord);
+        dispatch(addWord(newWord));
         updateWord(EmptyVocabWord);
       }
     }
@@ -109,7 +110,7 @@ export default function WordCard({
       });
 
       if (response.ok) {
-        vocabWordsStore.removeWord(word.id);
+        dispatch(removeWord(word.id));
       } else {
         console.error(response.data);
       }
