@@ -5,10 +5,11 @@ import WordCard from './WordCard';
 import { useVocabWordsStore } from '@/hooks/stores/useVocabWordsStore';
 import { useSearchStore } from '@/components/elements/SearchPanel/useSearchStore';
 import { useSortedStore } from '@/components/elements/SortAndOrder/useSortedStore';
-import { useVocabulariesStore } from '@/hooks/stores/useVocabulariesStore.ts';
 import { EmptyVocabWord, VocabWord } from '@/models/Word.ts';
 import { AuthStore, IQueryType, RequestMethod } from '@/scripts/api';
 import useFetch from '@/hooks/useFetch';
+import { useAppSelector } from '@/hooks/redux';
+import { getVocab } from '@/redux/vocabularies/slice';
 
 export default function List() {
   const { id } = useParams();
@@ -16,7 +17,7 @@ export default function List() {
   const [tempWord, setTempWord] = useState(EmptyVocabWord);
   const { getOrderedWords, setWords, updateWord, clearWords } =
     useVocabWordsStore();
-  const { getVocabulary } = useVocabulariesStore();
+  const vocab = useAppSelector((state) => getVocab(state, id || ''));
   const searchStore = useSearchStore();
   const { sort, order } = useSortedStore();
 
@@ -62,7 +63,7 @@ export default function List() {
 
   return (
     <>
-      {getVocabulary(id).editable && (
+      {vocab.editable && (
         <WordCard
           word={tempWord}
           updateWord={(newState) => {
@@ -84,7 +85,7 @@ export default function List() {
             <WordCard
               word={word}
               updateWord={updateWord}
-              editable={getVocabulary(id).editable}
+              editable={vocab.editable}
             />
           </div>
         ))}

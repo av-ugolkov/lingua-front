@@ -8,10 +8,9 @@ import ArrowBothSide from '@/assets/ArrowBothSide';
 import { AccessID, AccessStatus } from '@/models/Access';
 import { getAccessToken } from '@/scripts/AuthToken';
 import { useNotificationStore } from '@/components/notification/useNotificationStore';
-import { useVocabulariesStore } from '@/hooks/stores/useVocabulariesStore.ts';
 import Menu from './Menu';
 import api, { AuthStore } from '@/scripts/api';
-import { getCreateDate, getVocab } from '@/redux/vocabularies/slice';
+import { getCreateDate, getVocab, getWords } from '@/redux/vocabularies/slice';
 import { useAppSelector } from '@/hooks/redux';
 import { getLang } from '@/redux/languages/slice';
 
@@ -25,7 +24,6 @@ export default function FullCard({
   const navigate = useNavigate();
   const [isShowSignInUpPopup, setIsShowSignInUpPopup] = useState(false);
   const { notificationWarning } = useNotificationStore();
-  const { getWords } = useVocabulariesStore();
   const vocab = useAppSelector((state) => getVocab(state, id));
   const nativeLang = useAppSelector((state) =>
     getLang(state, vocab.nativeLang)
@@ -34,6 +32,7 @@ export default function FullCard({
     getLang(state, vocab.translateLang)
   );
   const createdAt = useAppSelector((state) => getCreateDate(state, id));
+  const words = useAppSelector((state) => getWords(state, id));
 
   function openVocabulary() {
     if (vocab.accessID !== AccessID.Public && getAccessToken() === '') {
@@ -84,7 +83,7 @@ export default function FullCard({
         </div>
         <div className='flex w-full text-gray-500'>{vocab.description}</div>
         <div className='flex flex-wrap w-full gap-1 mt-2'>
-          {getWords(id).map((word) => (
+          {words.map((word) => (
             <Tag
               key={word}
               value={word}

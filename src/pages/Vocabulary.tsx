@@ -7,14 +7,16 @@ import SortedPanel from '@/components/elements/SortAndOrder/SortedPanel';
 import { SortWordTypes } from '@/models/Sorted';
 import Header from '@/components/vocabulary/Header.tsx';
 import { VocabularyData } from '@/models/Vocabulary.ts';
-import { useVocabulariesStore } from '@/hooks/stores/useVocabulariesStore.ts';
 import { AuthStore, IQueryType, RequestMethod } from '@/scripts/api';
 import useFetch from '@/hooks/useFetch';
+import { useAppDispatch } from '@/hooks/redux';
+import { clearVocabs, setVocabs } from '@/redux/vocabularies/slice';
 
 export default function Vocabulary() {
   const { id } = useParams();
-
   const query = useMemo<IQueryType>(() => [['id', id]], [id]);
+  const dispatch = useAppDispatch();
+
   const { isLoading, response: respVocabInfo } = useFetch(
     '/vocabulary/info',
     RequestMethod.GET,
@@ -24,10 +26,10 @@ export default function Vocabulary() {
     }
   );
 
-  const vocabulariesStore = useVocabulariesStore();
   useEffect(() => {
     if (respVocabInfo.ok) {
-      const vocab: VocabularyData = {
+      const vocabs: VocabularyData[] = [];
+      vocabs.push({
         id: respVocabInfo.data['id'],
         name: respVocabInfo.data['name'],
         userID: respVocabInfo.data['user_id'],
@@ -40,12 +42,16 @@ export default function Vocabulary() {
         editable: respVocabInfo.data['editable'],
         tags: respVocabInfo.data['tags'],
         words: respVocabInfo.data['words'],
-        createdAt: new Date(respVocabInfo.data['created_at']),
-        updatedAt: new Date(respVocabInfo.data['updated_at']),
-      };
-      vocabulariesStore.addVocabulary(vocab);
+        createdAt: respVocabInfo.data['created_at'],
+        updatedAt: respVocabInfo.data['updated_at'],
+      });
+      dispatch(setVocabs(vocabs));
     }
-  }, [respVocabInfo, vocabulariesStore]);
+
+    return () => {
+      dispatch(clearVocabs());
+    };
+  }, [respVocabInfo, dispatch]);
 
   if (isLoading) {
     return <div></div>;

@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import List from '@/pages/account/vocabularies/component/List';
 import Button from '@/components/elements/Button';
 import Create from '@/pages/account/vocabularies/component/Create';
-import { useVocabulariesStore } from '@/hooks/stores/useVocabulariesStore';
 import { VocabularyData } from '@/models/Vocabulary.ts';
 import SortedPanel from '@/components/elements/SortAndOrder/SortedPanel';
 import ListBox, { IListBoxItem } from '@/components/elements/ListBox';
@@ -14,6 +13,7 @@ import { LanguageIcon } from '@heroicons/react/24/outline';
 import { SortWordTypes } from '@/models/Sorted';
 import api, { AuthStore } from '@/scripts/api';
 import { RootState } from '@/redux/store/store';
+import { addVocab } from '@/redux/vocabularies/slice';
 
 export default function Vocabularies() {
   const [isShowCreatePopup, setIsShowCreatePopup] = useState(false);
@@ -21,8 +21,7 @@ export default function Vocabularies() {
   const [listLangs, setListLangs] = useState([{ lang: 'Any', code: 'any' }]);
   const [nativeLang, setNativeLang] = useState('any');
   const [translateLang, setTranslateLang] = useState('any');
-
-  const vocabulariesStore = useVocabulariesStore();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (languages.length > 0) {
@@ -61,7 +60,7 @@ export default function Vocabularies() {
           userID: vocab.userID,
           words: [],
         };
-        vocabulariesStore.addVocabulary(newVocab);
+        dispatch(addVocab(newVocab));
         setIsShowCreatePopup(false);
       } else {
         console.error(response);

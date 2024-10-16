@@ -4,10 +4,12 @@ import FullCard from '@/components/elements/Vocabulary/FullCard';
 import Pagination from '../../components/elements/Pagination/Pagination';
 import { useSearchStore } from '../../components/elements/SearchPanel/useSearchStore';
 import { useSortedStore } from '../../components/elements/SortAndOrder/useSortedStore';
-import { useVocabulariesStore } from '@/hooks/stores/useVocabulariesStore.ts';
 import { AuthStore, IQueryType, RequestMethod } from '@/scripts/api';
 import useFetch from '@/hooks/useFetch';
 import { usePaginationStore } from '../../components/elements/Pagination/usePaginationStore';
+import { VocabularyData } from '@/models/Vocabulary';
+import { useAppDispatch, useAppSelector } from '@/hooks/redux';
+import { clearVocabs, setVocabs } from '@/redux/vocabularies/slice';
 
 interface SortedInputProps {
   nativeLang: string;
@@ -20,8 +22,8 @@ export default function List({ nativeLang, translateLang }: SortedInputProps) {
   const { page, itemsPerPage, setCountItems } = usePaginationStore();
   const { sort, order } = useSortedStore();
   const { searchValue } = useSearchStore();
-  const { vocabularies, addVocabulary, setVocabularies } =
-    useVocabulariesStore();
+  const vocabs = useAppSelector((state) => state.vocabs);
+  const dispatch = useAppDispatch();
 
   const query = useMemo<IQueryType>(
     () => [
@@ -47,8 +49,9 @@ export default function List({ nativeLang, translateLang }: SortedInputProps) {
 
   useEffect(() => {
     if (respVocabs.ok) {
+      const vocabs: VocabularyData[] = [];
       respVocabs.data['vocabularies'].forEach((item: any) => {
-        addVocabulary({
+        vocabs.push({
           id: item['id'],
           name: item['name'],
           userID: item['user_id'],
@@ -64,12 +67,13 @@ export default function List({ nativeLang, translateLang }: SortedInputProps) {
           updatedAt: item['updated_at'],
         });
       });
+      dispatch(setVocabs(vocabs));
       setCountItems(respVocabs.data['total_count']);
     }
     return () => {
-      setVocabularies([]);
+      dispatch(clearVocabs());
     };
-  }, [respVocabs, addVocabulary, setVocabularies, setCountItems]);
+  }, [respVocabs, setCountItems, dispatch]);
 
   if (isLoading) {
     return <div></div>;
@@ -77,7 +81,7 @@ export default function List({ nativeLang, translateLang }: SortedInputProps) {
 
   return (
     <div className='grid w-full gap-y-5 grid-cols-1'>
-      {vocabularies.map((item) => (
+      {vocabs.map((item) => (
         <FullCard
           key={item.id}
           id={item.id}
