@@ -1,13 +1,13 @@
 import { Order, Sorted } from '@/models/Sorted';
 import { createSlice } from '@reduxjs/toolkit/react';
 
-interface SearchState {
+export interface SearchAndOrderState {
   searchValue: string;
   sort: Sorted;
   order: Order;
 }
 
-const initialState: SearchState = {
+const initialState: SearchAndOrderState = {
   searchValue: '',
   sort: Sorted.Created,
   order: Order.DESC,

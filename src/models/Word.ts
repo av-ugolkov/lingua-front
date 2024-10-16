@@ -1,15 +1,14 @@
-export interface VocabWord {
+export interface VocabWord extends Word {
   id: string;
   vocabID: string;
-  native: Word;
   translates: string[];
   examples: string[];
-  updated: string;
-  created: string;
+  updated: number;
+  created: number;
 }
 
 export interface Word {
-  id: string;
+  wordID: string;
   text: string;
   pronunciation: string;
 }
@@ -17,13 +16,11 @@ export interface Word {
 export const EmptyVocabWord: VocabWord = {
   id: '',
   vocabID: '',
-  native: {
-    id: '',
-    text: '',
-    pronunciation: '',
-  },
+  wordID: '',
+  text: '',
+  pronunciation: '',
   translates: [],
   examples: [],
-  created: '',
-  updated: '',
+  created: 0,
+  updated: 0,
 };

@@ -18,7 +18,7 @@ export default function List() {
   const dispatch = useAppDispatch();
   const { id } = useParams();
   const navigate = useNavigate();
-  const [tempWord, setTempWord] = useState(EmptyVocabWord);
+  const [tempWord, setTempWord] = useState<VocabWord>({ ...EmptyVocabWord });
   const vocab = useAppSelector((state) => getVocab(state, id || ''));
   const { searchValue, sort, order } = useAppSelector(
     (state) => state.searchAndOrder
@@ -42,11 +42,9 @@ export default function List() {
         words.push({
           id: item['id'],
           vocabID: id || '',
-          native: {
-            id: item['native']['id'],
-            text: item['native']['text'],
-            pronunciation: item['native']['pronunciation'],
-          },
+          wordID: item['native']['id'],
+          text: item['native']['text'],
+          pronunciation: item['native']['pronunciation'],
           translates: item['translates'] || [],
           examples: item['examples'] || [],
           updated: item['updated'],
@@ -71,16 +69,16 @@ export default function List() {
     <>
       {vocab.editable && (
         <WordCard
-          word={tempWord}
-          updateWord={(newState) => {
-            setTempWord((prev) => ({ ...prev, ...newState }));
+          vocabWord={tempWord}
+          updateWord={(word) => {
+            setTempWord((prev) => ({ ...prev, ...word }));
           }}
         />
       )}
       {orderedWords
         .filter((word) => {
           return (
-            word.native.text.toLowerCase().includes(searchValue) ||
+            word.text.toLowerCase().includes(searchValue) ||
             word.translates.some((item) =>
               item.toLowerCase().includes(searchValue)
             )
@@ -89,7 +87,7 @@ export default function List() {
         .map((word) => (
           <div key={word.id}>
             <WordCard
-              word={word}
+              vocabWord={word}
               updateWord={(word) => dispatch(updateWord(word))}
               editable={vocab.editable}
             />
