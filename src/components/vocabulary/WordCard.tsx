@@ -213,8 +213,6 @@ export default function WordCard({
                 dispatch(addTranslation({ id: vocabWord.id, text: tag }));
               }}
               onRemoveTag={(ind) => {
-                const newTr = [...vocabWord.translates];
-                newTr.splice(ind, 1);
                 dispatch(
                   removeTranslation({ id: vocabWord.id, transInd: ind })
                 );
