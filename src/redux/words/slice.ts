@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit/react';
 
-import { VocabWord } from '@/models/Word';
+import { EmptyVocabWord, VocabWord } from '@/models/Word';
 import { Order, Sorted } from '@/models/Sorted';
 
 const initialState: VocabWord[] = [];
@@ -31,14 +31,49 @@ const slice = createSlice({
         console.error('word not found');
       }
     },
+    addTranslation: (
+      state,
+      action: { payload: { id: string; text: string } }
+    ) => {
+      state
+        .find((word) => word.id === action.payload.id)
+        ?.translates.push(action.payload.text);
+    },
+    removeTranslation: (
+      state,
+      action: { payload: { id: string; transInd: number } }
+    ) => {
+      state
+        .find((word) => word.id === action.payload.id)
+        ?.translates.splice(action.payload.transInd, 1);
+    },
+    addExample: (state, action: { payload: { id: string; text: string } }) => {
+      state
+        .find((word) => word.id === action.payload.id)
+        ?.examples.push(action.payload.text);
+    },
+    removeExample: (
+      state,
+      action: { payload: { id: string; examInd: number } }
+    ) => {
+      state
+        .find((word) => word.id === action.payload.id)
+        ?.examples.splice(action.payload.examInd, 1);
+    },
     clearWords: (state) => {
       state.splice(0, state.length);
     },
   },
   selectors: {
     getWord: (state, id: string) => {
+      if (id === '') {
+        return EmptyVocabWord;
+      }
       const word = state.find((word) => word.id === id);
-      return word || {};
+      if (!word) {
+        return EmptyVocabWord;
+      }
+      return word;
     },
     getOrderedWords: (state, sort: Sorted, order: Order) => {
       if (state.length === 0) {
@@ -74,8 +109,17 @@ const slice = createSlice({
   },
 });
 
-export const { addWord, setWords, updateWord, removeWord, clearWords } =
-  slice.actions;
+export const {
+  addWord,
+  setWords,
+  updateWord,
+  removeWord,
+  addTranslation,
+  removeTranslation,
+  addExample,
+  removeExample,
+  clearWords,
+} = slice.actions;
 export const { getWord, getOrderedWords } = slice.selectors;
 
 export default slice.reducer;

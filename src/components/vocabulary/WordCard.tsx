@@ -13,23 +13,31 @@ import Tags from '../elements/Tags/Tags';
 import DropdownMenu from '../elements/Dropdown/DropdownMenu';
 import DropdownItem from '../elements/Dropdown/Item';
 import InputField from './InputField';
-import { EmptyVocabWord, VocabWord } from '@/models/Word.ts';
+import { clearVocabWord, VocabWord } from '@/models/Word.ts';
 import api, { AuthStore } from '@/scripts/api';
-import { useAppDispatch } from '@/hooks/redux';
-import { addWord, removeWord } from '@/redux/words/slice';
+import { useAppDispatch, useAppSelector } from '@/hooks/redux';
+import {
+  addExample,
+  addTranslation,
+  addWord,
+  getWord,
+  removeExample,
+  removeTranslation,
+  removeWord,
+  updateWord,
+} from '@/redux/words/slice';
 import { notificationWarning } from '@/redux/notifications/slice';
 
 export default function WordCard({
-  vocabWord,
-  updateWord,
+  wordID,
   editable = true,
 }: {
-  vocabWord: VocabWord;
-  updateWord: (state: VocabWord) => void;
+  wordID: string;
   editable?: boolean;
 }) {
   const dispatch = useAppDispatch();
   const { id: vocabID } = useParams();
+  const vocabWord = useAppSelector((state) => getWord(state, wordID));
 
   function addVocabWord() {
     async function asyncAddWord() {
@@ -58,7 +66,7 @@ export default function WordCard({
         };
 
         dispatch(addWord(newWord));
-        updateWord({ ...EmptyVocabWord, translates: [], examples: [] });
+        clearVocabWord(vocabWord);
       } else {
         dispatch(notificationWarning(response.data));
       }
@@ -119,12 +127,15 @@ export default function WordCard({
         ],
       });
       if (response.ok) {
-        vocabWord.text = response.data['native']['text'];
-        vocabWord.pronunciation =
-          response.data['native']['pronunciation'] || '';
-        vocabWord.examples = response.data['examples'] || [];
-        vocabWord.translates = response.data['translates'] || [];
-        updateWord(vocabWord);
+        dispatch(
+          updateWord({
+            ...vocabWord,
+            text: response.data['native']['text'],
+            pronunciation: response.data['native']['pronunciation'] || '',
+            translates: response.data['translates'] || [],
+            examples: response.data['examples'] || [],
+          })
+        );
       } else {
         console.error(response);
       }
@@ -146,8 +157,12 @@ export default function WordCard({
         }
       );
       if (response.ok) {
-        vocabWord.pronunciation = response.data['native']['pronunciation'];
-        updateWord(vocabWord);
+        dispatch(
+          updateWord({
+            ...vocabWord,
+            pronunciation: response.data['native']['pronunciation'],
+          })
+        );
       } else {
         dispatch(notificationWarning(response.data));
       }
@@ -166,8 +181,7 @@ export default function WordCard({
               placeholder='Word'
               disabled={!editable}
               onChange={(v) => {
-                vocabWord.text = v;
-                updateWord(vocabWord);
+                dispatch(updateWord({ ...vocabWord, text: v }));
               }}
             />
             <InputField
@@ -175,8 +189,7 @@ export default function WordCard({
               placeholder='Pronunciation'
               disabled={!editable}
               onChange={(v) => {
-                vocabWord.pronunciation = v;
-                updateWord(vocabWord);
+                dispatch(updateWord({ ...vocabWord, pronunciation: v }));
               }}>
               {vocabWord.text !== '' && editable && (
                 <ArrowDownCircleIcon
@@ -197,12 +210,14 @@ export default function WordCard({
               placeholder='Type new translate and press Enter'
               disabled={!editable}
               onAddTag={(tag) => {
-                vocabWord.translates.push(tag);
-                updateWord(vocabWord);
+                dispatch(addTranslation({ id: vocabWord.id, text: tag }));
               }}
               onRemoveTag={(ind) => {
-                vocabWord.translates.splice(ind, 1);
-                updateWord(vocabWord);
+                const newTr = [...vocabWord.translates];
+                newTr.splice(ind, 1);
+                dispatch(
+                  removeTranslation({ id: vocabWord.id, transInd: ind })
+                );
               }}
             />
           </div>
@@ -214,12 +229,10 @@ export default function WordCard({
               placeholder='Type new example and press Enter'
               disabled={!editable}
               onAddTag={(tag) => {
-                vocabWord.examples.push(tag);
-                updateWord(vocabWord);
+                dispatch(addExample({ id: vocabWord.id, text: tag }));
               }}
               onRemoveTag={(ind) => {
-                vocabWord.examples.splice(ind, 1);
-                updateWord(vocabWord);
+                dispatch(removeExample({ id: vocabWord.id, examInd: ind }));
               }}
             />
           </div>

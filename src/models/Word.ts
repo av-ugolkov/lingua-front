@@ -7,6 +7,13 @@ export interface VocabWord extends Word {
   created: number;
 }
 
+export const clearVocabWord = (vocabWord: VocabWord) => {
+  vocabWord.text = '';
+  vocabWord.pronunciation = '';
+  vocabWord.translates = [];
+  vocabWord.examples = [];
+};
+
 export interface Word {
   wordID: string;
   text: string;

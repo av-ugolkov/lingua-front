@@ -1,24 +1,18 @@
 import { useNavigate, useParams } from 'react-router-dom';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 
 import WordCard from './WordCard';
-import { EmptyVocabWord, VocabWord } from '@/models/Word.ts';
+import { VocabWord } from '@/models/Word.ts';
 import { AuthStore, IQueryType, RequestMethod } from '@/scripts/api';
 import useFetch from '@/hooks/useFetch';
 import { useAppDispatch, useAppSelector } from '@/hooks/redux';
 import { getVocab } from '@/redux/vocabularies/slice';
-import {
-  clearWords,
-  getOrderedWords,
-  setWords,
-  updateWord,
-} from '@/redux/words/slice';
+import { clearWords, getOrderedWords, setWords } from '@/redux/words/slice';
 
 export default function List() {
   const dispatch = useAppDispatch();
   const { id } = useParams();
   const navigate = useNavigate();
-  const [tempWord, setTempWord] = useState<VocabWord>({ ...EmptyVocabWord });
   const vocab = useAppSelector((state) => getVocab(state, id || ''));
   const { searchValue, sort, order } = useAppSelector(
     (state) => state.searchAndOrder
@@ -67,14 +61,7 @@ export default function List() {
 
   return (
     <>
-      {vocab.editable && (
-        <WordCard
-          vocabWord={tempWord}
-          updateWord={(word) => {
-            setTempWord((prev) => ({ ...prev, ...word }));
-          }}
-        />
-      )}
+      {vocab.editable && <WordCard wordID='' />}
       {orderedWords
         .filter((word) => {
           return (
@@ -87,8 +74,7 @@ export default function List() {
         .map((word) => (
           <div key={word.id}>
             <WordCard
-              vocabWord={word}
-              updateWord={(word) => dispatch(updateWord(word))}
+              wordID={word.id}
               editable={vocab.editable}
             />
           </div>
