@@ -113,7 +113,10 @@ export default function WordCard({
   function cancelChanges() {
     async function asyncCancelChanges() {
       const response = await api.get('/vocabulary/word', AuthStore.USE, {
-        query: [['id', vocabWord.id]],
+        query: [
+          ['id', vocabWord.vocabID],
+          ['word_id', vocabWord.id],
+        ],
       });
       if (response.ok) {
         vocabWord.text = response.data['native']['text'];
