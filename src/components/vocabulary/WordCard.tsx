@@ -15,29 +15,31 @@ import DropdownItem from '../elements/Dropdown/Item';
 import InputField from './InputField';
 import { clearVocabWord, VocabWord } from '@/models/Word.ts';
 import api, { AuthStore } from '@/scripts/api';
-import { useAppDispatch, useAppSelector } from '@/hooks/redux';
+import { useAppDispatch } from '@/hooks/redux';
 import {
   addExample,
   addTranslation,
   addWord,
-  getWord,
   removeExample,
   removeTranslation,
   removeWord,
-  updateWord,
 } from '@/redux/words/slice';
-import { notificationWarning } from '@/redux/notifications/slice';
+import {
+  notificationSuccess,
+  notificationWarning,
+} from '@/redux/notifications/slice';
 
 export default function WordCard({
-  wordID,
+  vocabWord,
+  onChange,
   editable = true,
 }: {
-  wordID: string;
+  vocabWord: VocabWord;
+  onChange: (vocabWord: VocabWord) => void;
   editable?: boolean;
 }) {
   const dispatch = useAppDispatch();
   const { id: vocabID } = useParams();
-  const vocabWord = useAppSelector((state) => getWord(state, wordID));
 
   function addVocabWord() {
     async function asyncAddWord() {
@@ -67,6 +69,7 @@ export default function WordCard({
 
         dispatch(addWord(newWord));
         clearVocabWord(vocabWord);
+        onChange(vocabWord);
       } else {
         dispatch(notificationWarning(response.data));
       }
@@ -94,7 +97,11 @@ export default function WordCard({
           }),
         }
       );
-      console.warn('response: ', response.data);
+      if (response.ok) {
+        dispatch(notificationSuccess('Word updated'));
+      } else {
+        dispatch(notificationWarning('Sorry was something wrong'));
+      }
     }
 
     asyncUpdateVocabWord();
@@ -127,15 +134,13 @@ export default function WordCard({
         ],
       });
       if (response.ok) {
-        dispatch(
-          updateWord({
-            ...vocabWord,
-            text: response.data['native']['text'],
-            pronunciation: response.data['native']['pronunciation'] || '',
-            translates: response.data['translates'] || [],
-            examples: response.data['examples'] || [],
-          })
-        );
+        onChange({
+          ...vocabWord,
+          text: response.data['native']['text'],
+          pronunciation: response.data['native']['pronunciation'] || '',
+          translates: response.data['translates'] || [],
+          examples: response.data['examples'] || [],
+        });
       } else {
         console.error(response);
       }
@@ -157,12 +162,10 @@ export default function WordCard({
         }
       );
       if (response.ok) {
-        dispatch(
-          updateWord({
-            ...vocabWord,
-            pronunciation: response.data['native']['pronunciation'],
-          })
-        );
+        onChange({
+          ...vocabWord,
+          pronunciation: response.data['native']['pronunciation'],
+        });
       } else {
         dispatch(notificationWarning(response.data));
       }
@@ -181,7 +184,7 @@ export default function WordCard({
               placeholder='Word'
               disabled={!editable}
               onChange={(v) => {
-                dispatch(updateWord({ ...vocabWord, text: v }));
+                onChange({ ...vocabWord, text: v });
               }}
             />
             <InputField
@@ -189,7 +192,7 @@ export default function WordCard({
               placeholder='Pronunciation'
               disabled={!editable}
               onChange={(v) => {
-                dispatch(updateWord({ ...vocabWord, pronunciation: v }));
+                onChange({ ...vocabWord, pronunciation: v });
               }}>
               {vocabWord.text !== '' && editable && (
                 <ArrowDownCircleIcon

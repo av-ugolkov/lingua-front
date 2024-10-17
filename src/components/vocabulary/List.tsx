@@ -1,18 +1,24 @@
 import { useNavigate, useParams } from 'react-router-dom';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import WordCard from './WordCard';
-import { VocabWord } from '@/models/Word.ts';
+import { EmptyVocabWord, VocabWord } from '@/models/Word.ts';
 import { AuthStore, IQueryType, RequestMethod } from '@/scripts/api';
 import useFetch from '@/hooks/useFetch';
 import { useAppDispatch, useAppSelector } from '@/hooks/redux';
 import { getVocab } from '@/redux/vocabularies/slice';
-import { clearWords, getOrderedWords, setWords } from '@/redux/words/slice';
+import {
+  clearWords,
+  getOrderedWords,
+  setWords,
+  updateWord,
+} from '@/redux/words/slice';
 
 export default function List() {
   const dispatch = useAppDispatch();
   const { id } = useParams();
   const navigate = useNavigate();
+  const [newWord, setNewWord] = useState(EmptyVocabWord);
   const vocab = useAppSelector((state) => getVocab(state, id || ''));
   const { searchValue, sort, order } = useAppSelector(
     (state) => state.searchAndOrder
@@ -38,7 +44,7 @@ export default function List() {
           vocabID: id || '',
           wordID: item['native']['id'],
           text: item['native']['text'],
-          pronunciation: item['native']['pronunciation'],
+          pronunciation: item['native']['pronunciation'] || '',
           translates: item['translates'] || [],
           examples: item['examples'] || [],
           updated: item['updated'],
@@ -61,7 +67,12 @@ export default function List() {
 
   return (
     <>
-      {vocab.editable && <WordCard wordID='' />}
+      {vocab.editable && (
+        <WordCard
+          vocabWord={newWord}
+          onChange={setNewWord}
+        />
+      )}
       {orderedWords
         .filter((word) => {
           return (
@@ -74,7 +85,8 @@ export default function List() {
         .map((word) => (
           <div key={word.id}>
             <WordCard
-              wordID={word.id}
+              vocabWord={word}
+              onChange={(word) => dispatch(updateWord(word))}
               editable={vocab.editable}
             />
           </div>

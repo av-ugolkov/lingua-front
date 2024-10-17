@@ -19,7 +19,7 @@ export default function InputField({
         name='word'
         maxLength={50}
         placeholder={placeholder}
-        defaultValue={value}
+        value={value}
         disabled={disabled}
         onChange={(e) => {
           onChange(e.target.value);
