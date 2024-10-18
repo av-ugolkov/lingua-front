@@ -63,11 +63,13 @@ export default function About() {
         About creator
       </h1>
       <div className='flex bg-white p-5 mb-5 gap-x-5 shadow-md shadow-blue-300'>
-        <div className='min-w-36'>
+        <div className='min-w-36 text-center'>
           <img
-            className='rounded-full size-36 object-cover object-top duration-200 hover:scale-125 hover:duration-200'
+            className='rounded-full size-36 mb-2 object-cover object-top duration-200 hover:scale-125 hover:duration-200'
             src={creator}
             alt='creator'></img>
+          <p className='font-bold text-lg'>Alexander</p>
+          <p className='font-bold text-lg'>Ugolkov</p>
         </div>
         <div className='text-lg'>
           <p className='mb-1'>
@@ -90,7 +92,8 @@ export default function About() {
             reach out to me in{' '}
             <a
               className='inline-flex items-center align-middle'
-              href='www.linkedin.com/in/alexander-ugolkov'>
+              href='https://www.linkedin.com/in/alexander-ugolkov'
+              target='_blank'>
               <b className='text-blue-500'>LinkedIn</b>
               <img
                 className='flex size-6 duration-200 hover:scale-[115%] hover:duration-200'

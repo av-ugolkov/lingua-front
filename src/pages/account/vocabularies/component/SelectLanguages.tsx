@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
-import { ILanguage } from '@/hooks/stores/useLanguagesStore';
+
+import { ILanguage } from '@/redux/languages/slice';
 
 export default function SelectLanguages({
   title,
