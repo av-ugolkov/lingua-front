@@ -34,7 +34,7 @@ export default function NotificationBtn({
     return (
       <div
         className='w-full text-gray-400'
-        title='You need SingIn'>
+        title='You need to SingIn'>
         <BellIcon />
       </div>
     );
