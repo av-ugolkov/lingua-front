@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit/react';
 
-import { VocabWord } from '@/models/Word';
+import { EmptyVocabWord, VocabWord } from '@/models/Word';
 import { Order, Sorted } from '@/models/Sorted';
 
 const initialState: VocabWord[] = [];
@@ -37,34 +37,45 @@ const slice = createSlice({
   },
   selectors: {
     getWord: (state, id: string) => {
+      if (id === '') {
+        return EmptyVocabWord;
+      }
       const word = state.find((word) => word.id === id);
-      return word || {};
+      if (!word) {
+        return EmptyVocabWord;
+      }
+      return word;
     },
     getOrderedWords: (state, sort: Sorted, order: Order) => {
+      if (state.length === 0) {
+        return state;
+      }
+      const words = JSON.parse(JSON.stringify(state)) as VocabWord[];
       switch (sort) {
         case Sorted.Created:
           if (order === Order.DESC) {
-            state.sort((a, b) => b.created.valueOf() - a.created.valueOf());
+            words.sort((a, b) => b.created - a.created);
           } else {
-            state.sort((a, b) => a.created.valueOf() - b.created.valueOf());
+            words.sort((a, b) => a.created - b.created);
           }
           break;
         case Sorted.Updated:
           if (order === Order.DESC) {
-            state.sort((a, b) => b.updated.valueOf() - a.updated.valueOf());
+            words.sort((a, b) => b.updated - a.updated);
           } else {
-            state.sort((a, b) => a.updated.valueOf() - b.updated.valueOf());
+            words.sort((a, b) => a.updated - b.updated);
           }
           break;
         case Sorted.ABC:
           if (order === Order.DESC) {
-            state.sort((a, b) => b.native.text.localeCompare(a.native.text));
+            words.sort((a, b) => b.text.localeCompare(a.text));
           } else {
-            state.sort((a, b) => a.native.text.localeCompare(b.native.text));
+            words.sort((a, b) => a.text.localeCompare(b.text));
           }
           break;
       }
-      return state;
+
+      return words;
     },
   },
 });

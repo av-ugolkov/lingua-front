@@ -60,7 +60,6 @@ export default function FullCard({
           navigate(`/vocabulary/${id}`);
           break;
       }
-      console.warn(response.data);
     }
   }
 
