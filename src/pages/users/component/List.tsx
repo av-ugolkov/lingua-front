@@ -4,7 +4,6 @@ import useFetch from '@/hooks/useFetch';
 import Pagination from '@/components/elements/Pagination/Pagination';
 import Card from './Card';
 import { AuthStore, IQueryType, RequestMethod } from '@/scripts/api';
-import { clearVocabs } from '@/redux/vocabularies/slice';
 import { useAppDispatch, useAppSelector } from '@/hooks/redux';
 import { setCountItems } from '@/redux/pagination/slice';
 
@@ -53,7 +52,6 @@ export default function List() {
     }
     return () => {
       setUsers([]);
-      dispatch(clearVocabs());
     };
   }, [response, dispatch]);
 
