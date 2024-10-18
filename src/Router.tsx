@@ -2,7 +2,7 @@ import { createBrowserRouter } from 'react-router-dom';
 
 import Root from '@/layouts/Root';
 import Main from '@/pages/main';
-import About from '@/pages/About';
+import About from '@/pages/about';
 import SignUp from '@/pages/SignUp';
 import SignIn from '@/pages/SignIn';
 import Contact from '@/pages/Contact';
@@ -41,18 +41,18 @@ export const router = createBrowserRouter([
         element: <Vocabulary />,
       },
       {
+        path: 'about',
+        element: <About />,
+      },
+      {
+        path: 'contact',
+        element: <Contact />,
+      },
+      {
         path: '*',
         element: <Main />,
       },
     ],
-  },
-  {
-    path: 'about',
-    element: <About />,
-  },
-  {
-    path: 'contact',
-    element: <Contact />,
   },
   {
     path: '/sign_up',
