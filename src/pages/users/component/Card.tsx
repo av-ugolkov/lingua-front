@@ -5,26 +5,22 @@ import Avatar from '@/components/elements/Avatar';
 import Button from '@/components/elements/Button';
 import ShortCard from '@/components/elements/Vocabulary/ShortCard';
 import useFetch from '@/hooks/useFetch';
-import { AccessID } from '@/models/Access';
-import { useNotificationStore } from '@/components/notification/useNotificationStore';
 import { getUserID, isActiveToken } from '@/scripts/AuthToken';
 import { IUser } from './List';
 import api, { AuthStore, IQueryType, RequestMethod } from '@/scripts/api';
-
-export interface IVocab {
-  id: string;
-  name: string;
-  accessID: AccessID;
-  nativeLang: string;
-  translateLang: string;
-  wordsCount: number;
-}
+import { VocabularyData } from '@/models/Vocabulary';
+import { useAppDispatch } from '@/hooks/redux';
+import { setVocabs } from '@/redux/vocabularies/slice';
+import {
+  notificationError,
+  notificationSuccess,
+} from '@/redux/notifications/slice';
 
 export default function Card(user: IUser) {
+  const dispatch = useAppDispatch();
   const uid = getUserID();
-  const [vocabularies, setVocabularies] = useState<IVocab[]>([]);
   const [isSubscribe, setIsSubscribe] = useState(false);
-  const { notificationSuccess, notificationError } = useNotificationStore();
+  const [userVocabs, setUserVocabs] = useState<VocabularyData[]>([]);
 
   const queryVocabUser = useMemo<IQueryType>(
     () => [['user_id', user.id]],
@@ -52,9 +48,9 @@ export default function Card(user: IUser) {
     async function asyncSubscribe() {
       const response = await fetchSubscribe(subUserID);
       if (response.ok) {
-        notificationSuccess(`You subscribed to ${user.name}`);
+        dispatch(notificationSuccess(`You subscribed to ${user.name}`));
       } else {
-        notificationError(response.data);
+        dispatch(notificationError(response.data));
       }
     }
     asyncSubscribe();
@@ -123,25 +119,24 @@ export default function Card(user: IUser) {
 
   useEffect(() => {
     if (responseUser.ok) {
+      const vocabs: VocabularyData[] = [];
       responseUser.data.forEach((item: any) => {
-        setVocabularies((prev) => [
-          ...prev,
-          {
-            id: item['id'],
-            name: item['name'],
-            accessID: item['access_id'],
-            nativeLang: item['native_lang'],
-            translateLang: item['translate_lang'],
-            wordsCount: item['words_count'],
-          },
-        ]);
+        vocabs.push({
+          id: item['id'],
+          name: item['name'],
+          accessID: item['access_id'],
+          nativeLang: item['native_lang'],
+          translateLang: item['translate_lang'],
+          tags: item['tags'] || [],
+          description: item['description'] || '',
+          wordsCount: item['words_count'],
+          isNotification: item['notification'],
+        });
       });
+      setUserVocabs(vocabs);
+      dispatch(setVocabs(vocabs));
     }
-
-    return () => {
-      setVocabularies([]);
-    };
-  }, [responseUser]);
+  }, [responseUser, dispatch]);
 
   useEffect(() => {
     async function asyncCheck() {
@@ -191,10 +186,10 @@ export default function Card(user: IUser) {
         </div>
         <div className='flex-1 pl-5'>
           <ul className='flex flex-col gap-y-3'>
-            {vocabularies.map((vocab) => (
+            {userVocabs.map((vocab) => (
               <ShortCard
                 key={vocab.id}
-                {...vocab}
+                id={vocab.id}
               />
             ))}
           </ul>

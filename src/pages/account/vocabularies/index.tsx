@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 import List from '@/pages/account/vocabularies/component/List';
 import Button from '@/components/elements/Button';
 import Create from '@/pages/account/vocabularies/component/Create';
-import { useVocabulariesStore } from '@/hooks/stores/useVocabulariesStore';
 import { VocabularyData } from '@/models/Vocabulary.ts';
-import { useLanguagesStore } from '@/hooks/stores/useLanguagesStore';
 import SortedPanel from '@/components/elements/SortAndOrder/SortedPanel';
 import ListBox, { IListBoxItem } from '@/components/elements/ListBox';
 import ArrowBothSide from '@/assets/ArrowBothSide';
@@ -13,29 +12,28 @@ import SearchInput from '@/components/elements/SearchPanel/SearchInput';
 import { LanguageIcon } from '@heroicons/react/24/outline';
 import { SortWordTypes } from '@/models/Sorted';
 import api, { AuthStore } from '@/scripts/api';
+import { RootState } from '@/redux/store/store';
+import { addVocab } from '@/redux/vocabularies/slice';
 
 export default function Vocabularies() {
   const [isShowCreatePopup, setIsShowCreatePopup] = useState(false);
-  const { languages: languagesStore } = useLanguagesStore();
-  const [languages, setLanguages] = useState([{ lang: 'Any', code: 'any' }]);
+  const languages = useSelector((state: RootState) => state.langs);
+  const [listLangs, setListLangs] = useState([{ lang: 'Any', code: 'any' }]);
   const [nativeLang, setNativeLang] = useState('any');
   const [translateLang, setTranslateLang] = useState('any');
-
-  const vocabulariesStore = useVocabulariesStore();
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    if (languagesStore.size > 0) {
-      languagesStore.forEach((v, k) => {
-        setLanguages((prev) => [
-          ...prev,
-          {
-            lang: v,
-            code: k,
-          },
-        ]);
+    if (languages.length > 0) {
+      languages.forEach((lang) => {
+        setListLangs((prev) => [...prev, lang]);
       });
     }
-  }, [languagesStore]);
+
+    return () => {
+      setListLangs([{ lang: 'Any', code: 'any' }]);
+    };
+  }, [languages]);
 
   function createVocabulary(vocab: VocabularyData) {
     async function asyncFetchCreateVocabulary() {
@@ -62,7 +60,7 @@ export default function Vocabularies() {
           userID: vocab.userID,
           words: [],
         };
-        vocabulariesStore.addVocabulary(newVocab);
+        dispatch(addVocab(newVocab));
         setIsShowCreatePopup(false);
       } else {
         console.error(response);
@@ -74,7 +72,7 @@ export default function Vocabularies() {
 
   function mapToLanguages(): IListBoxItem[] {
     const items: IListBoxItem[] = [];
-    languages.forEach((item) => {
+    listLangs.forEach((item) => {
       items.push({ key: item.code, value: item.lang });
     });
     return items;
@@ -104,7 +102,7 @@ export default function Vocabularies() {
               indexValue={0}
               onChange={(value) => {
                 const lang =
-                  languages.find((tp) => tp.lang === value) || languages[0];
+                  listLangs.find((tp) => tp.lang === value) || listLangs[0];
                 setNativeLang(lang.code);
               }}
               classSelect='block w-fit p-1 bg-transparent border border-black text-black text-sm focus:ring-primary-500 focus:border-primary-500'
@@ -116,7 +114,7 @@ export default function Vocabularies() {
               indexValue={0}
               onChange={(value) => {
                 const lang =
-                  languages.find((tp) => tp.lang === value) || languages[0];
+                  listLangs.find((tp) => tp.lang === value) || listLangs[0];
                 setTranslateLang(lang.code);
               }}
               classSelect='block w-fit p-1 bg-transparent border border-black text-black text-sm focus:ring-primary-500 focus:border-primary-500'

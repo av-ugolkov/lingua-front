@@ -19,8 +19,8 @@ if (import.meta.env.DEV) {
   };
 }
 
-export function getAddr(): string {
-  return `${config.type}://${config.host}:${config.port}`;
+export function getFullAddr(endpoint: string): string {
+  return `${config.type}://${config.host}:${config.port}${endpoint}`;
 }
 
 export default config;

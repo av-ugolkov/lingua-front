@@ -14,8 +14,7 @@ export default function SignUp() {
 
   function signUp() {
     api
-      .post('/user/sign_up', AuthStore.NO)
-      .fetchFunc({
+      .post('/user/sign_up', AuthStore.NO, {
         body: JSON.stringify({
           email: email,
           username: email.substring(0, email.indexOf('@')),
@@ -34,8 +33,7 @@ export default function SignUp() {
 
   function sendCode() {
     api
-      .post('/auth/send_code', AuthStore.NO)
-      .fetchFunc({
+      .post('/auth/send_code', AuthStore.NO, {
         body: JSON.stringify({ email: email }),
       })
       .then(() => {

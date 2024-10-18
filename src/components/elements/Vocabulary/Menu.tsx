@@ -9,12 +9,14 @@ import DropdownMenu from '../Dropdown/DropdownMenu';
 import DropdownItem from '../Dropdown/Item';
 import Edit, { IEditData } from '@/pages/account/vocabularies/component/Edit';
 import { getUserID } from '@/scripts/AuthToken';
-import { useVocabulariesStore } from '@/hooks/stores/useVocabulariesStore';
 import api, { AuthStore } from '@/scripts/api';
+import { useAppDispatch, useAppSelector } from '@/hooks/redux';
+import { getVocab, removeVocab } from '@/redux/vocabularies/slice';
 
 export default function Menu({ vocabID }: { vocabID: string }) {
   const [isShowEditPopup, setIsShowEditPopup] = useState(false);
-  const { getVocabulary, removeVocabulary } = useVocabulariesStore();
+  const vocab = useAppSelector((state) => getVocab(state, vocabID));
+  const dispatch = useAppDispatch();
 
   function editVocabulary(editData: IEditData) {
     async function asyncEditVocabulary() {
@@ -27,9 +29,9 @@ export default function Menu({ vocabID }: { vocabID: string }) {
         }),
       });
       if (response.ok) {
-        getVocabulary(vocabID).name = editData.name;
-        getVocabulary(vocabID).description = editData.description;
-        getVocabulary(vocabID).accessID = editData.accessID;
+        vocab.name = editData.name;
+        vocab.description = editData.description;
+        vocab.accessID = editData.accessID;
       } else {
         console.error(response);
       }
@@ -41,10 +43,10 @@ export default function Menu({ vocabID }: { vocabID: string }) {
   function deleteVocabulary() {
     async function asyncDeleteVocabulary() {
       const response = await api.delete(`/vocabulary`, AuthStore.USE, {
-        query: [['name', getVocabulary(vocabID).name]],
+        query: [['name', vocab.name]],
       });
       if (response.ok) {
-        removeVocabulary(vocabID);
+        dispatch(removeVocab(vocabID));
       } else {
         console.error(response);
       }
@@ -56,7 +58,7 @@ export default function Menu({ vocabID }: { vocabID: string }) {
   return (
     <>
       <DropdownMenu baseSize='w-7 h-7'>
-        {getUserID() == getVocabulary(vocabID).userID ? (
+        {getUserID() == vocab.userID ? (
           <>
             <DropdownItem onClick={() => setIsShowEditPopup(true)}>
               Edit
@@ -77,9 +79,9 @@ export default function Menu({ vocabID }: { vocabID: string }) {
       {isShowEditPopup && (
         <Edit
           editData={{
-            name: getVocabulary(vocabID).name,
-            description: getVocabulary(vocabID).description,
-            accessID: getVocabulary(vocabID).accessID,
+            name: vocab.name,
+            description: vocab.description,
+            accessID: vocab.accessID,
           }}
           saveCallback={(editData) => {
             editVocabulary(editData);

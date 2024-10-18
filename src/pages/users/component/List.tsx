@@ -1,12 +1,12 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import useFetch from '@/hooks/useFetch';
-import { usePaginationStore } from '@/components/elements/Pagination/usePaginationStore';
 import Pagination from '@/components/elements/Pagination/Pagination';
-import { useSearchStore } from '@/components/elements/SearchPanel/useSearchStore';
-import { useSortedStore } from '@/components/elements/SortAndOrder/useSortedStore';
 import Card from './Card';
 import { AuthStore, IQueryType, RequestMethod } from '@/scripts/api';
+import { clearVocabs } from '@/redux/vocabularies/slice';
+import { useAppDispatch, useAppSelector } from '@/hooks/redux';
+import { setCountItems } from '@/redux/pagination/slice';
 
 export interface IUser {
   id: string;
@@ -16,10 +16,12 @@ export interface IUser {
 }
 
 export default function List() {
-  const { page, itemsPerPage, setCountItems } = usePaginationStore();
-  const { searchValue } = useSearchStore();
-  const { sort, order } = useSortedStore();
+  const { page, itemsPerPage } = useAppSelector((state) => state.pagination);
+  const { searchValue, sort, order } = useAppSelector(
+    (state) => state.searchAndOrder
+  );
   const [users, setUsers] = useState<IUser[]>([]);
+  const dispatch = useAppDispatch();
 
   const query = useMemo<IQueryType>(
     () => [
@@ -47,13 +49,13 @@ export default function List() {
         });
       });
       setUsers(users);
-      setCountItems(response.data['count_users']);
+      dispatch(setCountItems(response.data['count_users']));
     }
-
     return () => {
       setUsers([]);
+      dispatch(clearVocabs());
     };
-  }, [response, setCountItems]);
+  }, [response, dispatch]);
 
   return (
     <>

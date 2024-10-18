@@ -1,6 +1,5 @@
 import { useNavigate } from 'react-router-dom';
 
-import { useNotificationStore } from '../notification/useNotificationStore';
 import {
   ArrowLeftStartOnRectangleIcon,
   BookOpenIcon,
@@ -10,10 +9,12 @@ import {
 } from '@heroicons/react/24/outline';
 import { deleteAccessToken } from '@/scripts/AuthToken';
 import api, { AuthStore } from '@/scripts/api';
+import { useAppDispatch } from '@/hooks/redux';
+import { notificationWarning } from '@/redux/notifications/slice';
 
 export default function Menu() {
   const navigate = useNavigate();
-  const { notificationWarning } = useNotificationStore();
+  const dispatch = useAppDispatch();
 
   return (
     <div className='fixed top-12 right-2 w-48 h-fit bg-gray-300 shadow-lg shadow-blue-300 z-[5]'>
@@ -57,7 +58,7 @@ export default function Menu() {
                 navigate('/');
                 window.location.reload();
               } else {
-                notificationWarning(response.data);
+                dispatch(notificationWarning(response.data));
               }
             }
 
