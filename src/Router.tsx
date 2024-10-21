@@ -5,7 +5,7 @@ import Main from '@/pages/main';
 import About from '@/pages/about';
 import SignUp from '@/pages/SignUp';
 import SignIn from '@/pages/SignIn';
-import Contact from '@/pages/Contact';
+import Contact from '@/pages/contact';
 import AccountVocabularies from '@/pages/account/vocabularies';
 import Vocabulary from '@/pages/Vocabulary';
 import Vocabularies from '@/pages/vocabularies';
