@@ -11,9 +11,9 @@ import {
 } from '@heroicons/react/24/outline';
 
 import BtnCard from './BtnCard';
-import Tags from '../elements/Tags/Tags';
-import DropdownMenu from '../elements/Dropdown/DropdownMenu';
-import DropdownItem from '../elements/Dropdown/Item';
+import Tags from '../../../components/elements/Tags/Tags';
+import DropdownMenu from '../../../components/elements/Dropdown/DropdownMenu';
+import DropdownItem from '../../../components/elements/Dropdown/Item';
 import InputField from './InputField';
 import { clearVocabWord, VocabWord } from '@/models/Word.ts';
 import api, { AuthStore } from '@/scripts/api';
@@ -47,6 +47,7 @@ export default function WordCard({
             text: localVocabWord.text,
             pronunciation: localVocabWord.pronunciation,
           },
+          description: localVocabWord.description,
           translates: localVocabWord.translates,
           examples: localVocabWord.examples,
         }),
@@ -55,9 +56,10 @@ export default function WordCard({
         const newWord: VocabWord = {
           id: response.data['id'],
           wordID: response.data['native']['id'],
+          vocabID: vocabID || '',
           text: localVocabWord.text,
           pronunciation: localVocabWord.pronunciation,
-          vocabID: vocabID || '',
+          description: localVocabWord.description,
           translates: [...localVocabWord.translates],
           examples: [...localVocabWord.examples],
           created: response.data['created'],
@@ -89,6 +91,7 @@ export default function WordCard({
               text: localVocabWord.text,
               pronunciation: localVocabWord.pronunciation,
             },
+            description: localVocabWord.description,
             translates: localVocabWord.translates,
             examples: localVocabWord.examples,
           }),
@@ -135,6 +138,7 @@ export default function WordCard({
           ...localVocabWord,
           text: response.data['native']['text'],
           pronunciation: response.data['native']['pronunciation'] || '',
+          description: response.data['description'] || '',
           translates: response.data['translates'] || [],
           examples: response.data['examples'] || [],
         });
@@ -182,6 +186,7 @@ export default function WordCard({
               value={localVocabWord.text}
               placeholder='Word'
               disabled={!editable}
+              maxLength={50}
               onChange={(v) => {
                 setLocalVocabWord({ ...localVocabWord, text: v });
                 onChange(localVocabWord);
@@ -191,6 +196,7 @@ export default function WordCard({
               value={localVocabWord.pronunciation}
               placeholder='Pronunciation'
               disabled={!editable}
+              maxLength={50}
               onChange={(v) => {
                 setLocalVocabWord({ ...localVocabWord, pronunciation: v });
                 onChange(localVocabWord);
@@ -205,6 +211,18 @@ export default function WordCard({
                 />
               )}
             </InputField>
+          </div>
+          <div className='pt-3'>
+            <InputField
+              value={localVocabWord.description}
+              placeholder='Description'
+              disabled={!editable}
+              maxLength={100}
+              onChange={(v) => {
+                setLocalVocabWord({ ...localVocabWord, description: v });
+                onChange(localVocabWord);
+              }}
+            />
           </div>
           <div className='pt-3'>
             <div className='pb-[2px]'>Translates</div>

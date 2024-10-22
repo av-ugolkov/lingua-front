@@ -1,11 +1,11 @@
 import { useEffect, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
-import List from '@/components/vocabulary/List';
+import List from '@/pages/vocabulary/component/List';
 import SearchInput from '@/components/elements/SearchPanel/SearchInput';
 import SortedPanel from '@/components/elements/SortAndOrder/SortedPanel';
 import { SortWordTypes } from '@/models/Sorted';
-import Header from '@/components/vocabulary/Header.tsx';
+import Header from '@/pages/vocabulary/component/Header';
 import { VocabularyData } from '@/models/Vocabulary.ts';
 import { AuthStore, IQueryType, RequestMethod } from '@/scripts/api';
 import useFetch from '@/hooks/useFetch';
