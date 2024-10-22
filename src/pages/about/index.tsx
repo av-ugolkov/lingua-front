@@ -65,7 +65,7 @@ export default function About() {
       <div className='flex bg-white p-5 mb-5 gap-x-5 shadow-md shadow-blue-300'>
         <div className='min-w-36 text-center'>
           <img
-            className='rounded-full size-36 mb-2 object-cover object-top duration-200 hover:scale-125 hover:duration-200'
+            className='rounded-full size-36 mb-2 object-cover duration-200 hover:scale-125 hover:duration-200'
             src={creator}
             alt='creator'></img>
           <p className='font-bold text-lg'>Alexander</p>
