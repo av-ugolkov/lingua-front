@@ -7,7 +7,7 @@ import SignUp from '@/pages/SignUp';
 import SignIn from '@/pages/SignIn';
 import Contact from '@/pages/contact';
 import AccountVocabularies from '@/pages/account/vocabularies';
-import Vocabulary from '@/pages/Vocabulary';
+import Vocabulary from '@/pages/vocabulary';
 import Vocabularies from '@/pages/vocabularies';
 import Users from './pages/users';
 

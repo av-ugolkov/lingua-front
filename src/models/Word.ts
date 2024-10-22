@@ -1,6 +1,7 @@
 export interface VocabWord extends Word {
   id: string;
   vocabID: string;
+  description: string;
   translates: string[];
   examples: string[];
   updated: number;
@@ -26,6 +27,7 @@ export const EmptyVocabWord: VocabWord = {
   wordID: '',
   text: '',
   pronunciation: '',
+  description: '',
   translates: [],
   examples: [],
   created: 0,
