@@ -18,7 +18,7 @@ export default function SignUp() {
         body: JSON.stringify({
           email: email,
           username: email.substring(0, email.indexOf('@')),
-          code: code,
+          code: +code,
           password: password,
         }),
       })
