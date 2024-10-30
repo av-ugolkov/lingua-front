@@ -11,20 +11,14 @@ import {
 import { EnvelopeIcon as EnvelopeIconSolid } from '@heroicons/react/24/solid';
 
 import { deleteAccessToken } from '@/scripts/AuthToken';
-import api, { AuthStore, RequestMethod } from '@/scripts/api';
-import { useAppDispatch } from '@/hooks/redux';
-import { notificationWarning } from '@/redux/notifications/slice';
-import useFetch from '@/hooks/useFetch';
+import api, { AuthStore } from '@/scripts/api';
+import { useAppDispatch, useAppSelector } from '@/hooks/redux';
+import { toastWarning } from '@/redux/toasts/slice';
 
 export default function Menu() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-
-  const { response: respCountEvents } = useFetch(
-    '/events/count',
-    RequestMethod.GET,
-    AuthStore.USE
-  );
+  const { count: countEvents } = useAppSelector((state) => state.events);
 
   return (
     <div className='fixed top-12 right-2 w-48 h-fit bg-gray-300 shadow-lg shadow-blue-300 z-[5]'>
@@ -39,15 +33,11 @@ export default function Menu() {
         {MenuButton(
           'Notifications',
           <>
-            {respCountEvents.data && respCountEvents.data['count'] > 0 ? (
+            {countEvents > 0 ? (
               <div className='flex font-bold items-center text-indigo-500'>
                 <EnvelopeIconSolid className='w-5 h-5 ml-2' />
                 <XMarkIcon className='w-3 h-3' />
-                <div>
-                  {respCountEvents.data['count'] > 99
-                    ? '+99'
-                    : respCountEvents.data['count']}
-                </div>
+                <div>{countEvents > 99 ? '+99' : countEvents}</div>
               </div>
             ) : (
               <EnvelopeIcon className='w-5 h-5 ml-2' />
@@ -82,7 +72,7 @@ export default function Menu() {
                 navigate('/');
                 window.location.reload();
               } else {
-                dispatch(notificationWarning(response.data));
+                dispatch(toastWarning(response.data));
               }
             }
 

@@ -6,7 +6,7 @@ import AuthInput from '@/components/elements/Auth/AuthInput';
 import { setAccessToken } from '@/scripts/AuthToken';
 import api, { AuthStore } from '@/scripts/api';
 import { useAppDispatch } from '@/hooks/redux';
-import { notificationError } from '@/redux/notifications/slice';
+import { toastError } from '@/redux/toasts/slice';
 
 export default function SignIn() {
   const navigate = useNavigate();
@@ -22,7 +22,7 @@ export default function SignIn() {
       setAccessToken(respData.data.access_token);
       navigate('/');
     } else {
-      dispatch(notificationError(respData.data));
+      dispatch(toastError(respData.data));
       console.error(respData);
     }
   }

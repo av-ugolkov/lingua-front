@@ -11,10 +11,7 @@ import api, { AuthStore, IQueryType, RequestMethod } from '@/scripts/api';
 import { VocabularyData } from '@/models/Vocabulary';
 import { useAppDispatch } from '@/hooks/redux';
 import { setVocabs } from '@/redux/vocabularies/slice';
-import {
-  notificationError,
-  notificationSuccess,
-} from '@/redux/notifications/slice';
+import { toastError, toastSuccess } from '@/redux/toasts/slice';
 
 export default function Card(user: IUser) {
   const dispatch = useAppDispatch();
@@ -48,9 +45,9 @@ export default function Card(user: IUser) {
     async function asyncSubscribe() {
       const response = await fetchSubscribe(subUserID);
       if (response.ok) {
-        dispatch(notificationSuccess(`You subscribed to ${user.name}`));
+        dispatch(toastSuccess(`You subscribed to ${user.name}`));
       } else {
-        dispatch(notificationError(response.data));
+        dispatch(toastError(response.data));
       }
     }
     asyncSubscribe();
@@ -60,9 +57,9 @@ export default function Card(user: IUser) {
     async function asyncUnsubscribe() {
       const response = await fetchUnsubscribe(subUserID);
       if (response.ok) {
-        notificationSuccess(`You unsubscribed from ${user.name}`);
+        toastSuccess(`You unsubscribed from ${user.name}`);
       } else {
-        notificationError(response.data);
+        toastError(response.data);
       }
     }
     asyncUnsubscribe();

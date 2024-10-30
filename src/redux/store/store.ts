@@ -6,7 +6,8 @@ import vocabsReducer from '../vocabularies/slice';
 import wordsReducer from '../words/slice';
 import paginationReducer from '../pagination/slice';
 import searchAndOrderReducer from '../search_and_order/slice';
-import notificationsReducer from '../notifications/slice';
+import toastsReducer from '../toasts/slice';
+import eventsReducer from '../event/slice';
 
 export const store = configureStore({
   reducer: {
@@ -16,7 +17,8 @@ export const store = configureStore({
     words: wordsReducer,
     pagination: paginationReducer,
     searchAndOrder: searchAndOrderReducer,
-    notifications: notificationsReducer,
+    toasts: toastsReducer,
+    events: eventsReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(languagesApi.middleware),

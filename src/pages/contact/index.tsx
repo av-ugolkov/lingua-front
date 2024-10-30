@@ -1,9 +1,6 @@
 import Button from '@/components/elements/Button';
 import { useAppDispatch } from '@/hooks/redux';
-import {
-  notificationError,
-  notificationInfo,
-} from '@/redux/notifications/slice';
+import { toastError, toastInfo } from '@/redux/toasts/slice';
 import api, { AuthStore } from '@/scripts/api';
 import { useState } from 'react';
 
@@ -33,9 +30,9 @@ export default function Contact() {
     });
     if (response.ok) {
       setSupportData(emptySupportData);
-      dispatch(notificationInfo(response.data['msg']));
+      dispatch(toastInfo(response.data['msg']));
     } else {
-      dispatch(notificationError(response.data));
+      dispatch(toastError(response.data));
     }
     setEnabledSendBtn(true);
   };
@@ -133,18 +130,16 @@ export default function Contact() {
             disabled={!enabledSendBtn}
             callback={() => {
               if (!supportData.email) {
-                dispatch(notificationError('Email is required'));
+                dispatch(toastError('Email is required'));
                 return;
               } else if (!supportData.email.includes('@')) {
-                dispatch(notificationError('Email format is invalid'));
+                dispatch(toastError('Email format is invalid'));
                 return;
               } else if (!supportData.type) {
-                dispatch(
-                  notificationError('You need to choose the type of message')
-                );
+                dispatch(toastError('You need to choose the type of message'));
                 return;
               } else if (!supportData.message) {
-                dispatch(notificationError('Message is required'));
+                dispatch(toastError('Message is required'));
                 return;
               }
               sendRequest();

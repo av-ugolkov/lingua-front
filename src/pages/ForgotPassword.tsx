@@ -5,7 +5,7 @@ import Button from '@/components/elements/Button';
 import { setAccessToken } from '@/scripts/AuthToken';
 import api, { AuthStore } from '@/scripts/api';
 import { useAppDispatch } from '@/hooks/redux';
-import { notificationError } from '@/redux/notifications/slice';
+import { toastError } from '@/redux/toasts/slice';
 
 export default function ForgotPsw() {
   const dispatch = useAppDispatch();
@@ -21,7 +21,7 @@ export default function ForgotPsw() {
         setAccessToken(response.data['access_token']);
         navigate('/');
       } else {
-        dispatch(notificationError(response.data));
+        dispatch(toastError(response.data));
       }
     }
 

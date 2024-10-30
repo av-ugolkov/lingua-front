@@ -19,10 +19,7 @@ import { clearVocabWord, VocabWord } from '@/models/Word.ts';
 import api, { AuthStore } from '@/scripts/api';
 import { useAppDispatch } from '@/hooks/redux';
 import { addWord, removeWord } from '@/redux/words/slice';
-import {
-  notificationSuccess,
-  notificationWarning,
-} from '@/redux/notifications/slice';
+import { toastSuccess, toastWarning } from '@/redux/toasts/slice';
 
 export default function WordCard({
   vocabWord,
@@ -70,7 +67,7 @@ export default function WordCard({
         clearVocabWord(localVocabWord);
         onChange(localVocabWord);
       } else {
-        dispatch(notificationWarning(response.data));
+        dispatch(toastWarning(response.data));
       }
     }
 
@@ -98,9 +95,9 @@ export default function WordCard({
         }
       );
       if (response.ok) {
-        dispatch(notificationSuccess('Word updated'));
+        dispatch(toastSuccess('Word updated'));
       } else {
-        dispatch(notificationWarning('Sorry was something wrong'));
+        dispatch(toastWarning('Sorry was something wrong'));
       }
     }
 
@@ -144,7 +141,7 @@ export default function WordCard({
         });
         onChange(localVocabWord);
       } else {
-        dispatch(notificationWarning('Sorry was something wrong'));
+        dispatch(toastWarning('Sorry was something wrong'));
       }
     }
 
@@ -170,7 +167,7 @@ export default function WordCard({
         });
         onChange(localVocabWord);
       } else {
-        dispatch(notificationWarning(response.data));
+        dispatch(toastWarning(response.data));
       }
     }
 
