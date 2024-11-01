@@ -17,12 +17,18 @@ export default function Notifications() {
   useEffect(() => {
     if (respEvents.ok) {
       const events: IEventData[] = [];
-      respEvents.data['events'].map((e: any) => {
+      respEvents.data.map((e: any) => {
         events.push({
-          ID: e['ID'],
-          CreatedAt: e['CreatedAt'],
-          UserID: e['UserID'],
-          Msg: e['Payload'] || '',
+          ID: e['id'],
+          User: {
+            ID: e['user']['id'] || '',
+            Name: e['user']['name'] || 'Unknown',
+            LastVisitedAt: e['user']['last_visit_at'],
+            Role: e['user']['role'],
+          },
+          Type: e['type'],
+          Payload: new Map<string, any>(Object.entries(e['payload'])),
+          CreatedAt: e['created_at'],
           Watched: e['Watched'] || false,
         });
       });
@@ -32,9 +38,8 @@ export default function Notifications() {
 
   return (
     <>
-      <div className='flex flex-col gap-y-2'>
+      <div className='flex flex-col mt-5 gap-y-2'>
         {events.map((e: IEventData) => {
-          console.log(e.ID);
           return (
             <Event
               key={e.ID}

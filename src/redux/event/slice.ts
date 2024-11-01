@@ -1,17 +1,31 @@
 import { createSlice } from '@reduxjs/toolkit';
 
+export interface UserData {
+  ID: string;
+  Name: string;
+  Role: string;
+  LastVisitedAt: string;
+}
+
 export interface IEventData {
   ID: string;
-  UserID: string;
-  Msg: string;
+  User: UserData;
+  Type: string;
+  Payload: Map<string, any>;
   Watched: boolean;
   CreatedAt: string;
 }
 
 const EmptyEvent: IEventData = {
   ID: '',
-  UserID: '',
-  Msg: '',
+  User: {
+    ID: '',
+    Name: '',
+    Role: '',
+    LastVisitedAt: '',
+  },
+  Type: '',
+  Payload: new Map(),
   Watched: false,
   CreatedAt: '',
 };
