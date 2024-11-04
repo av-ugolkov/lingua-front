@@ -53,6 +53,12 @@ const slice = createSlice({
     setEvents: (state, action: { payload: IEventData[] }) => {
       state.events = action.payload;
     },
+    updateEvent: (state, action: { payload: IEventData }) => {
+      const ind = state.events.findIndex((e) => e.ID === action.payload.ID);
+      if (ind > -1) {
+        state.events[ind] = action.payload;
+      }
+    },
   },
   selectors: {
     getEvent: (state, id: string) => {
@@ -65,7 +71,7 @@ const slice = createSlice({
   },
 });
 
-export const { setCount, setEvent, setEvents } = slice.actions;
+export const { setCount, setEvent, setEvents, updateEvent } = slice.actions;
 export const { getEvent } = slice.selectors;
 
 export default slice.reducer;

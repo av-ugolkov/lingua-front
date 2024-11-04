@@ -22,14 +22,14 @@ export default function Notifications() {
           ID: e['id'],
           User: {
             ID: e['user']['id'] || '',
-            Name: e['user']['name'] || 'Unknown',
+            Name: e['user']['name'],
             LastVisitedAt: e['user']['last_visit_at'],
             Role: e['user']['role'],
           },
           Type: e['type'],
           Payload: new Map<string, any>(Object.entries(e['payload'])),
           CreatedAt: e['created_at'],
-          Watched: e['Watched'] || false,
+          Watched: e['watched'],
         });
       });
       dispatch(setEvents(events));
@@ -38,7 +38,7 @@ export default function Notifications() {
 
   return (
     <>
-      <div className='flex flex-col mt-5 gap-y-2'>
+      <div className='flex flex-col mt-5 gap-y-5'>
         {events.map((e: IEventData) => {
           return (
             <Event
