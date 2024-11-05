@@ -6,15 +6,19 @@ import {
   Cog8ToothIcon,
   EnvelopeIcon,
   UserGroupIcon,
+  XMarkIcon,
 } from '@heroicons/react/24/outline';
+import { EnvelopeIcon as EnvelopeIconSolid } from '@heroicons/react/24/solid';
+
 import { deleteAccessToken } from '@/scripts/AuthToken';
 import api, { AuthStore } from '@/scripts/api';
-import { useAppDispatch } from '@/hooks/redux';
-import { notificationWarning } from '@/redux/notifications/slice';
+import { useAppDispatch, useAppSelector } from '@/hooks/redux';
+import { toastWarning } from '@/redux/toasts/slice';
 
 export default function Menu() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const { count: countEvents } = useAppSelector((state) => state.events);
 
   return (
     <div className='fixed top-12 right-2 w-48 h-fit bg-gray-300 shadow-lg shadow-blue-300 z-[5]'>
@@ -28,7 +32,17 @@ export default function Menu() {
         )}
         {MenuButton(
           'Notifications',
-          <EnvelopeIcon className='w-5 h-5 ml-2' />,
+          <>
+            {countEvents > 0 ? (
+              <div className='flex font-bold items-center text-indigo-500'>
+                <EnvelopeIconSolid className='w-5 h-5 ml-2' />
+                <XMarkIcon className='w-3 h-3' />
+                <div>{countEvents > 99 ? '+99' : countEvents}</div>
+              </div>
+            ) : (
+              <EnvelopeIcon className='w-5 h-5 ml-2' />
+            )}
+          </>,
           () => {
             navigate('/account/notifications');
           }
@@ -58,7 +72,7 @@ export default function Menu() {
                 navigate('/');
                 window.location.reload();
               } else {
-                dispatch(notificationWarning(response.data));
+                dispatch(toastWarning(response.data));
               }
             }
 
@@ -77,7 +91,7 @@ function MenuButton(
 ): JSX.Element {
   return (
     <button
-      className='flex w-full px-4 py-2 select-none justify-end duration-500 hover:bg-gray-400 hover:text-white hover:duration-300'
+      className='flex w-full px-4 py-2 items-center select-none justify-end duration-500 hover:bg-gray-400 hover:text-white hover:duration-300'
       onClick={callback}>
       {label}
       {icon}

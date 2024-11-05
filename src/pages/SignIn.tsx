@@ -5,9 +5,12 @@ import Button from '@/components/elements/Button';
 import AuthInput from '@/components/elements/Auth/AuthInput';
 import { setAccessToken } from '@/scripts/AuthToken';
 import api, { AuthStore } from '@/scripts/api';
+import { useAppDispatch } from '@/hooks/redux';
+import { toastError } from '@/redux/toasts/slice';
 
 export default function SignIn() {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
@@ -19,6 +22,7 @@ export default function SignIn() {
       setAccessToken(respData.data.access_token);
       navigate('/');
     } else {
+      dispatch(toastError(respData.data));
       console.error(respData);
     }
   }

@@ -7,13 +7,13 @@ import '@/styles/globals.css';
 
 import { router } from '@/Router';
 import { store } from '@/redux/store/store';
-import NotificationContainer from '@/components/notification/container';
+import ToastContainer from '@/components/toast/container';
 
 const root = document.getElementById('root');
 
 ReactDOM.createRoot(root!).render(
   <Provider store={store}>
-    <NotificationContainer
+    <ToastContainer
       position='bottom'
       side='right'
       timeout={7000}

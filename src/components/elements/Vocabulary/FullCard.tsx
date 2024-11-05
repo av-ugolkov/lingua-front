@@ -12,7 +12,7 @@ import api, { AuthStore } from '@/scripts/api';
 import { getCreateDate, getVocab, getWords } from '@/redux/vocabularies/slice';
 import { useAppDispatch, useAppSelector } from '@/hooks/redux';
 import { getLang } from '@/redux/languages/slice';
-import { notificationWarning } from '@/redux/notifications/slice';
+import { toastWarning } from '@/redux/toasts/slice';
 
 export default function FullCard({
   id,
@@ -53,7 +53,7 @@ export default function FullCard({
       const access = response.data['access'];
       switch (access) {
         case AccessStatus.Forbidden:
-          dispatch(notificationWarning('Forbidden'));
+          dispatch(toastWarning('Forbidden'));
           break;
         case AccessStatus.Read:
         case AccessStatus.Edit:

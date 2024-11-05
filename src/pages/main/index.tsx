@@ -4,7 +4,7 @@ import RecomendedVocabs from '@/pages/main/component/RecommendedVocabs';
 import { AuthStore, IQueryType, RequestMethod } from '@/scripts/api';
 import useFetch from '@/hooks/useFetch';
 import { useAppDispatch } from '@/hooks/redux';
-import { clearNotifications } from '@/redux/notifications/slice';
+import { clearToasts } from '@/redux/toasts/slice';
 
 export default function HomePage() {
   const dispatch = useAppDispatch();
@@ -20,7 +20,7 @@ export default function HomePage() {
 
   useEffect(() => {
     return () => {
-      dispatch(clearNotifications());
+      dispatch(clearToasts());
     };
   }, [dispatch]);
 

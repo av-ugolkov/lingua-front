@@ -13,6 +13,7 @@ const slice = createSlice({
   initialState,
   reducers: {
     setLangs: (state, action: { payload: ILanguage[] }) => {
+      state.splice(0, state.length);
       action.payload.forEach((item: ILanguage) => {
         state.push(item);
       });
@@ -22,6 +23,7 @@ const slice = createSlice({
     builder.addMatcher(
       api.endpoints.getLanguages.matchFulfilled,
       (state, action: { payload: ILanguage[] }) => {
+        state.splice(0, state.length);
         action.payload.forEach((item: ILanguage) => {
           state.push(item);
         });
