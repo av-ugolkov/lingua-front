@@ -10,7 +10,8 @@ import AccountVocabularies from '@/pages/account/vocabularies';
 import Vocabulary from '@/pages/vocabulary';
 import Vocabularies from '@/pages/vocabularies';
 import Users from './pages/users';
-import AccountNotifications from "@/pages/account/notifications";
+import AccountNotifications from '@/pages/account/notifications';
+import AccountSettings from './pages/account/settings';
 
 export const router = createBrowserRouter([
   {
@@ -40,6 +41,10 @@ export const router = createBrowserRouter([
       {
         path: 'account/notifications',
         element: <AccountNotifications />,
+      },
+      {
+        path: 'account/settings',
+        element: <AccountSettings />,
       },
       {
         path: 'vocabulary/:id',
