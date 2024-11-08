@@ -3,6 +3,8 @@ export default function InputField({
   placeholder,
   disabled,
   maxLength = 50,
+  name = 'input',
+  type = 'text',
   onChange,
   children,
 }: {
@@ -10,6 +12,8 @@ export default function InputField({
   placeholder: string;
   disabled?: boolean;
   maxLength?: number;
+  name?: string;
+  type?: string;
   onChange: (value: string) => void;
   children?: React.ReactNode;
 }) {
@@ -17,8 +21,8 @@ export default function InputField({
     <div className='flex justify-start bg-transparent w-full border-solid border-[1px] border-black border-t-0 border-x-0'>
       <input
         className='w-full bg-transparent outline-none'
-        type='text'
-        name='word'
+        type={type}
+        name={name}
         maxLength={maxLength}
         placeholder={placeholder}
         value={value}
