@@ -10,7 +10,7 @@ export interface ITabElement {
 export default function Settings() {
   const tabs: ITabElement[] = [
     { name: 'Account', url: '#account', selected: true },
-    { name: 'Securety', url: '#securety', selected: false },
+    { name: 'Security', url: '#security', selected: false },
     { name: 'Personal Info', url: '#personal_info', selected: false },
     {
       name: 'Email Notifications',
@@ -18,7 +18,15 @@ export default function Settings() {
       selected: false,
     },
   ];
-  history.pushState(null, '', tabs[0].url);
+  console.log(history.state);
+  if (!history.state) {
+    history.pushState({ tab: tabs[0].url }, '', tabs[0].url);
+  } else {
+    tabs.forEach((tab) => {
+      tab.selected = tab.url === history.state.tab;
+    });
+    console.log(tabs);
+  }
 
   return (
     <>

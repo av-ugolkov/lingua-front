@@ -3,12 +3,13 @@ import { useState } from 'react';
 import { ITabElement } from '.';
 import TabsPanel from './component/tabs_panel';
 import Account from './component/account';
-import Securety from './component/securety';
+
 import PersonalInfo from './component/personal_info';
 import EmailNotifications from './component/email_notifications';
+import Security from './component/security';
 
 export default function PC({ tabs }: { tabs: ITabElement[] }) {
-  const [tabId, setTabId] = useState(tabs[0].url);
+  const [tabId, setTabId] = useState(history.state.tab);
 
   function chooseTabId(id: string) {
     tabs.forEach((tab) => {
@@ -43,8 +44,8 @@ function getTabForm(id: string) {
   switch (id) {
     case '#account':
       return <Account />;
-    case '#securety':
-      return <Securety />;
+    case '#security':
+      return <Security />;
     case '#personal_info':
       return <PersonalInfo />;
     case '#email_notifications':

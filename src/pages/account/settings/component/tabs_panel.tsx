@@ -11,6 +11,7 @@ export default function TabsPanel({ name, url, selected, selectFn }: TabProps) {
       <a
         href={url}
         onClick={() => {
+          history.pushState({ tab: url }, '', url);
           selectFn(url);
         }}
         className={clsx(
