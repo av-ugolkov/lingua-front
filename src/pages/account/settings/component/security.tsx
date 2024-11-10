@@ -1,24 +1,27 @@
+import { useEffect, useState } from 'react';
+
 import Button from '@/components/elements/Button';
 import InputFieldWithLabel from '@/components/elements/InputFieldWithLabel';
+import { useAppDispatch } from '@/hooks/redux';
+import { toastError, toastSuccess } from '@/redux/toasts/slice';
 import api, { AuthStore } from '@/scripts/api';
-import { useEffect, useState } from 'react';
 
 let timeout: NodeJS.Timeout;
 
 export default function Security() {
-  const [oldPassword, setOldPassword] = useState('');
+  const dispatch = useAppDispatch();
+  const [oldPsw, setOldPsw] = useState('');
   const [codeWasSent, setCodeWasSent] = useState(false);
-  const [newPassword, setNewPassword] = useState('');
+  const [newPsw, setNewPsw] = useState('');
   const [securityCode, setSecurityCode] = useState('');
 
   async function getSecurityCode() {
     const resp = await api.post(
-      '/account/settings/security_code',
+      '/account/settings/update_psw_code',
       AuthStore.USE,
       {
         body: JSON.stringify({
-          data: oldPassword,
-          type: 'change_password',
+          psw: oldPsw,
         }),
       }
     );
@@ -27,23 +30,24 @@ export default function Security() {
       timeout = setTimeout(() => {
         setCodeWasSent(false);
       }, 5 * 60 * 1000);
+    } else {
+      dispatch(toastError(resp.data));
     }
   }
 
   async function updatePassword() {
-    const resp = await api.post(
-      '/account/settings/update_password',
-      AuthStore.USE,
-      {
-        body: JSON.stringify({
-          old_password: oldPassword,
-          new_password: newPassword,
-          security_code: securityCode,
-        }),
-      }
-    );
+    const resp = await api.post('/account/settings/update_psw', AuthStore.USE, {
+      body: JSON.stringify({
+        old_psw: oldPsw,
+        new_psw: newPsw,
+        code: securityCode,
+      }),
+    });
     if (resp.ok) {
-      setCodeWasSent(true);
+      dispatch(toastSuccess('Password updated'));
+      setOldPsw('');
+    } else {
+      dispatch(toastError(resp.data));
     }
   }
 
@@ -59,13 +63,13 @@ export default function Security() {
         <InputFieldWithLabel
           id='old_password'
           label='Old Password'
-          value={oldPassword}
+          value={oldPsw}
           type='password'
           autoFill='password'
           placeholder='Old Password'
           maxLength={50}
           onChange={(value) => {
-            setOldPassword(value);
+            setOldPsw(value);
           }}
         />
         <div>
@@ -75,7 +79,7 @@ export default function Security() {
             focusOutlineColor='focus-visible:outline-indigo-600'
             disabledColor='disabled:bg-indigo-400'
             callback={getSecurityCode}
-            disabled={oldPassword.length === 0 || codeWasSent}>
+            disabled={oldPsw.length === 0 || codeWasSent}>
             Get Security Code
           </Button>
         </div>
@@ -84,13 +88,13 @@ export default function Security() {
             <InputFieldWithLabel
               id='new_password'
               label='New Password'
-              value={newPassword}
+              value={newPsw}
               type='password'
               autoFill='password'
               placeholder='New Password'
               maxLength={50}
               onChange={(value) => {
-                setNewPassword(value);
+                setNewPsw(value);
               }}
             />
             <InputFieldWithLabel
@@ -112,7 +116,7 @@ export default function Security() {
                 focusOutlineColor='focus-visible:outline-indigo-600'
                 disabledColor='disabled:bg-indigo-400'
                 callback={updatePassword}
-                disabled={oldPassword.length === 0}>
+                disabled={oldPsw.length === 0}>
                 Update password
               </Button>
             </div>
