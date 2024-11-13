@@ -1,5 +1,6 @@
-import Avatar from '../elements/Avatar';
 import { useEffect, useState } from 'react';
+
+import Avatar from '../elements/Avatar';
 import Menu from './Menu';
 import useFetch from '@/hooks/useFetch';
 import { AuthStore, RequestMethod } from '@/scripts/api';
@@ -27,7 +28,7 @@ export default function Account({ accountName }: { accountName: string }) {
     <>
       <div className='flex items-center'>
         <Avatar
-          name={accountName}
+          nickname={accountName}
           className='size-8 ml-2'
           callback={() => setIsShowMenu(!isShowMenu)}
         />

@@ -18,14 +18,13 @@ export default function Settings() {
       selected: false,
     },
   ];
-  console.log(history.state);
-  if (!history.state) {
+
+  if (!history.state.tab) {
     history.pushState({ tab: tabs[0].url }, '', tabs[0].url);
   } else {
     tabs.forEach((tab) => {
       tab.selected = tab.url === history.state.tab;
     });
-    console.log(tabs);
   }
 
   return (

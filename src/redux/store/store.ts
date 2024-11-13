@@ -8,6 +8,7 @@ import paginationReducer from '../pagination/slice';
 import searchAndOrderReducer from '../search_and_order/slice';
 import toastsReducer from '../toasts/slice';
 import eventsReducer from '../event/slice';
+import settingsReducer from '../settings/slice';
 
 export const store = configureStore({
   reducer: {
@@ -19,6 +20,7 @@ export const store = configureStore({
     searchAndOrder: searchAndOrderReducer,
     toasts: toastsReducer,
     events: eventsReducer,
+    settings: settingsReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(languagesApi.middleware),

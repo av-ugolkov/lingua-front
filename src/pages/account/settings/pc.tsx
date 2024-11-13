@@ -2,11 +2,11 @@ import { useState } from 'react';
 
 import { ITabElement } from '.';
 import TabsPanel from './component/tabs_panel';
-import Account from './component/account';
 
-import PersonalInfo from './component/personal_info';
+import Account from './component/account_tab';
 import EmailNotifications from './component/email_notifications';
 import Security from './component/security';
+import PersonalInfo from './component/personal_info';
 
 export default function PC({ tabs }: { tabs: ITabElement[] }) {
   const [tabId, setTabId] = useState(history.state.tab);

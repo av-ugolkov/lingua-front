@@ -37,11 +37,11 @@ export default function Event({ id }: { id: string }) {
       <div className='flex flex-col justify-between w-fit pr-5 border-r border-black'>
         <div className='flex justify-center pb-3'>
           <Avatar
-            name={event.User.Name}
+            nickname={event.User.Nickname}
             className='size-16 text-4xl'
           />
         </div>
-        <div className='flex justify-center'>{event.User.Name}</div>
+        <div className='flex justify-center'>{event.User.Nickname}</div>
       </div>
       <div className='relative w-full ml-3'>
         <div className='flex mr-6'>{createMsg(event)}</div>

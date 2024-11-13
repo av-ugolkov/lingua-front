@@ -9,7 +9,7 @@ import { setCountItems } from '@/redux/pagination/slice';
 
 export interface IUser {
   id: string;
-  name: string;
+  nickname: string;
   role: string;
   lastVisited: Date;
 }
@@ -42,7 +42,7 @@ export default function List() {
       response.data['users'].forEach((item: any) => {
         users.push({
           id: item['id'],
-          name: item['name'],
+          nickname: item['nickname'],
           role: item['role'],
           lastVisited: new Date(item['last_visited']),
         });
