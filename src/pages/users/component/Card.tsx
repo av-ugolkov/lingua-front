@@ -45,9 +45,9 @@ export default function Card(user: IUser) {
     async function asyncSubscribe() {
       const response = await fetchSubscribe(subUserID);
       if (response.ok) {
-        dispatch(toastSuccess(`You subscribed to ${user.name}`));
+        dispatch(toastSuccess(`You subscribed to ${user.nickname}`));
       } else {
-        dispatch(toastError(response.data));
+        dispatch(toastError(response.err));
       }
     }
     asyncSubscribe();
@@ -57,9 +57,9 @@ export default function Card(user: IUser) {
     async function asyncUnsubscribe() {
       const response = await fetchUnsubscribe(subUserID);
       if (response.ok) {
-        toastSuccess(`You unsubscribed from ${user.name}`);
+        dispatch(toastSuccess(`You unsubscribed from ${user.nickname}`));
       } else {
-        toastError(response.data);
+        dispatch(toastError(response.err));
       }
     }
     asyncUnsubscribe();
@@ -160,14 +160,14 @@ export default function Card(user: IUser) {
           <div>
             <div className='flex items-center mb-5 gap-x-5'>
               <Avatar
-                name={user.name}
+                nickname={user.nickname}
                 className='size-16 text-4xl'
               />
               <div className='w-36'>
                 <h2
                   className='w-full text-xl text-wrap truncate select-none'
-                  title={user.name}>
-                  {user.name}
+                  title={user.nickname}>
+                  {user.nickname}
                 </h2>
                 <p className='text-gray-600'>{user.role}</p>
               </div>

@@ -18,7 +18,7 @@ export default function Header() {
       const response = await api.get('/user/id', AuthStore.USE);
       if (response.ok) {
         setIsAuth(true);
-        setAccountName(response.data['name']);
+        setAccountName(response.data['nickname']);
       } else if (response.status === 401) {
         signOut();
       }

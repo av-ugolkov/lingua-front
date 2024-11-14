@@ -21,12 +21,13 @@ export default function Notifications() {
     if (respEvents.ok) {
       const events: IEventData[] = [];
       respEvents.data.map((e: any) => {
+        console.log(e);
         events.push({
           ID: e['id'],
           User: {
             ID: e['user']['id'] || '',
-            Name: e['user']['name'],
-            LastVisitedAt: e['user']['last_visit_at'],
+            Nickname: e['user']['nickname'],
+            VisitedAt: e['user']['visited_at'],
             Role: e['user']['role'],
           },
           Type: e['type'],

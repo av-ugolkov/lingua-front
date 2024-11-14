@@ -22,8 +22,7 @@ export default function SignIn() {
       setAccessToken(respData.data.access_token);
       navigate('/');
     } else {
-      dispatch(toastError(respData.data));
-      console.error(respData);
+      dispatch(toastError(respData.err));
     }
   }
 

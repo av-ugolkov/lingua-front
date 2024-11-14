@@ -14,10 +14,13 @@ export function getAccessToken(): string {
 
 export function isActiveToken(): boolean {
   const token = getAccessToken();
-  if (token === '') {
+  const parts = token.split('.');
+
+  if (parts.length !== 3) {
+    deleteAccessToken();
     return false;
   }
-  const payload = JSON.parse(atob(token.split('.')[1]));
+  const payload = JSON.parse(atob(parts[1]));
   const exp = payload['exp'];
 
   return Date.now() < exp * 1000;

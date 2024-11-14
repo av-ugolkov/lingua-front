@@ -3,16 +3,18 @@
 @tailwind utilities;
 @tailwind variants;
 
-.input-form {
-  @apply bg-gray-100 text-black placeholder:text-gray-600 border border-gray-400 focus:outline-none focus:border-indigo-500 active:border-indigo-500;
-}
+@layer components {
+  .input-form {
+    @apply bg-gray-100 text-black placeholder:text-gray-600 border border-gray-400 focus:outline-none focus:border-indigo-500 active:border-indigo-500;
+  }
 
-.input-white-form {
-  @apply bg-white text-black placeholder:text-gray-600 border border-gray-400 focus:outline-none focus:border-indigo-500 active:border-indigo-500;
-}
+  .input-white-form {
+    @apply bg-white text-black placeholder:text-gray-600 border border-gray-400 focus:outline-none focus:border-indigo-500 active:border-indigo-500;
+  }
 
-.bg-lock {
-  @apply fixed justify-center items-center bg-gray-700 bg-opacity-60 z-50 w-full inset-0 h-full;
+  .bg-lock {
+    @apply fixed justify-center items-center bg-gray-700 bg-opacity-60 z-50 w-full inset-0 h-full;
+  }
 }
 
 .border-groove {

@@ -32,7 +32,7 @@ export default function Contact() {
       setSupportData(emptySupportData);
       dispatch(toastInfo(response.data['msg']));
     } else {
-      dispatch(toastError(response.data));
+      dispatch(toastError(response.err));
     }
     setEnabledSendBtn(true);
   };

@@ -40,7 +40,7 @@ export default function List({ nativeLang, translateLang }: SortedInputProps) {
   const { isLoading, response: respVocabs } = useFetch(
     '/vocabularies',
     RequestMethod.GET,
-    AuthStore.NO,
+    AuthStore.OPTIONAL,
     {
       query: query,
     }

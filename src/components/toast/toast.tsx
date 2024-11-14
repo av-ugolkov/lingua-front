@@ -39,7 +39,7 @@ export default function Notification({
             {toastData.msg}
           </div>
         </div>
-        <button onClick={() => removeToast(toastData.id)}>
+        <button onClick={() => dispatch(removeToast(toastData.id))}>
           <XMarkIcon className='w-5 h-5' />
         </button>
       </div>

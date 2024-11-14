@@ -2,9 +2,9 @@ import { createSlice } from '@reduxjs/toolkit';
 
 export interface UserData {
   ID: string;
-  Name: string;
+  Nickname: string;
   Role: string;
-  LastVisitedAt: string;
+  VisitedAt: string;
 }
 
 export interface IEventData {
@@ -20,9 +20,9 @@ const EmptyEvent: IEventData = {
   ID: '',
   User: {
     ID: '',
-    Name: '',
+    Nickname: '',
     Role: '',
-    LastVisitedAt: '',
+    VisitedAt: '',
   },
   Type: '',
   Payload: new Map(),
