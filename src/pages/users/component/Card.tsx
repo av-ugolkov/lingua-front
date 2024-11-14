@@ -47,7 +47,7 @@ export default function Card(user: IUser) {
       if (response.ok) {
         dispatch(toastSuccess(`You subscribed to ${user.nickname}`));
       } else {
-        dispatch(toastError(response.data));
+        dispatch(toastError(response.err));
       }
     }
     asyncSubscribe();
@@ -57,9 +57,9 @@ export default function Card(user: IUser) {
     async function asyncUnsubscribe() {
       const response = await fetchUnsubscribe(subUserID);
       if (response.ok) {
-        toastSuccess(`You unsubscribed from ${user.nickname}`);
+        dispatch(toastSuccess(`You unsubscribed from ${user.nickname}`));
       } else {
-        toastError(response.data);
+        dispatch(toastError(response.err));
       }
     }
     asyncUnsubscribe();

@@ -31,7 +31,7 @@ export default function Security() {
         setCodeWasSent(false);
       }, 5 * 60 * 1000);
     } else {
-      dispatch(toastError(resp.data));
+      dispatch(toastError(resp.err));
     }
   }
 
@@ -47,7 +47,7 @@ export default function Security() {
       dispatch(toastSuccess('Password updated'));
       setOldPsw('');
     } else {
-      dispatch(toastError(resp.data));
+      dispatch(toastError(resp.err));
     }
   }
 

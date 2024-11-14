@@ -21,7 +21,7 @@ export default function ForgotPsw() {
         setAccessToken(response.data['access_token']);
         navigate('/');
       } else {
-        dispatch(toastError(response.data));
+        dispatch(toastError(response.err));
       }
     }
 

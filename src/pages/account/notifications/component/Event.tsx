@@ -25,7 +25,7 @@ export default function Event({ id }: { id: string }) {
         dispatch(updateEvent({ ...event, Watched: true }));
         dispatch(setCount(countEvents - 1));
       } else {
-        dispatch(toastError(resp.data));
+        dispatch(toastError(resp.err));
       }
     }
 

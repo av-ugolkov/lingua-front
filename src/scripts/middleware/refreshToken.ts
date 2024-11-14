@@ -26,7 +26,8 @@ export const refreshToken = async (): Promise<IResponseData> => {
       return {
         ok: false,
         status: 0,
-        data: 'Refresh token error',
+        data: null,
+        err: 'Refresh token error',
       };
     }
   } catch (error: any) {
@@ -34,7 +35,8 @@ export const refreshToken = async (): Promise<IResponseData> => {
     return {
       ok: false,
       status: 0,
-      data: error,
+      data: null,
+      err: error,
     };
   }
 };

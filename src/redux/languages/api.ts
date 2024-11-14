@@ -1,12 +1,13 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { ILanguage } from './slice';
 import { getFullAddr } from '@/config';
+import { ILanguage } from './slice';
 
 export const api = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: getFullAddr('/languages') }),
   endpoints: (build) => ({
-    getLanguages: build.query<ILanguage[], void>({
+    getLanguages: build.query<any, void>({
       query: () => '',
+      transformResponse: (response: any) => response['resp'] as ILanguage[],
     }),
   }),
 });

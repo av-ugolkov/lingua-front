@@ -64,7 +64,11 @@ const slice = createSlice({
         msg: action.payload,
       });
     },
-    toastError: (state, action: { payload: string }) => {
+    toastError: (state, action: { payload: string | undefined }) => {
+      if (!action.payload) {
+        return;
+      }
+
       if (state.toasts.length >= state.settings.max) {
         state.toasts.splice(0, 1);
       }
