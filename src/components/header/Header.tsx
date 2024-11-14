@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import HeaderBtn from './HeaderBtn';
 import Account from './Account';
 import api, { AuthStore } from '@/scripts/api';
-import { getAccessToken, isActiveToken } from '@/scripts/AuthToken';
 
 export default function Header() {
   const navigate = useNavigate();
@@ -31,11 +30,7 @@ export default function Header() {
       setIsLoading(false);
     }
 
-    if (isActiveToken() || getAccessToken() !== '') {
-      asyncGetUser();
-    } else {
-      signOut();
-    }
+    asyncGetUser();
   }, []);
 
   if (isLoading) {
