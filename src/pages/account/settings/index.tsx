@@ -11,12 +11,12 @@ export default function Settings() {
   const tabs: ITabElement[] = [
     { name: 'Account', url: '#account', selected: true },
     { name: 'Security', url: '#security', selected: false },
-    { name: 'Personal Info', url: '#personal_info', selected: false },
-    {
-      name: 'Email Notifications',
-      url: '#email_notifications',
-      selected: false,
-    },
+    // { name: 'Personal Info', url: '#personal_info', selected: false },
+    // {
+    //   name: 'Email Notifications',
+    //   url: '#email_notifications',
+    //   selected: false,
+    // },
   ];
 
   if (!history.state.tab) {
