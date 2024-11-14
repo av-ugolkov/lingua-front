@@ -1,37 +1,56 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import Button from '@/components/elements/Button';
 import InputFieldWithLabel from '@/components/elements/InputFieldWithLabel';
 import { useAppDispatch } from '@/hooks/redux';
-import { toastError, toastSuccess } from '@/redux/toasts/slice';
+import {
+  toastError,
+  toastInfo,
+  toastSuccess,
+  toastWarning,
+} from '@/redux/toasts/slice';
 import api, { AuthStore } from '@/scripts/api';
-
-let timeout: NodeJS.Timeout;
 
 export default function Security() {
   const dispatch = useAppDispatch();
   const [oldPsw, setOldPsw] = useState('');
-  const [codeWasSent, setCodeWasSent] = useState(false);
+  const [editPsw, setEditPsw] = useState(false);
+  const [sendingCode, setSendingCode] = useState(false);
   const [newPsw, setNewPsw] = useState('');
-  const [securityCode, setSecurityCode] = useState('');
+  const [code, setCode] = useState('');
+
+  function resetPswInput(ttl: number) {
+    setTimeout(() => {
+      setSendingCode(false);
+      setOldPsw('');
+      setNewPsw('');
+      setCode('');
+    }, ttl);
+  }
 
   async function getSecurityCode() {
+    setSendingCode(true);
     const resp = await api.post(
       '/account/settings/update_psw_code',
       AuthStore.USE,
       {
         body: JSON.stringify({
-          psw: oldPsw,
+          old_psw: oldPsw,
         }),
       }
     );
     if (resp.ok) {
-      setCodeWasSent(true);
-      timeout = setTimeout(() => {
-        setCodeWasSent(false);
-      }, 5 * 60 * 1000);
+      setEditPsw(true);
+      resetPswInput(300000);
+      dispatch(toastInfo(resp.data['msg']));
     } else {
-      dispatch(toastError(resp.err));
+      if (resp.status === 409) {
+        resetPswInput(resp.data['ttl']);
+        setEditPsw(true);
+        dispatch(toastWarning(resp.err));
+      } else {
+        dispatch(toastError(resp.err));
+      }
     }
   }
 
@@ -40,22 +59,20 @@ export default function Security() {
       body: JSON.stringify({
         old_psw: oldPsw,
         new_psw: newPsw,
-        code: securityCode,
+        code: code,
       }),
     });
     if (resp.ok) {
+      setEditPsw(false);
       dispatch(toastSuccess('Password updated'));
       setOldPsw('');
+      setNewPsw('');
+      setCode('');
+      setSendingCode(false);
     } else {
       dispatch(toastError(resp.err));
     }
   }
-
-  useEffect(() => {
-    return () => {
-      clearInterval(timeout);
-    };
-  }, [codeWasSent]);
 
   return (
     <>
@@ -71,19 +88,21 @@ export default function Security() {
           onChange={(value) => {
             setOldPsw(value);
           }}
+          disabled={editPsw}
         />
-        <div>
-          <Button
-            bgColor='bg-indigo-600'
-            hoverBgColor='hover:bg-indigo-500'
-            focusOutlineColor='focus-visible:outline-indigo-600'
-            disabledColor='disabled:bg-indigo-400'
-            callback={getSecurityCode}
-            disabled={oldPsw.length === 0 || codeWasSent}>
-            Get Security Code
-          </Button>
-        </div>
-        {codeWasSent && (
+        {!editPsw ? (
+          <div>
+            <Button
+              bgColor='bg-indigo-600'
+              hoverBgColor='hover:bg-indigo-500'
+              focusOutlineColor='focus-visible:outline-indigo-600'
+              disabledColor='disabled:bg-zinc-400'
+              callback={getSecurityCode}
+              disabled={oldPsw.length === 0 || sendingCode}
+              children={sendingCode ? 'Sending code...' : 'Change password'}
+            />
+          </div>
+        ) : (
           <>
             <InputFieldWithLabel
               id='new_password'
@@ -100,13 +119,13 @@ export default function Security() {
             <InputFieldWithLabel
               id='security_code'
               label='Security Code'
-              value={securityCode}
+              value={code}
               type='text'
               autoFill='off'
               placeholder='Security Code'
               maxLength={10}
               onChange={(value) => {
-                setSecurityCode(value);
+                setCode(value);
               }}
             />
             <div>
