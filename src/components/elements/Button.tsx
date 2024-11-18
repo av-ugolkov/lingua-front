@@ -28,7 +28,7 @@ export default function Button({
         hoverBgColor,
         focusOutlineColor,
         disabledColor,
-        `flex w-full h-full justify-center items-center px-3 py-1.5 text-sm text-nowrap font-semibold leading-6 text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`
+        `flex w-full h-full justify-center items-center px-3 py-1.5 text-sm text-nowrap font-semibold leading-6 text-white shadow-sm duration-200 hover:duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`
       )}>
       {children}
     </button>
