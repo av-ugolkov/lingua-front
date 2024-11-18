@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import Button from '@/components/elements/Button';
 import api, { AuthStore } from '@/scripts/api';
 import AuthInput from '@/components/elements/Auth/AuthInput';
+import GoogleButton from '@/components/google/button';
 
 export default function SignUp() {
   const navigate = useNavigate();
@@ -46,20 +47,20 @@ export default function SignUp() {
   }
 
   return (
-    <div className='flex min-w-80 min-h-full justify-center px-6 py-12 lg:px-80 text-gray-600'>
-      <div className='w-[520px] justify-center shadow-lg shadow-blue-300 px-10 py-10'>
+    <div className='flex min-w-80 min-h-full justify-center px-6 py-6 lg:px-80 text-gray-600'>
+      <div className='w-[520px] justify-center shadow-lg shadow-blue-300 px-10 py-5'>
         <div className='sm:mx-auto sm:w-full sm:max-w-sm'>
           <img
             className='mx-auto w-32 h-32'
             src='/logo-grey.png'
             alt='logo'
           />
-          <h2 className='mt-10 text-center text-2xl font-bold leading-9 tracking-tight'>
+          <h2 className='mt-5 text-center text-2xl font-bold leading-9 tracking-tight'>
             Sign up to create a new account
           </h2>
         </div>
 
-        <div className='mt-10 sm:mx-auto sm:w-full sm:max-w-sm'>
+        <div className='mt-5 sm:mx-auto sm:w-full sm:max-w-sm'>
           <form
             className='space-y-6'
             action='#'
@@ -146,6 +147,12 @@ export default function SignUp() {
               </Button>
             </div>
           </form>
+          <span className='flex items-center my-5'>
+            <span className='h-px flex-1 bg-black'></span>
+            <span className='shrink-0 px-6'>Or</span>
+            <span className='h-px flex-1 bg-black'></span>
+          </span>
+          <GoogleButton />
         </div>
       </div>
     </div>
