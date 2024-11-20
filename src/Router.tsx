@@ -12,6 +12,7 @@ import Vocabularies from '@/pages/vocabularies';
 import Users from './pages/users';
 import AccountNotifications from '@/pages/account/notifications';
 import AccountSettings from './pages/account/settings';
+import GoogleAuth from './pages/google_auth';
 
 export const router = createBrowserRouter([
   {
@@ -71,5 +72,9 @@ export const router = createBrowserRouter([
   {
     path: '/sign_in',
     element: <SignIn />,
+  },
+  {
+    path: '/auth/google',
+    element: <GoogleAuth />,
   },
 ]);
