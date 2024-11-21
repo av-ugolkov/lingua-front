@@ -1,7 +1,9 @@
-import { useAppDispatch } from '@/hooks/redux';
-import { toastError, toastInfo } from '@/redux/toasts/slice';
-import api, { AuthStore } from '@/scripts/api';
 import { useNavigate } from 'react-router-dom';
+import { useAppDispatch } from '@/hooks/redux';
+
+import { toastError } from '@/redux/toasts/slice';
+import api, { AuthStore } from '@/scripts/api';
+import { setAccessToken } from '@/scripts/AuthToken';
 
 interface CodeResponse {
   code: string;
@@ -27,13 +29,12 @@ export default function GoogleAuth() {
     .post('/auth/google', AuthStore.NO, { body: JSON.stringify(authData) })
     .then((resp) => {
       if (resp.ok) {
+        setAccessToken(resp.data['access_token']);
         navigate('/');
-        dispatch(toastInfo(resp.data['access_token']));
       } else {
         navigate('/');
         dispatch(toastError(resp.err));
       }
-      console.log(resp);
     });
   return <></>;
 }
