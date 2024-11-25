@@ -44,7 +44,7 @@ export default function WordCard({
             text: localVocabWord.text,
             pronunciation: localVocabWord.pronunciation,
           },
-          description: localVocabWord.description,
+          definition: localVocabWord.definition,
           translates: localVocabWord.translates,
           examples: localVocabWord.examples,
         }),
@@ -56,7 +56,7 @@ export default function WordCard({
           vocabID: vocabID || '',
           text: localVocabWord.text,
           pronunciation: localVocabWord.pronunciation,
-          description: localVocabWord.description,
+          definition: localVocabWord.definition,
           translates: [...localVocabWord.translates],
           examples: [...localVocabWord.examples],
           created: response.data['created'],
@@ -88,7 +88,7 @@ export default function WordCard({
               text: localVocabWord.text,
               pronunciation: localVocabWord.pronunciation,
             },
-            description: localVocabWord.description,
+            definition: localVocabWord.definition,
             translates: localVocabWord.translates,
             examples: localVocabWord.examples,
           }),
@@ -135,7 +135,7 @@ export default function WordCard({
           ...localVocabWord,
           text: response.data['native']['text'],
           pronunciation: response.data['native']['pronunciation'] || '',
-          description: response.data['description'] || '',
+          definition: response.data['definition'] || '',
           translates: response.data['translates'] || [],
           examples: response.data['examples'] || [],
         });
@@ -211,12 +211,12 @@ export default function WordCard({
           </div>
           <div className='pt-3'>
             <InputField
-              value={localVocabWord.description}
-              placeholder='Description'
+              value={localVocabWord.definition}
+              placeholder='Definition'
               disabled={!editable}
               maxLength={100}
               onChange={(v) => {
-                setLocalVocabWord({ ...localVocabWord, description: v });
+                setLocalVocabWord({ ...localVocabWord, definition: v });
                 onChange(localVocabWord);
               }}
             />

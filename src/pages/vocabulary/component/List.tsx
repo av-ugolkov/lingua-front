@@ -45,7 +45,7 @@ export default function List() {
           wordID: item['native']['id'],
           text: item['native']['text'],
           pronunciation: item['native']['pronunciation'] || '',
-          description: item['description'] || '',
+          definition: item['definition'] || '',
           translates: item['translates'] || [],
           examples: item['examples'] || [],
           updated: item['updated'],
