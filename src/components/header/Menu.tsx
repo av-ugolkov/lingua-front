@@ -13,7 +13,7 @@ import { EnvelopeIcon as EnvelopeIconSolid } from '@heroicons/react/24/solid';
 import { deleteAccessToken } from '@/scripts/AuthToken';
 import api, { AuthStore } from '@/scripts/api';
 import { useAppDispatch, useAppSelector } from '@/hooks/redux';
-import { toastWarning } from '@/redux/toasts/slice';
+import { toastError } from '@/redux/toasts/slice';
 
 export default function Menu() {
   const navigate = useNavigate();
@@ -72,7 +72,7 @@ export default function Menu() {
                 navigate('/');
                 window.location.reload();
               } else {
-                dispatch(toastWarning(response.data));
+                dispatch(toastError(response.data));
               }
             }
 

@@ -30,11 +30,10 @@ export default function GoogleAuth() {
     .then((resp) => {
       if (resp.ok) {
         setAccessToken(resp.data['access_token']);
-        navigate('/');
       } else {
-        navigate('/');
         dispatch(toastError(resp.err));
       }
+      navigate('/');
     });
   return <></>;
 }

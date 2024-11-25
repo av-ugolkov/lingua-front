@@ -5,8 +5,11 @@ import Button from '@/components/elements/Button';
 import api, { AuthStore } from '@/scripts/api';
 import AuthInput from '@/components/elements/Auth/AuthInput';
 import GoogleButton from '@/components/google/button';
+import { toastError } from '@/redux/toasts/slice';
+import { useAppDispatch } from '@/hooks/redux';
 
 export default function SignUp() {
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
@@ -15,7 +18,7 @@ export default function SignUp() {
 
   function signUp() {
     api
-      .post('/user/sign_up', AuthStore.NO, {
+      .post('/auth/sign_up', AuthStore.NO, {
         body: JSON.stringify({
           email: email,
           username: email.substring(0, email.indexOf('@')),
@@ -23,12 +26,15 @@ export default function SignUp() {
           password: password,
         }),
       })
-      .then(() => {
-        navigate('/');
+      .then((resp) => {
+        if (resp.ok) {
+          navigate('/');
+        } else {
+          dispatch(toastError(resp.err));
+        }
       })
       .catch((error) => {
         console.error(error);
-        //notification.value.ErrorNotification(data);
       });
   }
 
