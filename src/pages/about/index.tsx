@@ -1,5 +1,5 @@
 import { CheckBadgeIcon } from '@heroicons/react/24/outline';
-import creator from '@/assets/DSC01781.jpg';
+import creator from '/DSC01781.jpg';
 
 const pros: { header: string; description: string; isDone: boolean }[] = [
   {

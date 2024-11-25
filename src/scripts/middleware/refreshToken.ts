@@ -1,4 +1,5 @@
 import api, { AuthStore, IResponseData } from '@/scripts/api';
+import { getUserID } from '../AuthToken';
 
 const emptyPromise = Promise.resolve(null);
 let prRefreshToken: Promise<IResponseData | null> = emptyPromise;
@@ -12,7 +13,18 @@ function setEmptyPromise() {
 export const refreshToken = async (): Promise<IResponseData> => {
   try {
     if (prRefreshToken === emptyPromise) {
-      prRefreshToken = api.get('/auth/refresh', AuthStore.NO);
+      const uid = getUserID();
+      if (uid === '') {
+        return {
+          ok: false,
+          status: 0,
+          data: null,
+          err: 'Refresh token error',
+        };
+      }
+      prRefreshToken = api.get('/auth/refresh', AuthStore.NO, {
+        query: [['uid', uid]],
+      });
       setEmptyPromise();
     }
     const resp = await prRefreshToken;
