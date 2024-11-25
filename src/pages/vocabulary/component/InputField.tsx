@@ -18,7 +18,7 @@ export default function InputField({
   children?: React.ReactNode;
 }) {
   return (
-    <div className='flex justify-start bg-transparent w-full border-solid border-[1px] border-black border-t-0 border-x-0'>
+    <div className='flex justify-start bg-transparent w-full h-6 border-solid border-[1px] border-black border-t-0 border-x-0'>
       <input
         className='w-full bg-transparent outline-none'
         type={type}

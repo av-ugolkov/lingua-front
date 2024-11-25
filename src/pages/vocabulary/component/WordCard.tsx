@@ -2,24 +2,22 @@ import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import {
-  ArrowDownCircleIcon,
-  CheckCircleIcon,
   DocumentDuplicateIcon,
   PlusCircleIcon,
   TrashIcon,
-  XCircleIcon,
 } from '@heroicons/react/24/outline';
 
 import BtnCard from './BtnCard';
-import Tags from '../../../components/elements/Tags/Tags';
-import DropdownMenu from '../../../components/elements/Dropdown/DropdownMenu';
-import DropdownItem from '../../../components/elements/Dropdown/Item';
+import Tags from '@/components/elements/Tags/Tags';
+import DropdownMenu from '@/components/elements/Dropdown/DropdownMenu';
+import DropdownItem from '@/components/elements/Dropdown/Item';
 import InputField from './InputField';
-import { clearVocabWord, VocabWord } from '@/models/Word.ts';
+import { VocabWord } from '@/models/Word.ts';
 import api, { AuthStore } from '@/scripts/api';
 import { useAppDispatch } from '@/hooks/redux';
 import { addWord, removeWord } from '@/redux/words/slice';
-import { toastSuccess, toastWarning } from '@/redux/toasts/slice';
+import { toastWarning } from '@/redux/toasts/slice';
+import InputFieldButtons from './InputFieldButtons';
 
 export default function WordCard({
   vocabWord,
@@ -33,7 +31,19 @@ export default function WordCard({
   const dispatch = useAppDispatch();
   const { id: vocabID } = useParams();
 
-  const [localVocabWord, setLocalVocabWord] = useState(vocabWord);
+  const [word, setWord] = useState(vocabWord.text);
+  const [pronunciation, setPronunciation] = useState(vocabWord.pronunciation);
+  const [definition, setDefinition] = useState(vocabWord.definition);
+  const [translates, setTranslates] = useState(vocabWord.translates);
+  const [examples, setExamples] = useState(vocabWord.examples);
+
+  function clearForm() {
+    setWord('');
+    setPronunciation('');
+    setDefinition('');
+    setTranslates([]);
+    setExamples([]);
+  }
 
   function addVocabWord() {
     async function asyncAddWord() {
@@ -41,12 +51,12 @@ export default function WordCard({
         body: JSON.stringify({
           vocab_id: vocabID || '',
           native: {
-            text: localVocabWord.text,
-            pronunciation: localVocabWord.pronunciation,
+            text: word,
+            pronunciation: pronunciation,
           },
-          definition: localVocabWord.definition,
-          translates: localVocabWord.translates,
-          examples: localVocabWord.examples,
+          definition: definition,
+          translates: translates,
+          examples: examples,
         }),
       });
       if (response.ok) {
@@ -54,18 +64,18 @@ export default function WordCard({
           id: response.data['id'],
           wordID: response.data['native']['id'],
           vocabID: vocabID || '',
-          text: localVocabWord.text,
-          pronunciation: localVocabWord.pronunciation,
-          definition: localVocabWord.definition,
-          translates: [...localVocabWord.translates],
-          examples: [...localVocabWord.examples],
+          text: word,
+          pronunciation: pronunciation,
+          definition: definition,
+          translates: translates,
+          examples: examples,
           created: response.data['created'],
           updated: response.data['updated'],
         };
 
         dispatch(addWord(newWord));
-        clearVocabWord(localVocabWord);
-        onChange(localVocabWord);
+        clearForm();
+        updateWord();
       } else {
         dispatch(toastWarning(response.data));
       }
@@ -74,46 +84,16 @@ export default function WordCard({
     asyncAddWord();
   }
 
-  function updateVocabWord() {
-    async function asyncUpdateVocabWord() {
-      const response = await api.post(
-        '/vocabulary/word/update',
-        AuthStore.USE,
-        {
-          body: JSON.stringify({
-            id: localVocabWord.id,
-            vocab_id: vocabID,
-            native: {
-              id: localVocabWord.wordID,
-              text: localVocabWord.text,
-              pronunciation: localVocabWord.pronunciation,
-            },
-            definition: localVocabWord.definition,
-            translates: localVocabWord.translates,
-            examples: localVocabWord.examples,
-          }),
-        }
-      );
-      if (response.ok) {
-        dispatch(toastSuccess('Word updated'));
-      } else {
-        dispatch(toastWarning('Sorry was something wrong'));
-      }
-    }
-
-    asyncUpdateVocabWord();
-  }
-
   function deleteVocabWord() {
     async function asyncDelete() {
-      const jsonBodyData = { vocab_id: vocabID, word_id: localVocabWord.id };
+      const jsonBodyData = { vocab_id: vocabID, word_id: vocabWord.id };
       const bodyData = JSON.stringify(jsonBodyData);
       const response = await api.delete('/vocabulary/word', AuthStore.USE, {
         body: bodyData,
       });
 
       if (response.ok) {
-        dispatch(removeWord(localVocabWord.id));
+        dispatch(removeWord(vocabWord.id));
       } else {
         console.error(response.data);
       }
@@ -122,30 +102,19 @@ export default function WordCard({
     asyncDelete();
   }
 
-  function cancelChanges() {
-    async function asyncCancelChanges() {
-      const response = await api.get('/vocabulary/word', AuthStore.USE, {
-        query: [
-          ['id', localVocabWord.vocabID],
-          ['word_id', localVocabWord.id],
-        ],
-      });
-      if (response.ok) {
-        setLocalVocabWord({
-          ...localVocabWord,
-          text: response.data['native']['text'],
-          pronunciation: response.data['native']['pronunciation'] || '',
-          definition: response.data['definition'] || '',
-          translates: response.data['translates'] || [],
-          examples: response.data['examples'] || [],
-        });
-        onChange(localVocabWord);
-      } else {
-        dispatch(toastWarning('Sorry was something wrong'));
-      }
-    }
-
-    asyncCancelChanges();
+  function updateWord() {
+    onChange({
+      id: vocabWord.id,
+      vocabID: vocabWord.vocabID,
+      text: word,
+      pronunciation: pronunciation,
+      wordID: vocabWord.wordID,
+      definition: definition,
+      translates: translates,
+      examples: examples,
+      created: vocabWord.created,
+      updated: vocabWord.updated,
+    });
   }
 
   function getPronunciation() {
@@ -156,16 +125,13 @@ export default function WordCard({
         {
           query: [
             ['id', vocabID],
-            ['text', localVocabWord.text],
+            ['text', word],
           ],
         }
       );
       if (response.ok) {
-        setLocalVocabWord({
-          ...localVocabWord,
-          pronunciation: response.data['native']['pronunciation'],
-        });
-        onChange(localVocabWord);
+        setPronunciation(response.data['native']['pronunciation']);
+        updateWord();
       } else {
         dispatch(toastWarning(response.data));
       }
@@ -174,119 +140,120 @@ export default function WordCard({
     asyncGetPronunciation();
   }
 
+  function saveVocabWord() {}
+
+  function savePronunciation() {}
+
+  function saveDefinition() {}
+
   return (
     <>
       <div className='flex flex-row min-w-[540px] bg-blue-100 mb-8 border-solid border-[1px] border-gray-300 shadow-md shadow-blue-300'>
-        <div className='p-2 m-2 w-full'>
+        <div className='py-2 my-2 pl-2 ml-2 w-full'>
           <div className='flex gap-x-3'>
             <InputField
-              value={localVocabWord.text}
+              value={word}
               placeholder='Word'
               disabled={!editable}
               maxLength={50}
-              onChange={(v) => {
-                setLocalVocabWord({ ...localVocabWord, text: v });
-                onChange(localVocabWord);
-              }}
-            />
+              onChange={setWord}>
+              {vocabWord.id !== '' && word !== vocabWord.text && (
+                <InputFieldButtons
+                  save={saveVocabWord}
+                  cancel={() => setWord(vocabWord.text)}
+                />
+              )}
+            </InputField>
             <InputField
-              value={localVocabWord.pronunciation}
+              value={pronunciation}
               placeholder='Pronunciation'
               disabled={!editable}
               maxLength={50}
-              onChange={(v) => {
-                setLocalVocabWord({ ...localVocabWord, pronunciation: v });
-                onChange(localVocabWord);
-              }}>
-              {localVocabWord.text !== '' && editable && (
-                <ArrowDownCircleIcon
-                  title='Download pronunciation'
-                  onClick={() => {
-                    getPronunciation();
-                  }}
-                  className='size-6 py-0.5 mx-1 px-0.5'
-                />
+              onChange={setPronunciation}>
+              {vocabWord.id !== '' &&
+              pronunciation !== vocabWord.pronunciation ? (
+                word === '' ? (
+                  <InputFieldButtons
+                    save={savePronunciation}
+                    cancel={() => setPronunciation(vocabWord.pronunciation)}
+                  />
+                ) : (
+                  <InputFieldButtons
+                    save={savePronunciation}
+                    cancel={() => setPronunciation(vocabWord.pronunciation)}
+                    download={getPronunciation}
+                  />
+                )
+              ) : (
+                word !== '' && <InputFieldButtons download={getPronunciation} />
               )}
             </InputField>
           </div>
           <div className='pt-3'>
             <InputField
-              value={localVocabWord.definition}
+              value={definition}
               placeholder='Definition'
               disabled={!editable}
               maxLength={100}
-              onChange={(v) => {
-                setLocalVocabWord({ ...localVocabWord, definition: v });
-                onChange(localVocabWord);
-              }}
-            />
+              onChange={setDefinition}>
+              {definition !== vocabWord.definition && (
+                <InputFieldButtons
+                  save={saveDefinition}
+                  cancel={() => setDefinition(vocabWord.definition)}
+                />
+              )}
+            </InputField>
           </div>
           <div className='pt-3'>
             <div className='pb-[2px]'>Translates</div>
             <Tags
-              id={localVocabWord.id}
-              tags={localVocabWord.translates}
+              id={vocabWord.id}
+              tags={vocabWord.translates}
               placeholder='Type new translate and press Enter'
               disabled={!editable}
               onAddTag={(tag) => {
-                setLocalVocabWord({
-                  ...localVocabWord,
-                  translates: [...localVocabWord.translates, tag],
-                });
-                onChange(localVocabWord);
+                setTranslates([...translates, tag]);
               }}
               onRemoveTag={(ind) => {
-                setLocalVocabWord({
-                  ...localVocabWord,
-                  translates: localVocabWord.translates.filter(
-                    (_, i) => i !== ind
-                  ),
-                });
-                onChange(localVocabWord);
+                setTranslates(translates.splice(ind, 1));
               }}
             />
           </div>
           <div className='pt-3'>
             <div className='pb-[2px]'>Examples</div>
             <Tags
-              id={localVocabWord.id}
-              tags={localVocabWord.examples}
+              id={vocabWord.id}
+              tags={vocabWord.examples}
               placeholder='Type new example and press Enter'
               disabled={!editable}
               onAddTag={(tag) => {
-                setLocalVocabWord({
-                  ...localVocabWord,
-                  examples: [...localVocabWord.examples, tag],
-                });
-                onChange(localVocabWord);
+                setExamples([...examples, tag]);
               }}
               onRemoveTag={(ind) => {
-                setLocalVocabWord({
-                  ...localVocabWord,
-                  examples: localVocabWord.examples.filter((_, i) => i !== ind),
-                });
-                onChange(localVocabWord);
+                setExamples(examples.splice(ind, 1));
               }}
             />
           </div>
-          {localVocabWord.updated != 0 && (
+          {vocabWord.updated != 0 && (
             <div className='relative w-full text-gray-400 bottom-[-14px] text-right'>
-              {new Date(localVocabWord.created).toLocaleString('en-GB')}
+              {new Date(vocabWord.created).toLocaleString('en-GB')}
             </div>
           )}
         </div>
         {editable && (
-          <div className='flex flex-col justify-around align-middle mx-2'>
-            {localVocabWord.id === '' ? (
-              <BtnCard onClick={addVocabWord}>
-                <PlusCircleIcon
-                  className='w-6'
-                  color='blue'
-                  title='Add word'
-                />
-              </BtnCard>
+          <>
+            {vocabWord.id === '' ? (
+              <div className='flex flex-col justify-around align-middle mx-2'>
+                <BtnCard onClick={addVocabWord}>
+                  <PlusCircleIcon
+                    className='w-6'
+                    color='blue'
+                    title='Add word'
+                  />
+                </BtnCard>
+              </div>
             ) : (
-              <>
+              <div className='flex flex-col justify-start pt-3 align-middle mx-2'>
                 <DropdownMenu
                   title='Menu'
                   baseSize='w-7 h-7'>
@@ -303,23 +270,9 @@ export default function WordCard({
                     <TrashIcon className='size-5' />
                   </DropdownItem>
                 </DropdownMenu>
-                <BtnCard onClick={updateVocabWord}>
-                  <CheckCircleIcon
-                    className='w-6'
-                    color='green'
-                    title='Save changes'
-                  />
-                </BtnCard>
-                <BtnCard onClick={cancelChanges}>
-                  <XCircleIcon
-                    className='w-6'
-                    color='red'
-                    title='Cancel changes'
-                  />
-                </BtnCard>
-              </>
+              </div>
             )}
-          </div>
+          </>
         )}
       </div>
     </>
