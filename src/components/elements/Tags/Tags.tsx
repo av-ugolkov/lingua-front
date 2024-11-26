@@ -14,7 +14,7 @@ export default function Tags({
   placeholder: string;
   disabled?: boolean;
   onAddTag: (tag: string) => void;
-  onRemoveTag: (ind: number) => void;
+  onRemoveTag: (tag: string) => void;
 }) {
   return (
     <div className='flex flex-wrap w-full'>
@@ -36,7 +36,7 @@ export default function Tags({
                 value={tag}>
                 <XMarkIcon
                   className='min-w-5 w-5 h-5 ml-1 hover:shadow hover:shadow-blue-500'
-                  onClick={() => onRemoveTag(ind)}
+                  onClick={() => onRemoveTag(tag)}
                 />
               </Tag>
             ))}

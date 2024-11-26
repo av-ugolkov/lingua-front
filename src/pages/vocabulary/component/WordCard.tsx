@@ -16,7 +16,7 @@ import { VocabWord } from '@/models/Word.ts';
 import api, { AuthStore } from '@/scripts/api';
 import { useAppDispatch } from '@/hooks/redux';
 import { addWord, removeWord } from '@/redux/words/slice';
-import { toastWarning } from '@/redux/toasts/slice';
+import { toastError, toastSuccess, toastWarning } from '@/redux/toasts/slice';
 import InputFieldButtons from './InputFieldButtons';
 
 export default function WordCard({
@@ -140,11 +140,128 @@ export default function WordCard({
     asyncGetPronunciation();
   }
 
-  function saveVocabWord() {}
+  async function saveWord() {
+    const resp = await api.post('/vocabulary/word/update/text', AuthStore.USE, {
+      body: JSON.stringify({
+        id: vocabWord.id,
+        vocab_id: vocabID,
+        native: {
+          id: vocabWord.wordID,
+          text: word,
+        },
+      }),
+    });
 
-  function savePronunciation() {}
+    if (resp.ok) {
+      dispatch(toastSuccess('Word updated'));
+      updateWord();
+    } else {
+      dispatch(toastError(resp.err));
+    }
+  }
 
-  function saveDefinition() {}
+  async function savePronunciation() {
+    const resp = await api.post(
+      '/vocabulary/word/update/pronunciation',
+      AuthStore.USE,
+      {
+        body: JSON.stringify({
+          id: vocabWord.id,
+          vocab_id: vocabID,
+          native: {
+            id: vocabWord.wordID,
+            text: word,
+            pronunciation: pronunciation,
+          },
+        }),
+      }
+    );
+
+    if (resp.ok) {
+      dispatch(toastSuccess('Pronunciation updated'));
+      updateWord();
+    } else {
+      dispatch(toastError(resp.err));
+    }
+  }
+
+  async function saveDefinition() {
+    const resp = await api.post(
+      '/vocabulary/word/update/definition',
+      AuthStore.USE,
+      {
+        body: JSON.stringify({
+          id: vocabWord.id,
+          vocab_id: vocabID,
+          native: {
+            id: vocabWord.wordID,
+            text: word,
+          },
+          definition: definition,
+        }),
+      }
+    );
+
+    if (resp.ok) {
+      dispatch(toastSuccess('Definition updated'));
+      updateWord();
+    } else {
+      dispatch(toastError(resp.err));
+    }
+  }
+
+  async function saveTranslates(translates: string[]) {
+    const data = JSON.stringify({
+      id: vocabWord.id,
+      vocab_id: vocabID,
+      translates: translates,
+    });
+    const resp = await api.post(
+      '/vocabulary/word/update/translates',
+      AuthStore.USE,
+      {
+        body: data,
+      }
+    );
+
+    if (resp.ok) {
+      dispatch(toastSuccess('Translates updated'));
+      onChange({ ...vocabWord, translates: translates });
+      setTranslates(translates);
+    } else {
+      if (resp.status === 409) {
+        dispatch(toastWarning(resp.err));
+      } else {
+        dispatch(toastError(resp.err));
+      }
+    }
+  }
+
+  async function saveExamples(examples: string[]) {
+    const resp = await api.post(
+      '/vocabulary/word/update/examples',
+      AuthStore.USE,
+      {
+        body: JSON.stringify({
+          id: vocabWord.id,
+          vocab_id: vocabID,
+          examples: examples,
+        }),
+      }
+    );
+
+    if (resp.ok) {
+      dispatch(toastSuccess('Examples updated'));
+      onChange({ ...vocabWord, examples: examples });
+      setExamples(examples);
+    } else {
+      if (resp.status === 409) {
+        dispatch(toastWarning(resp.err));
+      } else {
+        dispatch(toastError(resp.err));
+      }
+    }
+  }
 
   return (
     <>
@@ -159,7 +276,7 @@ export default function WordCard({
               onChange={setWord}>
               {vocabWord.id !== '' && word !== vocabWord.text && (
                 <InputFieldButtons
-                  save={saveVocabWord}
+                  save={saveWord}
                   cancel={() => setWord(vocabWord.text)}
                 />
               )}
@@ -210,12 +327,13 @@ export default function WordCard({
               id={vocabWord.id}
               tags={vocabWord.translates}
               placeholder='Type new translate and press Enter'
-              disabled={!editable}
+              disabled={!editable || translates.length >= 10}
               onAddTag={(tag) => {
-                setTranslates([...translates, tag]);
+                saveTranslates([...translates, tag]);
               }}
-              onRemoveTag={(ind) => {
-                setTranslates(translates.splice(ind, 1));
+              onRemoveTag={(tag) => {
+                const newTr = translates.filter((t) => t !== tag);
+                saveTranslates(newTr);
               }}
             />
           </div>
@@ -225,12 +343,13 @@ export default function WordCard({
               id={vocabWord.id}
               tags={vocabWord.examples}
               placeholder='Type new example and press Enter'
-              disabled={!editable}
+              disabled={!editable || examples.length >= 5}
               onAddTag={(tag) => {
-                setExamples([...examples, tag]);
+                saveExamples([...examples, tag]);
               }}
-              onRemoveTag={(ind) => {
-                setExamples(examples.splice(ind, 1));
+              onRemoveTag={(tag) => {
+                const newEx = examples.filter((t) => t !== tag);
+                saveExamples(newEx);
               }}
             />
           </div>
