@@ -46,7 +46,7 @@ export default function WordCard({
 
   function addVocabWord() {
     async function asyncAddWord() {
-      const response = await api.post('/vocabulary/word', AuthStore.USE, {
+      const resp = await api.post('/vocabulary/word', AuthStore.USE, {
         body: JSON.stringify({
           vocab_id: vocabID || '',
           native: {
@@ -58,25 +58,25 @@ export default function WordCard({
           examples: examples,
         }),
       });
-      if (response.ok) {
+      if (resp.ok) {
         const newWord: VocabWord = {
-          id: response.data['id'],
-          wordID: response.data['native']['id'],
+          id: resp.data['id'],
+          wordID: resp.data['native']['id'],
           vocabID: vocabID || '',
           text: word,
           pronunciation: pronunciation,
           definition: definition,
           translates: translates,
           examples: examples,
-          created: response.data['created'],
-          updated: response.data['updated'],
+          created: resp.data['created'],
+          updated: resp.data['updated'],
         };
 
         dispatch(addWord(newWord));
         clearForm();
         updateWord();
       } else {
-        dispatch(toastWarning(response.data));
+        dispatch(toastWarning(resp.err));
       }
     }
 
@@ -118,7 +118,7 @@ export default function WordCard({
 
   function getPronunciation() {
     async function asyncGetPronunciation() {
-      const response = await api.get(
+      const resp = await api.get(
         '/vocabulary/word/pronunciation',
         AuthStore.USE,
         {
@@ -128,11 +128,11 @@ export default function WordCard({
           ],
         }
       );
-      if (response.ok) {
-        setPronunciation(response.data['native']['pronunciation']);
+      if (resp.ok) {
+        setPronunciation(resp.data['native']['pronunciation']);
         updateWord();
       } else {
-        dispatch(toastWarning(response.data));
+        dispatch(toastWarning(resp.err));
       }
     }
 
