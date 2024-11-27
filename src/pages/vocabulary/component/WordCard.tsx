@@ -30,7 +30,6 @@ export default function WordCard({
 }) {
   const dispatch = useAppDispatch();
   const { id: vocabID } = useParams();
-
   const [word, setWord] = useState(vocabWord.text);
   const [pronunciation, setPronunciation] = useState(vocabWord.pronunciation);
   const [definition, setDefinition] = useState(vocabWord.definition);
@@ -140,14 +139,14 @@ export default function WordCard({
     asyncGetPronunciation();
   }
 
-  async function saveWord() {
+  async function saveWord(value: string) {
     const resp = await api.post('/vocabulary/word/update/text', AuthStore.USE, {
       body: JSON.stringify({
         id: vocabWord.id,
         vocab_id: vocabID,
         native: {
           id: vocabWord.wordID,
-          text: word,
+          text: value,
         },
       }),
     });
@@ -160,7 +159,7 @@ export default function WordCard({
     }
   }
 
-  async function savePronunciation() {
+  async function savePronunciation(value: string) {
     const resp = await api.post(
       '/vocabulary/word/update/pronunciation',
       AuthStore.USE,
@@ -171,7 +170,7 @@ export default function WordCard({
           native: {
             id: vocabWord.wordID,
             text: word,
-            pronunciation: pronunciation,
+            pronunciation: value,
           },
         }),
       }
@@ -185,7 +184,7 @@ export default function WordCard({
     }
   }
 
-  async function saveDefinition() {
+  async function saveDefinition(value: string) {
     const resp = await api.post(
       '/vocabulary/word/update/definition',
       AuthStore.USE,
@@ -197,7 +196,7 @@ export default function WordCard({
             id: vocabWord.wordID,
             text: word,
           },
-          definition: definition,
+          definition: value,
         }),
       }
     );
@@ -273,37 +272,23 @@ export default function WordCard({
               placeholder='Word'
               disabled={!editable}
               maxLength={50}
-              onChange={setWord}>
-              {vocabWord.id !== '' && word !== vocabWord.text && (
-                <InputFieldButtons
-                  save={saveWord}
-                  cancel={() => setWord(vocabWord.text)}
-                />
-              )}
-            </InputField>
+              onChange={setWord}
+              onFixed={(v) => {
+                if (v !== '' && v !== vocabWord.text) saveWord(v);
+              }}
+            />
             <InputField
               value={pronunciation}
               placeholder='Pronunciation'
               disabled={!editable}
               maxLength={50}
-              onChange={setPronunciation}>
-              {vocabWord.id !== '' &&
-              pronunciation !== vocabWord.pronunciation ? (
-                word === '' ? (
-                  <InputFieldButtons
-                    save={savePronunciation}
-                    cancel={() => setPronunciation(vocabWord.pronunciation)}
-                  />
-                ) : (
-                  <InputFieldButtons
-                    save={savePronunciation}
-                    cancel={() => setPronunciation(vocabWord.pronunciation)}
-                    download={getPronunciation}
-                  />
-                )
-              ) : (
-                word !== '' && <InputFieldButtons download={getPronunciation} />
-              )}
+              onChange={setPronunciation}
+              onFixed={(v) => {
+                if (v !== vocabWord.pronunciation) {
+                  savePronunciation(v);
+                }
+              }}>
+              {word !== '' && <InputFieldButtons download={getPronunciation} />}
             </InputField>
           </div>
           <div className='pt-3'>
@@ -312,14 +297,13 @@ export default function WordCard({
               placeholder='Definition'
               disabled={!editable}
               maxLength={100}
-              onChange={setDefinition}>
-              {definition !== vocabWord.definition && (
-                <InputFieldButtons
-                  save={saveDefinition}
-                  cancel={() => setDefinition(vocabWord.definition)}
-                />
-              )}
-            </InputField>
+              onChange={setDefinition}
+              onFixed={(v) => {
+                if (v !== vocabWord.definition) {
+                  saveDefinition(v);
+                }
+              }}
+            />
           </div>
           <div className='pt-3'>
             <div className='pb-[2px]'>Translates</div>

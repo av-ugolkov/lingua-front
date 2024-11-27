@@ -1,36 +1,12 @@
-import {
-  ArrowDownCircleIcon,
-  CheckCircleIcon,
-  XCircleIcon,
-} from '@heroicons/react/24/outline';
+import { ArrowDownCircleIcon } from '@heroicons/react/24/outline';
 
 interface Props {
-  save?: () => void;
-  cancel?: () => void;
   download?: () => void;
 }
 
-export default function InputFieldButtons({ save, cancel, download }: Props) {
+export default function InputFieldButtons({ download }: Props) {
   return (
-    <div className='flex gap-x-1'>
-      {save && (
-        <CheckCircleIcon
-          title='Save'
-          className='size-6 text-green-500 duration-200 hover:text-green-400 hover:duration-200'
-          onClick={() => {
-            save();
-          }}
-        />
-      )}
-      {cancel && (
-        <XCircleIcon
-          title='Cancel'
-          className='size-6 text-red-500 duration-200 hover:text-red-400 hover:duration-200'
-          onClick={() => {
-            cancel();
-          }}
-        />
-      )}
+    <>
       {download && (
         <ArrowDownCircleIcon
           title='Download'
@@ -40,6 +16,6 @@ export default function InputFieldButtons({ save, cancel, download }: Props) {
           }}
         />
       )}
-    </div>
+    </>
   );
 }
