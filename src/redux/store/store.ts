@@ -13,7 +13,7 @@ import settingsReducer from '../settings/slice';
 export const store = configureStore({
   reducer: {
     [languagesApi.reducerPath]: languagesApi.reducer,
-    langs: langReducer,
+    langStore: langReducer,
     vocabs: vocabsReducer,
     words: wordsReducer,
     pagination: paginationReducer,

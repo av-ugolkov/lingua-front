@@ -9,9 +9,10 @@ import { LanguageIcon } from '@heroicons/react/24/outline';
 import ArrowBothSide from '@/assets/ArrowBothSide';
 import { RootState } from '@/redux/store/store';
 import { useSelector } from 'react-redux';
+import { getLangs } from '@/redux/languages/slice';
 
 export default function Vocabularies() {
-  const languages = useSelector((state: RootState) => state.langs);
+  const languages = useSelector((state: RootState) => getLangs(state));
   const [listLangs, setListLangs] = useState([{ lang: 'Any', code: 'any' }]);
   const [nativeLang, setNativeLang] = useState('any');
   const [translateLang, setTranslateLang] = useState('any');

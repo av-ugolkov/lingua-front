@@ -13,6 +13,7 @@ import Users from './pages/users';
 import AccountNotifications from '@/pages/account/notifications';
 import AccountSettings from './pages/account/settings';
 import GoogleAuth from './pages/google_auth';
+import { Dictionary } from './pages/dictionary';
 
 export const router = createBrowserRouter([
   {
@@ -58,6 +59,10 @@ export const router = createBrowserRouter([
       {
         path: 'contact',
         element: <Contact />,
+      },
+      {
+        path: 'Dictionaries',
+        element: <Dictionary />,
       },
       {
         path: '*',

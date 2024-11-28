@@ -17,7 +17,7 @@ import { addVocab } from '@/redux/vocabularies/slice';
 
 export default function Vocabularies() {
   const [isShowCreatePopup, setIsShowCreatePopup] = useState(false);
-  const languages = useSelector((state: RootState) => state.langs);
+  const languages = useSelector((state: RootState) => state.langStore.langs);
   const [listLangs, setListLangs] = useState([{ lang: 'Any', code: 'any' }]);
   const [nativeLang, setNativeLang] = useState('any');
   const [translateLang, setTranslateLang] = useState('any');
@@ -99,7 +99,9 @@ export default function Vocabularies() {
             <ListBox
               id='native_language'
               items={mapToLanguages()}
-              indexValue={0}
+              indexValue={listLangs.findIndex(
+                (lang) => lang.code === nativeLang
+              )}
               onChange={(value) => {
                 const lang =
                   listLangs.find((tp) => tp.lang === value) || listLangs[0];
@@ -111,7 +113,9 @@ export default function Vocabularies() {
             <ListBox
               id='translate_language'
               items={mapToLanguages()}
-              indexValue={0}
+              indexValue={listLangs.findIndex(
+                (lang) => lang.code === translateLang
+              )}
               onChange={(value) => {
                 const lang =
                   listLangs.find((tp) => tp.lang === value) || listLangs[0];
