@@ -14,10 +14,11 @@ import DropdownItem from '@/components/elements/Dropdown/Item';
 import InputField from './InputField';
 import { VocabWord } from '@/models/Word.ts';
 import api, { AuthStore } from '@/scripts/api';
-import { useAppDispatch } from '@/hooks/redux';
+import { useAppDispatch, useAppSelector } from '@/hooks/redux';
 import { addWord, removeWord } from '@/redux/words/slice';
 import { toastError, toastSuccess, toastWarning } from '@/redux/toasts/slice';
 import InputFieldButtons from './InputFieldButtons';
+import { getVocab } from '@/redux/vocabularies/slice';
 
 export default function WordCard({
   vocabWord,
@@ -30,6 +31,7 @@ export default function WordCard({
 }) {
   const dispatch = useAppDispatch();
   const { id: vocabID } = useParams();
+  const vocab = useAppSelector((state) => getVocab(state, vocabID || ''));
   const [word, setWord] = useState(vocabWord.text);
   const [pronunciation, setPronunciation] = useState(vocabWord.pronunciation);
   const [definition, setDefinition] = useState(vocabWord.definition);
@@ -119,11 +121,11 @@ export default function WordCard({
   function getPronunciation() {
     async function asyncGetPronunciation() {
       const resp = await api.get(
-        '/vocabulary/word/pronunciation',
+        '/dictionary/word/pronunciation',
         AuthStore.USE,
         {
           query: [
-            ['id', vocabID],
+            ['lang_code', vocab.nativeLang],
             ['text', word],
           ],
         }
@@ -140,7 +142,7 @@ export default function WordCard({
   }
 
   async function saveWord(value: string) {
-    const resp = await api.post('/vocabulary/word/update/text', AuthStore.USE, {
+    const resp = await api.post('/vocabulary/word/text', AuthStore.USE, {
       body: JSON.stringify({
         id: vocabWord.id,
         vocab_id: vocabID,
@@ -161,7 +163,7 @@ export default function WordCard({
 
   async function savePronunciation(value: string) {
     const resp = await api.post(
-      '/vocabulary/word/update/pronunciation',
+      '/vocabulary/word/pronunciation',
       AuthStore.USE,
       {
         body: JSON.stringify({
@@ -185,21 +187,17 @@ export default function WordCard({
   }
 
   async function saveDefinition(value: string) {
-    const resp = await api.post(
-      '/vocabulary/word/update/definition',
-      AuthStore.USE,
-      {
-        body: JSON.stringify({
-          id: vocabWord.id,
-          vocab_id: vocabID,
-          native: {
-            id: vocabWord.wordID,
-            text: word,
-          },
-          definition: value,
-        }),
-      }
-    );
+    const resp = await api.post('/vocabulary/word/definition', AuthStore.USE, {
+      body: JSON.stringify({
+        id: vocabWord.id,
+        vocab_id: vocabID,
+        native: {
+          id: vocabWord.wordID,
+          text: word,
+        },
+        definition: value,
+      }),
+    });
 
     if (resp.ok) {
       dispatch(toastSuccess('Definition updated'));
@@ -215,13 +213,9 @@ export default function WordCard({
       vocab_id: vocabID,
       translates: translates,
     });
-    const resp = await api.post(
-      '/vocabulary/word/update/translates',
-      AuthStore.USE,
-      {
-        body: data,
-      }
-    );
+    const resp = await api.post('/vocabulary/word/translates', AuthStore.USE, {
+      body: data,
+    });
 
     if (resp.ok) {
       dispatch(toastSuccess('Translates updated'));
@@ -237,17 +231,13 @@ export default function WordCard({
   }
 
   async function saveExamples(examples: string[]) {
-    const resp = await api.post(
-      '/vocabulary/word/update/examples',
-      AuthStore.USE,
-      {
-        body: JSON.stringify({
-          id: vocabWord.id,
-          vocab_id: vocabID,
-          examples: examples,
-        }),
-      }
-    );
+    const resp = await api.post('/vocabulary/word/examples', AuthStore.USE, {
+      body: JSON.stringify({
+        id: vocabWord.id,
+        vocab_id: vocabID,
+        examples: examples,
+      }),
+    });
 
     if (resp.ok) {
       dispatch(toastSuccess('Examples updated'));
