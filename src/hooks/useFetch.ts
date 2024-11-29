@@ -65,7 +65,7 @@ const useFetch = (
             throw new Error('Invalid method');
         }
       } catch (error: any) {
-        setResponse({ ok: false, status: 0, data: error });
+        setResponse({ ok: false, status: 0, data: null, err: error });
         setIsLoading(false);
       }
     };

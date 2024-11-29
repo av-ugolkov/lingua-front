@@ -11,10 +11,7 @@ import api, { AuthStore, IQueryType, RequestMethod } from '@/scripts/api';
 import { VocabularyData } from '@/models/Vocabulary';
 import { useAppDispatch } from '@/hooks/redux';
 import { setVocabs } from '@/redux/vocabularies/slice';
-import {
-  notificationError,
-  notificationSuccess,
-} from '@/redux/notifications/slice';
+import { toastError, toastSuccess } from '@/redux/toasts/slice';
 
 export default function Card(user: IUser) {
   const dispatch = useAppDispatch();
@@ -48,9 +45,9 @@ export default function Card(user: IUser) {
     async function asyncSubscribe() {
       const response = await fetchSubscribe(subUserID);
       if (response.ok) {
-        dispatch(notificationSuccess(`You subscribed to ${user.name}`));
+        dispatch(toastSuccess(`You subscribed to ${user.nickname}`));
       } else {
-        dispatch(notificationError(response.data));
+        dispatch(toastError(response.err));
       }
     }
     asyncSubscribe();
@@ -60,9 +57,9 @@ export default function Card(user: IUser) {
     async function asyncUnsubscribe() {
       const response = await fetchUnsubscribe(subUserID);
       if (response.ok) {
-        notificationSuccess(`You unsubscribed from ${user.name}`);
+        dispatch(toastSuccess(`You unsubscribed from ${user.nickname}`));
       } else {
-        notificationError(response.data);
+        dispatch(toastError(response.err));
       }
     }
     asyncUnsubscribe();
@@ -163,14 +160,14 @@ export default function Card(user: IUser) {
           <div>
             <div className='flex items-center mb-5 gap-x-5'>
               <Avatar
-                name={user.name}
+                nickname={user.nickname}
                 className='size-16 text-4xl'
               />
               <div className='w-36'>
                 <h2
                   className='w-full text-xl text-wrap truncate select-none'
-                  title={user.name}>
-                  {user.name}
+                  title={user.nickname}>
+                  {user.nickname}
                 </h2>
                 <p className='text-gray-600'>{user.role}</p>
               </div>

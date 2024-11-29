@@ -3,13 +3,17 @@ import { createBrowserRouter } from 'react-router-dom';
 import Root from '@/layouts/Root';
 import Main from '@/pages/main';
 import About from '@/pages/about';
-import SignUp from '@/pages/SignUp';
-import SignIn from '@/pages/SignIn';
-import Contact from '@/pages/Contact';
+import SignUp from '@/pages/sign_up';
+import SignIn from '@/pages/sign_in';
+import Contact from '@/pages/contact';
 import AccountVocabularies from '@/pages/account/vocabularies';
-import Vocabulary from '@/pages/Vocabulary';
+import Vocabulary from '@/pages/vocabulary';
 import Vocabularies from '@/pages/vocabularies';
 import Users from './pages/users';
+import AccountNotifications from '@/pages/account/notifications';
+import AccountSettings from './pages/account/settings';
+import GoogleAuth from './pages/google_auth';
+import { Dictionary } from './pages/dictionary';
 
 export const router = createBrowserRouter([
   {
@@ -37,6 +41,14 @@ export const router = createBrowserRouter([
         element: <AccountVocabularies />,
       },
       {
+        path: 'account/notifications',
+        element: <AccountNotifications />,
+      },
+      {
+        path: 'account/settings',
+        element: <AccountSettings />,
+      },
+      {
         path: 'vocabulary/:id',
         element: <Vocabulary />,
       },
@@ -47,6 +59,10 @@ export const router = createBrowserRouter([
       {
         path: 'contact',
         element: <Contact />,
+      },
+      {
+        path: 'Dictionaries',
+        element: <Dictionary />,
       },
       {
         path: '*',
@@ -61,5 +77,9 @@ export const router = createBrowserRouter([
   {
     path: '/sign_in',
     element: <SignIn />,
+  },
+  {
+    path: '/auth/google',
+    element: <GoogleAuth />,
   },
 ]);

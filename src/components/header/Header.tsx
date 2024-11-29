@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import HeaderBtn from './HeaderBtn';
 import Account from './Account';
 import api, { AuthStore } from '@/scripts/api';
-import { getAccessToken, isActiveToken } from '@/scripts/AuthToken';
 
 export default function Header() {
   const navigate = useNavigate();
@@ -18,7 +17,7 @@ export default function Header() {
       const response = await api.get('/user/id', AuthStore.USE);
       if (response.ok) {
         setIsAuth(true);
-        setAccountName(response.data['name']);
+        setAccountName(response.data['nickname']);
       } else if (response.status === 401) {
         signOut();
       }
@@ -31,11 +30,7 @@ export default function Header() {
       setIsLoading(false);
     }
 
-    if (isActiveToken() || getAccessToken() !== '') {
-      asyncGetUser();
-    } else {
-      signOut();
-    }
+    asyncGetUser();
   }, []);
 
   if (isLoading) {
@@ -68,12 +63,16 @@ export default function Header() {
           url='/contact'
         />
         <HeaderBtn
-          name='Users'
-          url='/users'
+          name='Dictionaries'
+          url='/dictionaries'
         />
         <HeaderBtn
           name='Vocabularies'
           url='/vocabularies'
+        />
+        <HeaderBtn
+          name='Users'
+          url='/users'
         />
         {isAuth ? (
           <Account accountName={accountName} />

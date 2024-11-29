@@ -12,13 +12,13 @@ import { RootState } from '@/redux/store/store';
 import { getLang } from '@/redux/languages/slice';
 import { useAppDispatch, useAppSelector } from '@/hooks/redux';
 import { getVocab } from '@/redux/vocabularies/slice';
-import { notificationWarning } from '@/redux/notifications/slice';
+import { toastWarning } from '@/redux/toasts/slice';
 
 export default function ShortCard({ id }: { id: string }) {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const [isShowSignInUpPopup, setIsShowSignInUpPopup] = useState(false);
-  const languages = useSelector((state: RootState) => state.langs);
+  const languages = useSelector((state: RootState) => state.langStore.langs);
   const vocab = useAppSelector((state) => getVocab(state, id));
   const nativeLang = useAppSelector((state) =>
     getLang(state, vocab.nativeLang)
@@ -52,7 +52,7 @@ export default function ShortCard({ id }: { id: string }) {
       const access = response.data['access'];
       switch (access) {
         case AccessStatus.Forbidden:
-          dispatch(notificationWarning('Forbidden'));
+          dispatch(toastWarning('Forbidden'));
           break;
         case AccessStatus.Read:
         case AccessStatus.Edit:

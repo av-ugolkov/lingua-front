@@ -33,12 +33,14 @@ export type IQueryType = [string, any][];
 export interface IResponseData {
   status: number;
   data: any;
+  err: string | undefined;
   ok: boolean;
 }
 
 const emptyResponse: IResponseData = {
   status: 0,
   data: null,
+  err: undefined,
   ok: false,
 };
 
@@ -63,14 +65,16 @@ const fetchData = async (
       const dataJson = await resp.json();
       return {
         status: resp.status,
-        data: dataJson,
+        data: dataJson.resp,
+        err: dataJson.msg,
         ok: resp.ok,
       };
     })
     .catch((error) => {
       return {
         status: 0,
-        data: error,
+        data: null,
+        err: error,
         ok: false,
       };
     });
@@ -120,7 +124,12 @@ async function fetchFunc(
     const respData = await fetchData(url, init, data?.query);
     return respData;
   } catch (error: any) {
-    return { ok: false, status: 0, data: error };
+    return {
+      ok: false,
+      status: 0,
+      data: null,
+      err: error,
+    };
   }
 }
 

@@ -6,17 +6,21 @@ import vocabsReducer from '../vocabularies/slice';
 import wordsReducer from '../words/slice';
 import paginationReducer from '../pagination/slice';
 import searchAndOrderReducer from '../search_and_order/slice';
-import notificationsReducer from '../notifications/slice';
+import toastsReducer from '../toasts/slice';
+import eventsReducer from '../event/slice';
+import settingsReducer from '../settings/slice';
 
 export const store = configureStore({
   reducer: {
     [languagesApi.reducerPath]: languagesApi.reducer,
-    langs: langReducer,
+    langStore: langReducer,
     vocabs: vocabsReducer,
     words: wordsReducer,
     pagination: paginationReducer,
     searchAndOrder: searchAndOrderReducer,
-    notifications: notificationsReducer,
+    toasts: toastsReducer,
+    events: eventsReducer,
+    settings: settingsReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(languagesApi.middleware),

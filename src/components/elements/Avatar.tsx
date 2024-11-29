@@ -1,11 +1,11 @@
 import clsx from 'clsx';
 
 export default function Avatar({
-  name,
+  nickname,
   className,
   callback,
 }: {
-  name: string;
+  nickname: string;
   className?: string;
   callback?: () => void;
 }) {
@@ -17,7 +17,7 @@ export default function Avatar({
         'inline-block cursor-pointer text-center content-center select-none bg-gray-300 rounded-full hover:shadow-md hover:duration-200 hover:shadow-blue-500 duration-1000',
         className
       )}>
-      {name.charAt(0).toUpperCase()}
+      {nickname.charAt(0).toUpperCase()}
     </button>
   );
 }

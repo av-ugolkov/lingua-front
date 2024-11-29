@@ -2,7 +2,6 @@ import { useEffect, useMemo } from 'react';
 
 import useFetch from '@/hooks/useFetch';
 import FullCard from '@/components/elements/Vocabulary/FullCard';
-import Pagination from '@/components/elements/Pagination/Pagination';
 import { AuthStore, IQueryType, RequestMethod } from '@/scripts/api';
 import { VocabularyData } from '@/models/Vocabulary';
 import { useAppDispatch, useAppSelector } from '@/hooks/redux';
@@ -40,7 +39,7 @@ export default function List({ nativeLang, translateLang }: SortedInputProps) {
   const { isLoading, response: respVocabs } = useFetch(
     '/vocabularies',
     RequestMethod.GET,
-    AuthStore.NO,
+    AuthStore.OPTIONAL,
     {
       query: query,
     }
@@ -87,7 +86,6 @@ export default function List({ nativeLang, translateLang }: SortedInputProps) {
           authStore={AuthStore.OPTIONAL}
         />
       ))}
-      <Pagination />
     </div>
   );
 }

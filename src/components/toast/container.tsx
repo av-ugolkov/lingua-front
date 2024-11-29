@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
 import clsx from 'clsx';
 
-import Notification from './notification';
+import Toast from './toast';
 import { useAppDispatch, useAppSelector } from '@/hooks/redux';
-import { setSettings } from '@/redux/notifications/slice';
+import { setSettings } from '@/redux/toasts/slice';
 
 export interface ContainerSettings {
   position: 'top' | 'bottom' | 'middle';
@@ -19,7 +19,7 @@ export default function NotificationContainer({
   max,
 }: ContainerSettings) {
   const dispatch = useAppDispatch();
-  const { notifications } = useAppSelector((state) => state.notifications);
+  const { toasts } = useAppSelector((state) => state.toasts);
 
   useEffect(() => {
     dispatch(setSettings({ max }));
@@ -33,10 +33,10 @@ export default function NotificationContainer({
           setPosition(position),
           setSide(side)
         )}>
-        {notifications.map((notification) => (
-          <Notification
-            key={notification.id}
-            notification={notification}
+        {toasts.map((toast) => (
+          <Toast
+            key={toast.id}
+            toastData={toast}
             timeout={timeout}
           />
         ))}
