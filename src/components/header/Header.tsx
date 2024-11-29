@@ -63,12 +63,16 @@ export default function Header() {
           url='/contact'
         />
         <HeaderBtn
-          name='Users'
-          url='/users'
+          name='Dictionaries'
+          url='/dictionaries'
         />
         <HeaderBtn
           name='Vocabularies'
           url='/vocabularies'
+        />
+        <HeaderBtn
+          name='Users'
+          url='/users'
         />
         {isAuth ? (
           <Account accountName={accountName} />

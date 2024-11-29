@@ -6,39 +6,52 @@ export interface ILanguage {
   code: string;
 }
 
-const initialState: ILanguage[] = [];
+interface IState {
+  langs: ILanguage[];
+  currentLang: string;
+}
+
+const initialState: IState = {
+  langs: [],
+  currentLang: 'en',
+};
 
 const slice = createSlice({
-  name: 'langs',
+  name: 'langStore',
   initialState,
   reducers: {
     setLangs: (state, action: { payload: ILanguage[] }) => {
-      state.splice(0, state.length);
+      state.langs.splice(0, state.langs.length);
       action.payload.forEach((item: ILanguage) => {
-        state.push(item);
+        state.langs.push(item);
       });
+    },
+    setCurrentLang: (state, action: { payload: string }) => {
+      state.currentLang = action.payload;
     },
   },
   extraReducers: (builder) => {
     builder.addMatcher(
       api.endpoints.getLanguages.matchFulfilled,
       (state, action: { payload: ILanguage[] }) => {
-        state.splice(0, state.length);
+        state.langs.splice(0, state.langs.length);
         action.payload.forEach((item: ILanguage) => {
-          state.push(item);
+          state.langs.push(item);
         });
       }
     );
   },
   selectors: {
+    getLangs: (state) => state.langs,
     getLang: (state, code: string) => {
-      const lang = state.find((item) => item.code === code)?.lang || 'Unknown';
+      const lang =
+        state.langs.find((item) => item.code === code)?.lang || 'Unknown';
       return lang;
     },
   },
 });
 
-export const { setLangs } = slice.actions;
-export const { getLang } = slice.selectors;
+export const { setLangs, setCurrentLang } = slice.actions;
+export const { getLangs, getLang } = slice.selectors;
 
 export default slice.reducer;

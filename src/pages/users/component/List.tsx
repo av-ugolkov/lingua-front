@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import useFetch from '@/hooks/useFetch';
-import Pagination from '@/components/elements/Pagination/Pagination';
 import Card from './Card';
 import { AuthStore, IQueryType, RequestMethod } from '@/scripts/api';
 import { useAppDispatch, useAppSelector } from '@/hooks/redux';
@@ -64,7 +63,6 @@ export default function List() {
             {...item}
           />
         ))}
-        <Pagination />
       </div>
     </>
   );

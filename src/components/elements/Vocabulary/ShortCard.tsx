@@ -18,7 +18,7 @@ export default function ShortCard({ id }: { id: string }) {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const [isShowSignInUpPopup, setIsShowSignInUpPopup] = useState(false);
-  const languages = useSelector((state: RootState) => state.langs);
+  const languages = useSelector((state: RootState) => state.langStore.langs);
   const vocab = useAppSelector((state) => getVocab(state, id));
   const nativeLang = useAppSelector((state) =>
     getLang(state, vocab.nativeLang)

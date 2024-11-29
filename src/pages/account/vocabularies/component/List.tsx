@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 
 import { AuthStore, IQueryType, RequestMethod } from '@/scripts/api';
 import FullCard from '@/components/elements/Vocabulary/FullCard';
-import Pagination from '@/components/elements/Pagination/Pagination';
 import useFetch from '@/hooks/useFetch';
 import { clearVocabs, setVocabs } from '@/redux/vocabularies/slice';
 import { VocabularyData } from '@/models/Vocabulary';
@@ -88,7 +87,6 @@ export default function List({ nativeLang, translateLang }: SortedInputProps) {
           authStore={AuthStore.USE}
         />
       ))}
-      <Pagination />
     </div>
   );
 }
