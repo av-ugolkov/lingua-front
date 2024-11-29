@@ -33,3 +33,12 @@ export const EmptyVocabWord: VocabWord = {
   created: 0,
   updated: 0,
 };
+
+export interface DictWord {
+  id: string;
+  text: string;
+  pronunciation: string;
+  langCode: string;
+  creator: string;
+  createdAt: string;
+}

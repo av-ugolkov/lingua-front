@@ -6,7 +6,7 @@ import ListBox, { IListBoxItem } from '../ListBox';
 import { useAppDispatch, useAppSelector } from '@/hooks/redux';
 import { setItemsPerPage, setPage } from '@/redux/pagination/slice';
 
-const countsItemsPerPage: IListBoxItem[] = [
+const defauldCountsItemsPerPage: IListBoxItem[] = [
   { key: '5', value: '5' },
   { key: '10', value: '10' },
   { key: '15', value: '15' },
@@ -14,17 +14,24 @@ const countsItemsPerPage: IListBoxItem[] = [
   { key: '25', value: '25' },
 ];
 
-export default function Pagination() {
+interface Props {
+  countsItemsPerPage?: IListBoxItem[];
+}
+
+export default function Pagination({ countsItemsPerPage }: Props) {
+  const dispatch = useAppDispatch();
   const { page, itemsPerPage, countItems } = useAppSelector(
     (state) => state.pagination
   );
-  const dispatch = useAppDispatch();
+
+  if (!countsItemsPerPage) {
+    countsItemsPerPage = defauldCountsItemsPerPage;
+  }
+
+  dispatch(setItemsPerPage(+countsItemsPerPage[0].value));
+
   const maxPage = Math.ceil(countItems / itemsPerPage);
   const pageNums = getPaginationItems(page, maxPage, 7);
-
-  if (countItems == 0) {
-    return <div></div>;
-  }
 
   return (
     <div className='flex min-w-[540px] items-center justify-between border border-gray-300 bg-white px-4 py-3 sm:px-6'>
