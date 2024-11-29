@@ -28,7 +28,7 @@ export default function Create({
   closeCallback: () => void;
 }) {
   const [vocab, setVocab] = useState(EmptyVocabulary);
-  const languages = useSelector((state: RootState) => state.langs);
+  const languages = useSelector((state: RootState) => state.langStore.langs);
   const [accesses, setAccesses] = useState(tempAccesses);
 
   useEffect(() => {
