@@ -1,4 +1,3 @@
-import Pagination from '@/components/elements/Pagination/Pagination';
 import { useAppDispatch, useAppSelector } from '@/hooks/redux';
 import useFetch from '@/hooks/useFetch';
 import { DictWord } from '@/models/Word';
@@ -34,7 +33,7 @@ export default function List() {
   useEffect(() => {
     if (response.ok) {
       const w: DictWord[] = [];
-      response.data.forEach((item: any) => {
+      response.data['words'].forEach((item: any) => {
         w.push({
           id: item['id'],
           text: item['text'],
@@ -45,7 +44,7 @@ export default function List() {
         });
       });
       setWords(w);
-      dispatch(setCountItems(w.length));
+      dispatch(setCountItems(response.data['count_words']));
     }
   }, [dispatch, response.data, response.ok]);
 
@@ -63,15 +62,6 @@ export default function List() {
           />
         );
       })}
-      <Pagination
-        countsItemsPerPage={[
-          { key: '20', value: '20' },
-          { key: '30', value: '30' },
-          { key: '50', value: '50' },
-          { key: '25', value: '25' },
-          { key: '100', value: '100' },
-        ]}
-      />
     </div>
   );
 }

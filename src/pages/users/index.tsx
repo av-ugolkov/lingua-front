@@ -6,6 +6,7 @@ import { SortUserTypes } from '@/models/Sorted';
 import List from './component/List';
 import { clearVocabs } from '@/redux/vocabularies/slice';
 import { useAppDispatch } from '@/hooks/redux';
+import Pagination from '@/components/elements/Pagination/Pagination';
 
 export default function Users() {
   const dispatch = useAppDispatch();
@@ -23,6 +24,7 @@ export default function Users() {
         <SortedPanel sortedTypes={SortUserTypes} />
       </div>
       <List />
+      <Pagination />
     </>
   );
 }

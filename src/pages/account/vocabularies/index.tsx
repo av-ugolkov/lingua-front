@@ -14,6 +14,7 @@ import { SortWordTypes } from '@/models/Sorted';
 import api, { AuthStore } from '@/scripts/api';
 import { RootState } from '@/redux/store/store';
 import { addVocab } from '@/redux/vocabularies/slice';
+import Pagination from '@/components/elements/Pagination/Pagination';
 
 export default function Vocabularies() {
   const [isShowCreatePopup, setIsShowCreatePopup] = useState(false);
@@ -133,6 +134,7 @@ export default function Vocabularies() {
         nativeLang={nativeLang}
         translateLang={translateLang}
       />
+      <Pagination />
       {isShowCreatePopup && (
         <Create
           addCallback={(newVocab) => {

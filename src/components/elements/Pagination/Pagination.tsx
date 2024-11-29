@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import clsx from 'clsx';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/20/solid';
 
@@ -20,6 +21,7 @@ interface Props {
 
 export default function Pagination({ countsItemsPerPage }: Props) {
   const dispatch = useAppDispatch();
+  const [index, setIndex] = useState(0);
   const { page, itemsPerPage, countItems } = useAppSelector(
     (state) => state.pagination
   );
@@ -28,17 +30,21 @@ export default function Pagination({ countsItemsPerPage }: Props) {
     countsItemsPerPage = defauldCountsItemsPerPage;
   }
 
-  dispatch(setItemsPerPage(+countsItemsPerPage[0].value));
+  useEffect(() => {
+    dispatch(setItemsPerPage(+countsItemsPerPage[0].value));
+  }, [dispatch, countsItemsPerPage]);
 
   const maxPage = Math.ceil(countItems / itemsPerPage);
   const pageNums = getPaginationItems(page, maxPage, 7);
 
   return (
-    <div className='flex min-w-[540px] items-center justify-between border border-gray-300 bg-white px-4 py-3 sm:px-6'>
+    <div className='flex min-w-[540px] items-center justify-between border border-gray-300 bg-white px-4 py-3 my-5 sm:px-6'>
       <div className='flex flex-1 items-center justify-between'>
         <p className='text-sm min-w-24 text-black mr-1'>
           Showing{' '}
-          <span className='font-medium'>{(page - 1) * itemsPerPage + 1}</span>{' '}
+          <span className='font-medium'>
+            {countItems > 0 ? (page - 1) * itemsPerPage + 1 : 0}
+          </span>{' '}
           to{' '}
           <span className='font-medium'>
             {Math.min(countItems, itemsPerPage * page)}
@@ -86,10 +92,11 @@ export default function Pagination({ countsItemsPerPage }: Props) {
             <ListBox
               id='count_items'
               items={countsItemsPerPage}
-              indexValue={countsItemsPerPage.findIndex(
-                (item) => item.value === `${itemsPerPage}`
-              )}
+              indexValue={index}
               onChange={(value) => {
+                setIndex(
+                  countsItemsPerPage.findIndex((item) => item.value === value)
+                );
                 dispatch(setPage(1));
                 dispatch(setItemsPerPage(+value));
               }}

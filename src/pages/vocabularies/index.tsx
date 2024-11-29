@@ -10,6 +10,7 @@ import ArrowBothSide from '@/assets/ArrowBothSide';
 import { RootState } from '@/redux/store/store';
 import { useSelector } from 'react-redux';
 import { getLangs } from '@/redux/languages/slice';
+import Pagination from '@/components/elements/Pagination/Pagination';
 
 export default function Vocabularies() {
   const languages = useSelector((state: RootState) => getLangs(state));
@@ -47,7 +48,9 @@ export default function Vocabularies() {
             <ListBox
               id='native_language'
               items={mapToLanguages()}
-              indexValue={0}
+              indexValue={listLangs.findIndex(
+                (lang) => lang.code === nativeLang
+              )}
               onChange={(value) => {
                 const lang =
                   listLangs.find((tp) => tp.lang === value) || listLangs[0];
@@ -59,7 +62,9 @@ export default function Vocabularies() {
             <ListBox
               id='translate_language'
               items={mapToLanguages()}
-              indexValue={0}
+              indexValue={listLangs.findIndex(
+                (lang) => lang.code === translateLang
+              )}
               onChange={(value) => {
                 const lang =
                   listLangs.find((tp) => tp.lang === value) || listLangs[0];
@@ -77,6 +82,7 @@ export default function Vocabularies() {
         nativeLang={nativeLang}
         translateLang={translateLang}
       />
+      <Pagination />
     </>
   );
 }
