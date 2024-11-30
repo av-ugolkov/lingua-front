@@ -53,7 +53,7 @@ export default function List() {
   }
 
   return (
-    <div className='grid w-full gap-2 grid-cols-2'>
+    <div className='grid w-full gap-2 grid-cols-1'>
       {words.map((word: any) => {
         return (
           <Word

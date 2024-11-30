@@ -4,8 +4,11 @@ import { useNavigate } from 'react-router-dom';
 import HeaderBtn from './HeaderBtn';
 import Account from './Account';
 import api, { AuthStore } from '@/scripts/api';
+import { useAppDispatch } from '@/hooks/redux';
+import { setNickname } from '@/redux/user/slice';
 
 export default function Header() {
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
 
@@ -17,7 +20,9 @@ export default function Header() {
       const response = await api.get('/user/id', AuthStore.USE);
       if (response.ok) {
         setIsAuth(true);
-        setAccountName(response.data['nickname']);
+        const nickname = response.data['nickname'];
+        dispatch(setNickname(nickname));
+        setAccountName(nickname);
       } else if (response.status === 401) {
         signOut();
       }
@@ -31,7 +36,7 @@ export default function Header() {
     }
 
     asyncGetUser();
-  }, []);
+  }, [dispatch]);
 
   if (isLoading) {
     return <div></div>;

@@ -328,7 +328,7 @@ export default function WordCard({
             />
           </div>
           {vocabWord.updated != 0 && (
-            <div className='relative w-full text-gray-400 -bottom-3 -right-10 text-right'>
+            <div className='relative w-full text-gray-400 -bottom-3 text-right'>
               {new Date(vocabWord.created).toLocaleString('en-GB')}
             </div>
           )}
