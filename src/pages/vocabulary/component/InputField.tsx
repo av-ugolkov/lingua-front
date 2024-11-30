@@ -15,7 +15,7 @@ export default function InputField({
   maxLength?: number;
   name?: string;
   onChange: (value: string) => void;
-  onFixed: (value: string) => void;
+  onFixed?: (value: string) => void;
   children?: React.ReactNode;
 }) {
   const timerID = useRef<number | null>(null);
@@ -40,12 +40,12 @@ export default function InputField({
 
           if (timerID.current) clearTimeout(timerID.current);
           timerID.current = window.setTimeout(() => {
-            onFixed(e.target.value);
+            onFixed?.(e.target.value);
           }, 3000);
         }}
         onBlur={() => {
           if (timerID.current) clearTimeout(timerID.current);
-          onFixed(value);
+          onFixed?.(value);
         }}
       />
       {children}

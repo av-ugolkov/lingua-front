@@ -1,8 +1,8 @@
 import { useNavigate, useParams } from 'react-router-dom';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 
 import WordCard from './WordCard';
-import { EmptyVocabWord, VocabWord } from '@/models/Word.ts';
+import { VocabWord } from '@/models/Word.ts';
 import { AuthStore, IQueryType, RequestMethod } from '@/scripts/api';
 import useFetch from '@/hooks/useFetch';
 import { useAppDispatch, useAppSelector } from '@/hooks/redux';
@@ -13,12 +13,12 @@ import {
   setWords,
   updateWord,
 } from '@/redux/words/slice';
+import InputWordCard from './InputWordCard';
 
 export default function List() {
   const dispatch = useAppDispatch();
   const { id } = useParams();
   const navigate = useNavigate();
-  const [newWord, setNewWord] = useState(EmptyVocabWord);
   const vocab = useAppSelector((state) => getVocab(state, id || ''));
   const { searchValue, sort, order } = useAppSelector(
     (state) => state.searchAndOrder
@@ -68,12 +68,7 @@ export default function List() {
 
   return (
     <>
-      {vocab.editable && (
-        <WordCard
-          vocabWord={newWord}
-          onChange={setNewWord}
-        />
-      )}
+      {vocab.editable && <InputWordCard />}
       {orderedWords
         .filter((word) => {
           return (
