@@ -255,7 +255,7 @@ export default function WordCard({
   return (
     <>
       <div className='flex flex-row min-w-[540px] bg-blue-100 mb-8 border-solid border-[1px] border-gray-300 shadow-md shadow-blue-300'>
-        <div className='py-2 my-2 pl-2 ml-2 w-full'>
+        <div className='py-2 my-2 px-2 mx-2 w-full'>
           <div className='flex gap-x-3'>
             <InputField
               value={word}
@@ -328,7 +328,7 @@ export default function WordCard({
             />
           </div>
           {vocabWord.updated != 0 && (
-            <div className='relative w-full text-gray-400 bottom-[-14px] text-right'>
+            <div className='relative w-full text-gray-400 -bottom-3 -right-10 text-right'>
               {new Date(vocabWord.created).toLocaleString('en-GB')}
             </div>
           )}
@@ -336,7 +336,7 @@ export default function WordCard({
         {editable && (
           <>
             {vocabWord.id === '' ? (
-              <div className='flex flex-col justify-around align-middle mx-2'>
+              <div className='flex flex-col justify-around align-middle mr-2'>
                 <BtnCard onClick={addVocabWord}>
                   <PlusCircleIcon
                     className='w-6'
@@ -346,7 +346,7 @@ export default function WordCard({
                 </BtnCard>
               </div>
             ) : (
-              <div className='flex flex-col justify-start pt-3 align-middle mx-2'>
+              <div className='flex flex-col justify-start pt-3 align-middle mr-2'>
                 <DropdownMenu
                   title='Menu'
                   baseSize='w-7 h-7'>
