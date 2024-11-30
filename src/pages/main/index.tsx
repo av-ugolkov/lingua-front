@@ -5,12 +5,20 @@ import { AuthStore, IQueryType, RequestMethod } from '@/scripts/api';
 import useFetch from '@/hooks/useFetch';
 import { useAppDispatch } from '@/hooks/redux';
 import { clearToasts } from '@/redux/toasts/slice';
+import { DictWord } from '@/models/Word';
+import RandomWord from './component/RandomWord';
 
 export default function HomePage() {
   const dispatch = useAppDispatch();
-  const [word, setWord] = useState('');
+  const [words, setWords] = useState<DictWord[]>([]);
 
-  const query = useMemo<IQueryType>(() => [['lang_code', 'en']], []);
+  const query = useMemo<IQueryType>(
+    () => [
+      ['lang_code', 'en'],
+      ['limit', 3],
+    ],
+    []
+  );
   const { response: respRandomWord } = useFetch(
     '/dictionary/word/random',
     RequestMethod.GET,
@@ -26,18 +34,35 @@ export default function HomePage() {
 
   useEffect(() => {
     if (respRandomWord.ok) {
-      setWord(respRandomWord.data['text']);
+      const words: DictWord[] = [];
+      respRandomWord.data.forEach((item: any) => {
+        words.push({
+          id: item['id'],
+          text: item['text'],
+          pronunciation: item['pronunciation'],
+          langCode: item['lang_code'],
+          creator: '',
+          createdAt: '',
+        });
+      });
+      setWords(words);
     }
   }, [respRandomWord]);
 
   return (
     <>
       <section className='block bg-blue-100 text-center mt-8 p-5 shadow-md shadow-blue-300'>
-        <h2 className='text-xl'>Word of the day</h2>
-        <div id='word-container'>
-          <h3 className='text-3xl font-bold'>{word}</h3>
-          <p>Language: English</p>
-          <p>Translation: -</p>
+        <div
+          id='word-container'
+          className='flex justify-evenly'>
+          {words.map((word) => {
+            return (
+              <RandomWord
+                key={word.id}
+                word={word}
+              />
+            );
+          })}
         </div>
       </section>
 
