@@ -43,7 +43,7 @@ export default function List() {
           id: item['id'],
           nickname: item['nickname'],
           role: item['role'],
-          lastVisited: new Date(item['last_visited']),
+          lastVisited: new Date(item['visited_at']),
         });
       });
       setUsers(users);

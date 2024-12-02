@@ -20,7 +20,7 @@ export default function Menu({ vocabID }: { vocabID: string }) {
 
   function editVocabulary(editData: IEditData) {
     async function asyncEditVocabulary() {
-      const response = await api.put(`/vocabulary`, AuthStore.USE, {
+      const response = await api.put('/vocabulary', AuthStore.USE, {
         body: JSON.stringify({
           id: vocabID,
           name: editData.name,

@@ -9,6 +9,7 @@ import searchAndOrderReducer from '../search_and_order/slice';
 import toastsReducer from '../toasts/slice';
 import eventsReducer from '../event/slice';
 import settingsReducer from '../settings/slice';
+import userReducer from '../user/slice';
 
 export const store = configureStore({
   reducer: {
@@ -21,6 +22,7 @@ export const store = configureStore({
     toasts: toastsReducer,
     events: eventsReducer,
     settings: settingsReducer,
+    userStore: userReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(languagesApi.middleware),

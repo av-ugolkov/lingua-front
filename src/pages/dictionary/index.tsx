@@ -9,9 +9,9 @@ export function Dictionary() {
       <List />
       <Pagination
         countsItemsPerPage={[
-          { key: '40', value: '40' },
-          { key: '60', value: '60' },
-          { key: '80', value: '80' },
+          { key: '30', value: '30' },
+          { key: '50', value: '50' },
+          { key: '75', value: '75' },
           { key: '100', value: '100' },
         ]}
       />
