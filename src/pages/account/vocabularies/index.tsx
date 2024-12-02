@@ -15,14 +15,16 @@ import api, { AuthStore } from '@/scripts/api';
 import { RootState } from '@/redux/store/store';
 import { addVocab } from '@/redux/vocabularies/slice';
 import Pagination from '@/components/elements/Pagination/Pagination';
+import { getNickname } from '@/redux/user/slice';
 
 export default function Vocabularies() {
+  const dispatch = useDispatch();
   const [isShowCreatePopup, setIsShowCreatePopup] = useState(false);
   const languages = useSelector((state: RootState) => state.langStore.langs);
   const [listLangs, setListLangs] = useState([{ lang: 'Any', code: 'any' }]);
   const [nativeLang, setNativeLang] = useState('any');
   const [translateLang, setTranslateLang] = useState('any');
-  const dispatch = useDispatch();
+  const nickname = useSelector((state: RootState) => getNickname(state));
 
   useEffect(() => {
     if (languages.length > 0) {
@@ -46,25 +48,28 @@ export default function Vocabularies() {
         description: vocab.description,
         tags: [],
       });
-      const response = await api.post(`/vocabulary`, AuthStore.USE, {
+      const resp = await api.post(`/vocabulary`, AuthStore.USE, {
         body: body,
       });
-      if (response.ok) {
+      if (resp.ok) {
         const newVocab: VocabularyData = {
-          id: response.data['id'],
+          id: resp.data['id'],
           name: vocab.name,
           accessID: vocab.accessID,
           nativeLang: vocab.nativeLang,
           translateLang: vocab.translateLang,
           description: vocab.description,
-          tags: vocab.tags,
-          userID: vocab.userID,
+          userName: nickname,
+          userID: resp.data['user_id'],
+          updatedAt: resp.data['updated_at'],
+          createdAt: resp.data['created_at'],
+          wordsCount: 0,
           words: [],
         };
         dispatch(addVocab(newVocab));
         setIsShowCreatePopup(false);
       } else {
-        console.error(response);
+        console.error(resp.err);
       }
     }
 

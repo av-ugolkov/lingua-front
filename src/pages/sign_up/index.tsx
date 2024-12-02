@@ -21,7 +21,6 @@ export default function SignUp() {
       .post('/auth/sign_up', AuthStore.NO, {
         body: JSON.stringify({
           email: email,
-          username: email.substring(0, email.indexOf('@')),
           code: +code,
           password: password,
         }),

@@ -8,7 +8,7 @@ export interface VocabularyData {
   translateLang: string;
   description: string;
   wordsCount?: number;
-  tags: string[];
+  tags?: string[];
   userID?: string;
   userName?: string;
   editable?: boolean;

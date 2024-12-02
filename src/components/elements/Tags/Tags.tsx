@@ -32,8 +32,8 @@ export default function Tags({
           : tags.map((tag, ind) => (
               <Tag
                 key={ind}
-                className='mr-2 mb-2'
-                value={tag}>
+                value={tag}
+                className='mr-2 mb-2'>
                 <XMarkIcon
                   className='min-w-5 w-5 h-5 ml-1 hover:shadow hover:shadow-blue-500'
                   onClick={() => onRemoveTag(tag)}
