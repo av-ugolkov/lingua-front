@@ -7,7 +7,9 @@ export const api = createApi({
   endpoints: (build) => ({
     getLanguages: build.query<any, void>({
       query: () => '',
-      transformResponse: (response: any) => response['resp'] as ILanguage[],
+      transformResponse: (response: any) => {
+        return response as ILanguage[];
+      },
     }),
   }),
 });

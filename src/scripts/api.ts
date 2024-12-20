@@ -65,7 +65,7 @@ const fetchData = async (
       const dataJson = await resp.json();
       return {
         status: resp.status,
-        data: dataJson.resp,
+        data: dataJson.data,
         err: dataJson.msg,
         ok: resp.ok,
       };
